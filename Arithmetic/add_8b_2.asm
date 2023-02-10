@@ -20,8 +20,7 @@ code segment
            
            mov ah,1h           ;read a character from console
            int 21h
-           sub al,30h          ;convert number into bcd from as
-           cii form
+           sub al,30h          ;convert number into bcd from ascii form
            mov num1,al         ;store number as num1
            
            lea dx,msg2         ;load address of msg2 into dx
