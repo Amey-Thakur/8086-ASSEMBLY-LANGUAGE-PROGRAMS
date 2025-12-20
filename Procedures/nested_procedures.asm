@@ -1,43 +1,71 @@
-; Program: Nested Procedure Calls
-; Description: Demonstrate nested procedure calls
-; Author: Amey Thakur
+;=============================================================================
+; Program:     Nested Procedure Calls
+; Description: Demonstrate procedural hierarchy where one subroutine calls 
+;              another, showcasing the stack's LIFO nature for return addresses.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
-    NUM DW 10
+    NUM    DW 10
     RESULT DW ?
-    MSG DB 'Nested procedures executed$'
+    MSG    DB 'Success: Nested procedure hierarchy executed.$'
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
 .CODE
-; Inner procedure - doubles a number
-DOUBLE_NUM PROC
-    SHL AX, 1        ; Multiply by 2
-    RET
-DOUBLE_NUM ENDP
 
-; Outer procedure - doubles twice (x4)
-QUADRUPLE_NUM PROC
-    CALL DOUBLE_NUM  ; First double
-    CALL DOUBLE_NUM  ; Second double
+; Level 2: Inner Procedure
+; Just doubles the number in AX.
+DOUBLE_AX PROC
+    SHL AX, 1                           ; Fast multiply by 2
     RET
-QUADRUPLE_NUM ENDP
+DOUBLE_AX ENDP
 
+; Level 1: Outer Procedure
+; Performs a quadruple operation by calling the double routine twice.
+QUADRUPLE_AX PROC
+    CALL DOUBLE_AX                      ; 1st level nest
+    CALL DOUBLE_AX                      ; 1st level nest
+    RET
+QUADRUPLE_AX ENDP
+
+; Entry Point
 MAIN PROC
+    ; Initialize environment
     MOV AX, @DATA
     MOV DS, AX
     
-    MOV AX, NUM          ; Load number (10)
-    CALL QUADRUPLE_NUM   ; Result = 40
+    ; Use the procedural logic: 10 * 4 = 40
+    MOV AX, NUM
+    CALL QUADRUPLE_AX
     MOV RESULT, AX
     
-    ; Display message
+    ; Confirmation message
     LEA DX, MSG
     MOV AH, 09H
     INT 21H
     
-    MOV AH, 4CH      ; Exit to DOS
+    ; Exit
+    MOV AH, 4CH
     INT 21H
 MAIN ENDP
+
 END MAIN
+
+;=============================================================================
+; NESTING NOTES:
+; - Each 'CALL' adds an entry to the hardware stack.
+; - Inner procedures must always return (RET) before the outer procedures
+;   can resume their work.
+; - There is no limit to nesting depth other than the available stack memory.
+;=============================================================================
