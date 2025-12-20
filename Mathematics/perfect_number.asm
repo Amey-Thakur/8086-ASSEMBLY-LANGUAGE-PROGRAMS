@@ -1,58 +1,80 @@
-; Program: Check Perfect Number
-; Description: Check if a number is perfect (sum of divisors = number)
-; Author: Amey Thakur
+;=============================================================================
+; Program:     Perfect Number Check
+; Description: Determine if a 16-bit number is "Perfect".
+;              A Perfect number is equal to the sum of its proper divisors.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
-    NUM DW 28        ; 28 = 1 + 2 + 4 + 7 + 14 (perfect number)
-    SUM DW 0
-    MSG_PERFECT DB 'Number is PERFECT$'
-    MSG_NOT DB 'Number is NOT perfect$'
+    NUM DW 28                           ; 28 = 1 + 2 + 4 + 7 + 14 (Perfect Number)
+    SUM DW 0                            ; Accumulator for divisors
+    MSG_YES DB 'The number is PERFECT.$'
+    MSG_NO  DB 'The number is NOT perfect.$'
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
 .CODE
 MAIN PROC
+    ; Setup Data Segment
     MOV AX, @DATA
     MOV DS, AX
     
-    MOV BX, 1        ; Divisor starts at 1
-    MOV CX, NUM
-    SHR CX, 1        ; Only check up to NUM/2
+    ; We iterate from 1 up to (NUM - 1) to find proper divisors
+    MOV BX, 1                           ; Starting divisor
     
-CHECK_DIVISOR:
+DIVISOR_SEARCH:
+    ; Check if BX is a divisor: (NUM % BX == 0)
     MOV AX, NUM
     XOR DX, DX
-    DIV BX           ; AX = NUM / BX, DX = remainder
+    DIV BX                              ; AX = Quotient, DX = Remainder
     
-    CMP DX, 0        ; If remainder is 0, BX is a divisor
-    JNE NEXT_DIV
+    CMP DX, 0                           ; Is it a divisor?
+    JNE NEXT_ITERATION
     
-    ADD SUM, BX      ; Add divisor to sum
+    ADD SUM, BX                         ; Add BX to our running sum
     
-NEXT_DIV:
-    INC BX
-    CMP BX, NUM
-    JL CHECK_DIVISOR
+NEXT_ITERATION:
+    INC BX                              ; Next candidate
+    CMP BX, NUM                         ; Stop before reaching NUM itself
+    JL DIVISOR_SEARCH
     
-    ; Compare sum with number
+;-------------------------------------------------------------------------
+; VALIDATION
+;-------------------------------------------------------------------------
     MOV AX, SUM
-    CMP AX, NUM
-    JE IS_PERFECT
+    CMP AX, NUM                         ; Does Sum of Divisors equal original?
+    JE SUCCESS
     
-    LEA DX, MSG_NOT
-    JMP DISPLAY
+    LEA DX, MSG_NO
+    JMP DISPLAY_RESULT
     
-IS_PERFECT:
-    LEA DX, MSG_PERFECT
+SUCCESS:
+    LEA DX, MSG_YES
     
-DISPLAY:
-    MOV AH, 09H
+DISPLAY_RESULT:
+    MOV AH, 09H                         ; DOS: Print string
     INT 21H
     
-    MOV AH, 4CH      ; Exit to DOS
+    ; Exit
+    MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
 
-; Perfect numbers: 6, 28, 496, 8128...
+;=============================================================================
+; PERFECT NUMBER NOTES:
+; - Example: 6 (1+2+3=6), 28 (1+2+4+7+14=28).
+; - Optimization: A divisor will never be greater than NUM/2. 
+;   Starting with BX=1 and checking till NUM/2 is faster.
+; - This implementation uses the fundamental definition for clarity.
+;=============================================================================
