@@ -1,87 +1,100 @@
-
-
-
-; this is an example of out instruction.
-; it writes values to virtual i/o port
-; that controls the stepper-motor.
-; c:\emu8086\devices\stepper_motor.exe is on port 7
+;=============================================================================
+; Program:     Stepper Motor Control
+; Description: Demonstrate controlling a virtual stepper motor on port 7.
+;              Cycles through half-step and full-step rotations in both
+;              clockwise and counter-clockwise directions.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 #start=stepper_motor.exe#
-
-
-name "stepper"
-
+NAME "stepper"
 #make_bin#
 
-steps_before_direction_change = 20h ; 32 (decimal)
+; Configuration
+STEPS_BEFORE_DIRECTION_CHANGE EQU 20H ; 32 (decimal) steps per sequence
 
-jmp start
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
+JMP START
 
-; ========= data ===============
+;-----------------------------------------------------------------------------
+; STEPPING SEQUENCE DATA (4-phase motor)
+; Each byte represents the state of the 4 coils/magnets
+;-----------------------------------------------------------------------------
 
-; bin data for clock-wise
-; half-step rotation:
-datcw    db 0000_0110b
-         db 0000_0100b    
-         db 0000_0011b
-         db 0000_0010b
+; Half-Step Clockwise (Smoother, higher torque)
+DATCW    DB 0000_0110B
+         DB 0000_0100B    
+         DB 0000_0011B
+         DB 0000_0010B
 
-; bin data for counter-clock-wise
-; half-step rotation:
-datccw   db 0000_0011b
-         db 0000_0001b    
-         db 0000_0110b
-         db 0000_0010b
+; Half-Step Counter-Clockwise
+DATCCW   DB 0000_0011B
+         DB 0000_0001B    
+         DB 0000_0110B
+         DB 0000_0010B
 
+; Full-Step Clockwise (Higher speed)
+DATCW_FS DB 0000_0001B
+         DB 0000_0011B    
+         DB 0000_0110B
+         DB 0000_0000B
 
-; bin data for clock-wise
-; full-step rotation:
-datcw_fs db 0000_0001b
-         db 0000_0011b    
-         db 0000_0110b
-         db 0000_0000b
+; Full-Step Counter-Clockwise
+DATCCW_FS DB 0000_0100B
+          DB 0000_0110B    
+          DB 0000_0011B
+          DB 0000_0000B
 
-; bin data for counter-clock-wise
-; full-step rotation:
-datccw_fs db 0000_0100b
-          db 0000_0110b    
-          db 0000_0011b
-          db 0000_0000b
+START:
+    MOV BX, OFFSET DATCW            ; Start with Clockwise Half-Step
+    MOV SI, 0                       ; Table index (0-3)
+    MOV CX, 0                       ; Global step counter
 
+NEXT_STEP:
+    ; Handshake: Motor sets top bit (bit 7) when ready for next command
+WAIT_READY:   
+    IN AL, 7                        ; Read motor status from port 7
+    TEST AL, 10000000B              ; Check busy bit
+    JZ WAIT_READY                   ; Loop until ready
 
-start:
-mov bx, offset datcw ; start from clock-wise half-step.
-mov si, 0
-mov cx, 0 ; step counter
+    ; Send current phase sequence from data table to port 7
+    MOV AL, [BX][SI]
+    OUT 7, AL
 
-next_step:
-; motor sets top bit when it's ready to accept new command
-wait:   in al, 7     
-        test al, 10000000b
-        jz wait
+    ; Cycle through 4-step sequence
+    INC SI
+    CMP SI, 4
+    JB CONTINUE_LOOP
+    MOV SI, 0                       ; Reset to start of 4-step sequence
 
-mov al, [bx][si]
-out 7, al
+CONTINUE_LOOP:
+    INC CX                          ; Total steps in current direction
+    CMP CX, STEPS_BEFORE_DIRECTION_CHANGE
+    JB  NEXT_STEP                   ; Continue current sequence
 
-inc si
+    ; Change to next sequence after enough steps
+    MOV CX, 0
+    ADD BX, 4                       ; Increment data pointer to next table
 
-cmp si, 4
-jb next_step
-mov si, 0
+    ; If we've finished all 4 tables, return to the first one
+    CMP BX, OFFSET DATCCW_FS
+    JBE NEXT_STEP
 
-inc cx
-cmp cx, steps_before_direction_change
-jb  next_step
+    MOV BX, OFFSET DATCW            ; Return to beginning (Half-CW)
+    JMP NEXT_STEP
 
-mov cx, 0
-add bx, 4 ; next bin data
+END
 
-cmp bx, offset datccw_fs
-jbe next_step
-
-mov bx, offset datcw ; return to clock-wise half-step.
-
-jmp next_step
-
-
-
+;=============================================================================
+; STEPPER MOTOR NOTES:
+; - Stepper motors move in precise angular increments (steps).
+; - Requires a sequence of electrical pulses to internal coils.
+; - Half-stepping interleaves states for finer resolution.
+; - Full-stepping energizes coils in simpler pairs for higher power/speed.
+; - Emu8086 uses port 7 for its virtual stepper motor device.
+;=============================================================================

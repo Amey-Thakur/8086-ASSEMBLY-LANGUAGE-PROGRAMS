@@ -1,171 +1,164 @@
+;=============================================================================
+; Program:     Robot Control Simulation
+; Description: Demonstrate controlling a virtual robot in Emu8086.
+;              The robot explores its environment, detects obstacles/lamps,
+;              and toggles lights randomly.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 #start=robot.exe#
+NAME "robot"
 
-name "robot"
-
+; Memory layout configuration for simulation
 #make_bin#
 #cs = 500#
 #ds = 500#
-#ss = 500#    ; stack
-#sp = ffff#
-#ip = 0#
+#ss = 500#                          ; Stack segment
+#sp = ffff#                         ; Stack pointer at bottom
+#ip = 0#                            ; Instruction pointer
 
-; this is an example of contoling the robot.
+;-----------------------------------------------------------------------------
+; ROBOT I/O PORTS
+; - Port 9: Command Register (Output) / Status (Input)
+; - Port 10: Data Register (Input of sensor readings)
+; - Port 11: Status Register (Flag check)
+;-----------------------------------------------------------------------------
+R_PORT EQU 9
 
-; this code randomly moves the robot,
-; and makes it to switch the lamps on and off.
+;-----------------------------------------------------------------------------
+; MAIN LOOP: EXPLORATION
+;-----------------------------------------------------------------------------
+ETERNAL_LOOP:
+    CALL WAIT_ROBOT                  ; Ensure robot is ready for next command
 
-; robot is a mechanical creature and it takes 
-; some time for it to complete a task.
-; status register is used to see if robot is busy or not.
+    ; Examine the area in front of the robot
+    MOV AL, 4                        ; Command 4: Examine
+    OUT R_PORT, AL
 
-; c:\emu8086\devices\robot.exe uses ports 9, 10 and 11
-; source code of the robot and other devices is in:
-; c:\emu8086\devices\developer\sources\
-; robot is programmed in visual basic 6.0
+    CALL WAIT_EXAM                   ; Wait for sensor data to become valid
 
+    ; Get sensor result from Data Register
+    IN AL, R_PORT + 1
 
-; robot base i/o port:
-r_port equ 9
+    ; Sensor feedback codes:
+    ; 0   - Nothing found
+    ; 255 - Wall/Obstacle
+    ; 7   - Lighted lamp
+    ; 0..6 - Dark lamps (various shades)
 
-;===================================
+    CMP AL, 0
+    JE CONT                          ; Nothing found, move forward
+    CMP AL, 255  
+    JE CONT                          ; Wall found, try to turn in 'CONT'
 
-eternal_loop:
-; wait until robot
-; is ready:
-call wait_robot
+    CMP AL, 7                        ; Is it a switched-on lamp?
+    JNE LAMP_OFF                     ; No, skip to switching on
+    
+    ; If lamp is on, switch it off
+    CALL SWITCH_OFF_LAMP 
+    JMP  CONT
 
-; examine the area
-; in front of the robot:
-mov al, 4
-out r_port, al
+LAMP_OFF: 
+    ; If it reaches here, it must be a switched-off lamp
+    CALL SWITCH_ON_LAMP
 
-call wait_exam
+CONT:
+    ; Randomly decide to turn or move
+    CALL RANDOM_TURN
+    CALL WAIT_ROBOT
 
-; get result from
-; data register:
-in al, r_port + 1
+    ; Move step forward
+    MOV AL, 1                        ; Command 1: Step forward
+    OUT R_PORT, AL
+    CALL WAIT_ROBOT
 
-; nothing found?
-cmp al, 0
-je cont  ; - yes, so continue.
+    ; Move step forward again for smoother motion
+    MOV AL, 1
+    OUT R_PORT, AL
 
-; wall?
-cmp al, 255  
-je cont  ; - yes, so continue.
+    JMP ETERNAL_LOOP                 ; Infinite exploration loop
 
-; switched-on lamp?
-cmp al, 7
-jne lamp_off  ; - no, so skip.
-; - yes, so switch it off,
-;   and turn:
-call switch_off_lamp 
-jmp  cont  ; continue
+;-----------------------------------------------------------------------------
+; PROCEDURES
+;-----------------------------------------------------------------------------
 
-lamp_off: nop
+; BLOCKING WAIT: Robot Ready
+WAIT_ROBOT PROC
+    BUSY: 
+        IN AL, R_PORT + 2            ; Read Status Register
+        TEST AL, 00000010B           ; Check bit 1 (Busy Flag)
+        JNZ BUSY                     ; Wait while busy
+    RET    
+WAIT_ROBOT ENDP
 
-; if gets here, then we have
-; switched-off lamp, because
-; all other situations checked
-; already:
-call switch_on_lamp
+; BLOCKING WAIT: Examination Data Valid
+WAIT_EXAM PROC
+    BUSY2: 
+        IN AL, R_PORT + 2            ; Read Status Register
+        TEST AL, 00000001B           ; Check bit 0 (Data Ready Flag)
+        JZ BUSY2                     ; Wait if no data yet
+    RET    
+WAIT_EXAM ENDP
 
-cont:
-call random_turn
+; Toggle Lamp Off (Command 6)
+SWITCH_OFF_LAMP PROC
+    MOV AL, 6
+    OUT R_PORT, AL
+    RET
+SWITCH_OFF_LAMP ENDP
 
-call wait_robot
+; Toggle Lamp On (Command 5)
+SWITCH_ON_LAMP PROC
+    MOV AL, 5
+    OUT R_PORT, AL
+    RET
+SWITCH_ON_LAMP ENDP
 
-; try to step forward:
-mov al, 1
-out r_port, al
+; Generate random turns using system timer ticks
+RANDOM_TURN PROC
+    ; Get current clock ticks in CX:DX
+    MOV AH, 0
+    INT 1AH                          ; BIOS Time services
 
-call wait_robot
+    ; Scramble ticks to generate pseudo-random bits
+    XOR DH, DL
+    XOR CH, CL
+    XOR CH, DH
 
-; try to step forward again:
-mov al, 1
-out r_port, al
+    TEST CH, 2                       ; Use bit 1 to decide weight of turning
+    JZ NO_TURN
 
-jmp eternal_loop ; go again!
+    TEST CH, 1                       ; Use bit 0 to decide Left or Right
+    JNZ TURN_RIGHT
 
-;===================================
+    ; Turn Left (Command 2)
+    MOV AL, 2
+    OUT R_PORT, AL
+    RET  
 
-; this procedure does not
-; return until robot is ready
-; to receive next command:
-wait_robot proc
-; check if robot busy:
-busy: in al, r_port+2
-      test al, 00000010b
-      jnz busy ; busy, so wait.
-ret    
-wait_robot endp
+TURN_RIGHT:
+    ; Turn Right (Command 3)
+    MOV AL, 3
+    OUT R_PORT, AL
 
-;===================================
+NO_TURN:
+    RET
+RANDOM_TURN ENDP
 
-; this procedure does not
-; return until robot completes
-; the examination:
-wait_exam proc
-; check if has new data:
-busy2: in al, r_port+2
-       test al, 00000001b
-       jz busy2 ; no new data, so wait.
-ret    
-wait_exam endp
+END
 
-;===================================
-
-; switch off the lamp:
-switch_off_lamp proc
-mov al, 6
-out r_port, al
-ret
-switch_off_lamp endp
-
-;===================================
-
-; switch on the lamp:
-switch_on_lamp proc
-mov al, 5
-out r_port, al
-ret
-switch_on_lamp endp
-
-;===================================
-
-; generates a random turn using
-; system timer:
-random_turn proc
-
-; get number of clock
-; ticks since midnight
-; in cx:dx
-mov ah, 0
-int 1ah
-
-; randomize using xor:
-xor dh, dl
-xor ch, cl
-xor ch, dh
-
-test ch, 2
-jz no_turn
-
-test ch, 1
-jnz turn_right
-
-; turn left:
-mov al, 2
-out r_port, al
-; exit from procedure:
-ret  
-
-turn_right:
-mov al, 3
-out r_port, al
-
-no_turn:
-ret
-random_turn endp
-
-;===================================
+;=============================================================================
+; ROBOT SIMULATION NOTES:
+; - Virtual robot uses multiple ports starting from base port 9.
+; - Robot takes physical time to move; software MUST poll status registers.
+; - Command mapping:
+;   1: Step forward
+;   2: Turn left
+;   3: Turn right
+;   4: Examine front
+;   5: Switch lamp ON
+;   6: Switch lamp OFF
+;=============================================================================
