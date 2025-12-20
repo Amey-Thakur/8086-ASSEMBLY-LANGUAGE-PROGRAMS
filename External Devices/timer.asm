@@ -1,138 +1,155 @@
-; this sample shows the use of a timer function (int 15h / 86h)
-; this code prints some chars with 1 second delay.
+;=============================================================================
+; Program:     Timer and Delay Function
+; Description: Demonstrate BIOS timer interrupt (INT 15h / AH=86h).
+;              Prints characters with a 1-second delay.
+;              Designed as a boot sector program.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
-; note: Windows XP does not support this interrupt (always sets CF=1),
-; to test this program in real environment write it to a floppy disk using 
-; compiled writebin.asm. after sucessfull  compilation of both files,
-; type this from command prompt:   writebin timer.bin   
-
-; note: floppy disk boot record will be overwritten.
-;       the floppy will not be useable under windows/dos until
-;       you reformat it, data on floppy disk may be lost.
-;       use empty floppy disks only.
-
-name "timer"
+NAME "timer"
 
 #make_boot#
-org     7c00h
+ORG 7C00H                           ; Boot sector entry point
 
-; set the segment registers
-mov     ax, cs
-mov     ds, ax
-mov     es, ax
+;-----------------------------------------------------------------------------
+; INITIALIZATION
+;-----------------------------------------------------------------------------
+; Setup segment registers
+MOV AX, CS
+MOV DS, AX
+MOV ES, AX
 
+; Initialize UI
+CALL SET_VIDEO_MODE
+CALL CLEAR_SCREEN
 
-call set_video_mode
-call clear_screen
+;-----------------------------------------------------------------------------
+; MAIN LOOP: PRINT WITH DELAY
+;-----------------------------------------------------------------------------
+NEXT_CHAR:
+    CMP COUNT, 0                     ; All chars printed?
+    JZ STOP
 
+    ; Print current character using BIOS TTY
+    MOV AL, C1
+    MOV AH, 0EH
+    INT 10H
 
-next_char:
-cmp     count, 0
-jz      stop
+    ; Increment ASCII and decrement counter
+    INC C1
+    DEC COUNT
 
-; print char:
-mov     al, c1
-mov     ah, 0eh
-int     10h
+    ;-------------------------------------------------------------------------
+    ; WAIT DELAY (INT 15h / AH=86h)
+    ; Input CX:DX = microseconds to wait
+    ; 1,000,000 microseconds = 1 second = 000F 4240h
+    ;-------------------------------------------------------------------------
+    MOV CX, 0FH                     ; High word of 1,000,000
+    MOV DX, 4240H                   ; Low word of 1,000,000
+    MOV AH, 86H                     ; BIOS: Wait function
+    INT 15H
 
-; next ascii char:
-inc     c1
-dec     count
+    JC STOP                         ; Exit if interrupt not supported (CF=1)
 
-; set 1 million microseconds interval (1 second)
-mov     cx, 0fh
-mov     dx, 4240h
-mov     ah, 86h
-int     15h
+    JMP NEXT_CHAR                   ; Continue loop
 
-; stop any error:
-jc      stop    
+;-----------------------------------------------------------------------------
+; TERMINATION: DISP NOTIFY AND REBOOT
+;-----------------------------------------------------------------------------
+STOP:
+    ; Print message using BIOS service 13h (Print string with attribute)
+    MOV AL, 1
+    MOV BH, 0
+    MOV BL, 0010_1111B              ; Attribute: White on Green
+    MOV CX, MSG_SIZE
+    MOV DL, 4                       ; Column
+    MOV DH, 15                      ; Row
+    MOV BP, OFFSET MSG
+    MOV AH, 13H
+    INT 10H
 
-jmp     next_char
+    ; Wait for user input
+    MOV AH, 0
+    INT 16H
 
-stop:
+    ; Perform a soft reboot
+    INT 19H                         ; BIOS Bootstrap loader
 
-; print message using bios int 10h/13h function
-mov al, 1
-mov bh, 0
-mov bl, 0010_1111b
-mov cx, msg_size
-mov dl, 4
-mov dh, 15
-mov bp, offset msg
-mov ah, 13h
-int 10h
+;-----------------------------------------------------------------------------
+; DATA SECTION
+;-----------------------------------------------------------------------------
+COUNT DB 10                         ; Print 10 characters
+C1    DB 'a'                        ; Starting character
 
-; wait for any key...
-mov ah, 0
-int 16h
+MSG DB "remove floppy disk and press any key to reboot..."
+MSG_SIZE = $ - MSG
 
+;-----------------------------------------------------------------------------
+; PROCEDURES
+;-----------------------------------------------------------------------------
 
-int 19h            ; reboot
+; Set standard text mode
+SET_VIDEO_MODE PROC
+    MOV AH, 0
+    MOV AL, 3                       ; 80x25 characters, 16 colors
+    INT 10H
+    
+    ; Disable blinking to allow 16 background colors
+    MOV AX, 1003H
+    MOV BX, 0    
+    INT 10H
+    RET
+SET_VIDEO_MODE ENDP
 
+; Clear screen and reset cursor
+CLEAR_SCREEN PROC NEAR
+    PUSH AX
+    PUSH DS
+    PUSH BX
+    PUSH CX
+    PUSH DI
 
-count   db      10
-c1      db      'a'
+    MOV AX, 40H                     ; Access BIOS Data Area
+    MOV DS, AX  
+    
+    MOV AH, 06H                     ; BIOS: Scroll window up
+    MOV AL, 0                       ; 0 = clear entire window
+    MOV BH, 1111_0000B              ; Fill attribute: Black on White
+    MOV CH, 0                       ; Top row
+    MOV CL, 0                       ; Left column
+    
+    MOV DI, 84H                     ; BDA: Rows on screen - 1
+    MOV DH, [DI]                    ; Lower right row
+    MOV DI, 4AH                     ; BDA: Columns on screen
+    MOV DL, [DI]
+    DEC DL                          ; Lower right column
+    INT 10H
 
+    ; Set cursor at (0,0)
+    MOV BH, 0
+    MOV DL, 0
+    MOV DH, 0
+    MOV AH, 02H
+    INT 10H
 
-msg db "remove floppy disk and press any key to reboot..."
-msg_size = $ - msg
+    POP DI
+    POP CX
+    POP BX
+    POP DS
+    POP AX
+    RET
+CLEAR_SCREEN ENDP
 
+END
 
-
-; set video mode and disable blinking (for compatibility).
-set_video_mode proc
-mov     ah, 0
-mov     al, 3 ; text mode 80x25, 16 colors, 8 pages
-int     10h
-; blinking disabled for compatibility with dos,
-; emulator and windows prompt do not blink anyway.
-mov     ax, 1003h
-mov     bx, 0    ; disable blinking.
-int     10h
-ret
-set_video_mode endp
-
-
-
-
-; clear the screen by scrolling entire screen window,
-; and set cursor position on top.
-; default attribute is changed to black on white.
-clear_screen proc near
-        push    ax      ; store registers...
-        push    ds      ;
-        push    bx      ;
-        push    cx      ;
-        push    di      ;
-
-        mov     ax, 40h
-        mov     ds, ax  ; for getting screen parameters.
-        mov     ah, 06h ; scroll up function id.
-        mov     al, 0   ; scroll all lines!
-        mov     bh, 1111_0000b  ; attribute for new lines.
-        mov     ch, 0   ; upper row.
-        mov     cl, 0   ; upper col.
-        mov     di, 84h ; rows on screen -1,
-        mov     dh, [di] ; lower row (byte).
-        mov     di, 4ah ; columns on screen,
-        mov     dl, [di]
-        dec     dl      ; lower col.
-        int     10h
-
-        ; set cursor position to top
-        ; of the screen:
-        mov     bh, 0   ; current page.
-        mov     dl, 0   ; col.
-        mov     dh, 0   ; row.
-        mov     ah, 02
-        int     10h
-
-        pop     di      ; re-store registers...
-        pop     cx      ;
-        pop     bx      ;
-        pop     ds      ;
-        pop     ax      ;
-
-        ret
-clear_screen endp
+;=============================================================================
+; TIMER INTERRUPT NOTES:
+; - INT 15h, AH=86h is used for precise microsecond delays.
+; - CX (high word) and DX (low word) together form a 32-bit wait value.
+; - Support varies: Real mode support is standard, but some NT-based Windows
+;   emulations fail this call (setting Carry Flag).
+; - Microseconds: 1,000,000 = 1 sec.
+;=============================================================================

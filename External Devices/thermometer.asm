@@ -1,47 +1,66 @@
-; this short program for emu8086 shows how to keep constant temperature
-; using heater and thermometer (between 60° to 80°),
-; it is assumed that air temperature is lower 60°.
-
-; thermometer.exe is started automatically from c:\emu8086\devices.
-; it is also accessible from the "virtual devices" menu of the emulator.
+;=============================================================================
+; Program:     Digital Thermostat Control
+; Description: Simulate a temperature control system using a heater and
+;              a virtual thermometer. Maintains temperature between 60'C and 80'C.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 #start=thermometer.exe#
-
-; temperature rises fast, thus emulator should be set to run at the maximum speed.
-
-; if closed, the thermometer window can be re-opened from emulator's "virtual devices" menu.
-
-
-
 #make_bin#
+NAME "thermo"
 
-name "thermo"
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
+; Logic: Hysteresis-based temperature control.
+; - If Temp < 60'C: Turn Heater ON
+; - If Temp > 80'C: Turn Heater OFF
+; - Ports: 125 (Input from Thermometer), 127 (Output to Heater)
+;-----------------------------------------------------------------------------
 
-; set data segment to code segment:
-mov ax, cs
-mov ds, ax
+; Initialize segments
+MOV AX, CS
+MOV DS, AX
 
-start:
+START:
+    ; Read current temperature from port 125
+    IN AL, 125
 
-in al, 125
+    ; Check lower threshold (60'C)
+    CMP AL, 60
+    JL  LOW_TEMP                    ; If under 60, heat up
 
-cmp al, 60
-jl  low
+    ; Check upper threshold (80'C)
+    CMP AL, 80
+    JG   HIGH_TEMP                  ; If over 80, cool down
 
-cmp al, 80
-jle  ok
-jg   high
+    ; If between 60 and 80, maintain current heater state
+    JMP OK
 
-low:
-mov al, 1
-out 127, al   ; turn heater "on".
-jmp ok
+LOW_TEMP:
+    ; Temperature is too low (< 60)
+    MOV AL, 1
+    OUT 127, AL                     ; Turn heater "ON" by sending 1 to port 127
+    JMP OK
 
-high:
-mov al, 0
-out 127, al   ; turn heater "off". 
+HIGH_TEMP:
+    ; Temperature is too high (> 80)
+    MOV AL, 0
+    OUT 127, AL                     ; Turn heater "OFF" by sending 0 to port 127
 
-ok:
-jmp start   ; endless loop.
+OK:
+    JMP START                       ; Endless control loop
 
+END
 
+;=============================================================================
+; THERMOSTAT LOGIC NOTES:
+; - Goal: Maintain temperature in safety range (60-80).
+; - Port 125: Returns current temp as a byte.
+; - Port 127: Heater control (1=on, 0=off).
+; - Air temp is assumed < 60 so default state cools down without heater.
+; - Hysteresis prevents rapid oscillation (jitter) at a single degree threshold.
+;=============================================================================
