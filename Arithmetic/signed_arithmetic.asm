@@ -1,7 +1,13 @@
-; Program: Signed Number Operations
-; Description: Demonstrate signed arithmetic and comparisons
-; Author: Amey Thakur
-; Keywords: 8086 signed, signed arithmetic, negative numbers
+;=============================================================================
+; Program:     Signed Number Operations
+; Description: Demonstrate signed arithmetic and comparisons.
+;              Shows how to work with negative numbers in 8086 using
+;              two's complement representation.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H

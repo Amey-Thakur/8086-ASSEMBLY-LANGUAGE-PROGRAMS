@@ -1,7 +1,12 @@
-; Program: Multiplication Table Generator
-; Description: Generate and display multiplication table
-; Author: Amey Thakur
-; Keywords: 8086 multiplication table, times table
+;=============================================================================
+; Program:     Multiplication Table Generator
+; Description: Generate and display multiplication table for any number.
+;              Demonstrates loops, procedures, and number display.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
