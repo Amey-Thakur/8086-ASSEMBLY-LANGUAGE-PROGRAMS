@@ -1,76 +1,115 @@
-; Program: Switch-Case (Jump Table) Structure
-; Description: Implement switch-case using jump table
-; Author: Amey Thakur
+;=============================================================================
+; Program:     Switch-Case Structure (Jump Table)
+; Description: Implement switch-case using jump table technique.
+;              Efficient for multiple branch decisions.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
-    MENU DB 'Select option (1-4):', 0DH, 0AH
-         DB '1. Add', 0DH, 0AH
-         DB '2. Subtract', 0DH, 0AH
-         DB '3. Multiply', 0DH, 0AH
-         DB '4. Divide', 0DH, 0AH, '$'
+    CHOICE DB 2                         ; User choice (1-3)
+    MSG1 DB 'Option 1 selected$'
+    MSG2 DB 'Option 2 selected$'
+    MSG3 DB 'Option 3 selected$'
+    MSG_DEF DB 'Invalid option$'
     
-    MSG_ADD DB 'You selected: Addition$'
-    MSG_SUB DB 'You selected: Subtraction$'
-    MSG_MUL DB 'You selected: Multiplication$'
-    MSG_DIV DB 'You selected: Division$'
-    MSG_INV DB 'Invalid option!$'
-    
-    JUMP_TABLE DW CASE_1, CASE_2, CASE_3, CASE_4
+    ;-------------------------------------------------------------------------
+    ; Jump Table - Array of addresses for each case
+    ;-------------------------------------------------------------------------
+    JUMP_TABLE DW CASE_1, CASE_2, CASE_3
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+; 
+; High-level equivalent:
+;   switch (choice)
+;       case 1: print "Option 1"
+;       case 2: print "Option 2"
+;       case 3: print "Option 3"
+;       default: print "Invalid"
+;-----------------------------------------------------------------------------
 .CODE
 MAIN PROC
+    ; Initialize Data Segment
     MOV AX, @DATA
     MOV DS, AX
     
-    ; Display menu
-    LEA DX, MENU
-    MOV AH, 09H
-    INT 21H
+    ;-------------------------------------------------------------------------
+    ; Validate Choice (bounds check)
+    ;-------------------------------------------------------------------------
+    MOV AL, CHOICE                      ; Load choice
+    CMP AL, 1
+    JB DEFAULT_CASE                     ; If choice < 1, invalid
+    CMP AL, 3
+    JA DEFAULT_CASE                     ; If choice > 3, invalid
     
-    ; Read choice
-    MOV AH, 01H
-    INT 21H
+    ;-------------------------------------------------------------------------
+    ; Calculate Jump Table Index
+    ; Index = (choice - 1) * 2 (each address is 2 bytes)
+    ;-------------------------------------------------------------------------
+    DEC AL                              ; AL = choice - 1 (0-based index)
+    XOR AH, AH                          ; Clear high byte
+    SHL AX, 1                           ; AX = AX * 2 (word offset)
     
-    ; Convert ASCII to number (0-based index)
-    SUB AL, '1'
-    
-    ; Validate input (0-3)
-    CMP AL, 4
-    JAE INVALID
-    
-    ; Use jump table
-    XOR AH, AH
-    SHL AX, 1        ; Multiply by 2 (word offset)
-    MOV BX, AX
-    JMP JUMP_TABLE[BX]
+    ;-------------------------------------------------------------------------
+    ; Jump through Table
+    ;-------------------------------------------------------------------------
+    MOV BX, AX                          ; BX = offset into table
+    JMP JUMP_TABLE[BX]                  ; Indirect jump to case handler
     
 CASE_1:
-    LEA DX, MSG_ADD
-    JMP DISPLAY
+    LEA DX, MSG1
+    JMP END_SWITCH
     
 CASE_2:
-    LEA DX, MSG_SUB
-    JMP DISPLAY
+    LEA DX, MSG2
+    JMP END_SWITCH
     
 CASE_3:
-    LEA DX, MSG_MUL
-    JMP DISPLAY
+    LEA DX, MSG3
+    JMP END_SWITCH
     
-CASE_4:
-    LEA DX, MSG_DIV
-    JMP DISPLAY
+DEFAULT_CASE:
+    LEA DX, MSG_DEF
     
-INVALID:
-    LEA DX, MSG_INV
-    
-DISPLAY:
+END_SWITCH:
+    ;-------------------------------------------------------------------------
+    ; Display Result
+    ;-------------------------------------------------------------------------
     MOV AH, 09H
     INT 21H
     
-    MOV AH, 4CH      ; Exit to DOS
+    ;-------------------------------------------------------------------------
+    ; Program Termination
+    ;-------------------------------------------------------------------------
+    MOV AH, 4CH                         ; DOS: Terminate program
     INT 21H
 MAIN ENDP
 END MAIN
+
+;=============================================================================
+; SWITCH-CASE IMPLEMENTATION METHODS
+;=============================================================================
+; 
+; Method 1: Compare and Jump (Simple but slow for many cases)
+;   CMP AL, 1 / JE CASE_1
+;   CMP AL, 2 / JE CASE_2
+;   ...
+; 
+; Method 2: Jump Table (Fast for consecutive values)
+;   - Create table of addresses
+;   - Calculate index: (value - base) * 2
+;   - Indirect jump: JMP TABLE[BX]
+;   - O(1) time complexity regardless of cases
+; 
+; Method 3: Binary Search (for sparse values)
+;   - Good for non-consecutive case values
+;=============================================================================

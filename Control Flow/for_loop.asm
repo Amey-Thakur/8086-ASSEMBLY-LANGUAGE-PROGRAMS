@@ -1,90 +1,107 @@
-; Program: For Loop Structure
-; Description: Implement for loop logic in assembly
-; Author: Amey Thakur
+;=============================================================================
+; Program:     For Loop Structure
+; Description: Implement for loop logic in assembly.
+;              Demonstrates initialization, condition, and increment.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
-    MSG DB 'Multiplication Table of 5:', 0DH, 0AH, '$'
+    MSG DB 'For loop iteration: $'
     NEWLINE DB 0DH, 0AH, '$'
-    TIMES_STR DB ' x 5 = $'
-    NUM DW 5
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+; 
+; High-level equivalent:
+;   for (i = 1; i <= 5; i++)
+;       print i
+;-----------------------------------------------------------------------------
 .CODE
 MAIN PROC
+    ; Initialize Data Segment
     MOV AX, @DATA
     MOV DS, AX
     
-    ; Display header
+    ;-------------------------------------------------------------------------
+    ; FOR Loop: Initialization
+    ; i = 1 (using BL as loop counter)
+    ;-------------------------------------------------------------------------
+    MOV BL, 1                           ; Initialize counter
+    
+FOR_START:
+    ;-------------------------------------------------------------------------
+    ; FOR Loop: Condition Check
+    ; i <= 5
+    ;-------------------------------------------------------------------------
+    CMP BL, 5                           ; Compare i with 5
+    JG FOR_END                          ; If i > 5, exit loop
+    
+    ;-------------------------------------------------------------------------
+    ; Loop Body
+    ;-------------------------------------------------------------------------
+    ; Display message
     LEA DX, MSG
     MOV AH, 09H
     INT 21H
     
-    ; FOR i = 1 TO 10
-    MOV CX, 10       ; Loop counter
-    MOV BX, 1        ; i = 1
-    
-FOR_LOOP:
-    PUSH CX
-    
-    ; Print i
-    MOV AX, BX
-    CALL PRINT_NUM
-    
-    ; Print " x 5 = "
-    LEA DX, TIMES_STR
-    MOV AH, 09H
+    ; Display counter value
+    MOV DL, BL
+    ADD DL, '0'                         ; Convert to ASCII
+    MOV AH, 02H
     INT 21H
-    
-    ; Calculate and print i * 5
-    MOV AX, BX
-    MUL NUM
-    CALL PRINT_NUM
     
     ; Newline
     LEA DX, NEWLINE
     MOV AH, 09H
     INT 21H
     
-    INC BX           ; i++
-    POP CX
-    LOOP FOR_LOOP
+    ;-------------------------------------------------------------------------
+    ; FOR Loop: Increment
+    ; i++
+    ;-------------------------------------------------------------------------
+    INC BL                              ; Increment counter
     
-    MOV AH, 4CH      ; Exit to DOS
+    ;-------------------------------------------------------------------------
+    ; Jump back to condition check
+    ;-------------------------------------------------------------------------
+    JMP FOR_START
+    
+FOR_END:
+    ;-------------------------------------------------------------------------
+    ; Program Termination
+    ;-------------------------------------------------------------------------
+    MOV AH, 4CH                         ; DOS: Terminate program
     INT 21H
 MAIN ENDP
-
-; Print number in AX
-PRINT_NUM PROC
-    PUSH AX
-    PUSH BX
-    PUSH CX
-    PUSH DX
-    
-    MOV BX, 10
-    XOR CX, CX
-    
-DIVIDE_LOOP:
-    XOR DX, DX
-    DIV BX
-    PUSH DX
-    INC CX
-    CMP AX, 0
-    JNE DIVIDE_LOOP
-    
-PRINT_LOOP:
-    POP DX
-    ADD DL, '0'
-    MOV AH, 02H
-    INT 21H
-    LOOP PRINT_LOOP
-    
-    POP DX
-    POP CX
-    POP BX
-    POP AX
-    RET
-PRINT_NUM ENDP
-
 END MAIN
+
+;=============================================================================
+; FOR LOOP PATTERN IN ASSEMBLY
+;=============================================================================
+; 
+; High-level:                      Assembly equivalent:
+; ---------------------------      ---------------------
+; for (init; cond; incr)           ; init
+;     loop_body                FOR_START:
+;                                  ; cond check
+;                                  Jcc FOR_END      ; Exit if FALSE
+;                                  ; loop_body
+;                                  ; incr
+;                                  JMP FOR_START
+;                              FOR_END:
+; 
+; OPTIMIZATION: Use LOOP instruction when counting down:
+;   MOV CX, 5          ; Count
+; LOOP_START:
+;   ; body
+;   LOOP LOOP_START    ; CX--, jump if CX != 0
+;=============================================================================

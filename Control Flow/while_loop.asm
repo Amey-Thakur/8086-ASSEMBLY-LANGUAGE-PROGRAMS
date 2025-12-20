@@ -1,79 +1,103 @@
-; Program: While Loop Structure
-; Description: Implement while loop logic in assembly
-; Author: Amey Thakur
+;=============================================================================
+; Program:     While Loop Structure
+; Description: Implement while loop logic in assembly.
+;              Loop continues while condition is true.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
-    MSG DB 'Sum of 1 to 10 = $'
-    SUM DW 0
-    COUNT DW 1
-    LIMIT DW 10
+    COUNT DW 0                          ; Counter variable
+    LIMIT DW 5                          ; Loop limit
+    MSG DB 'While loop iteration: $'
+    NEWLINE DB 0DH, 0AH, '$'
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+; 
+; High-level equivalent:
+;   count = 0
+;   while (count < limit)
+;       print count
+;       count++
+;-----------------------------------------------------------------------------
 .CODE
 MAIN PROC
+    ; Initialize Data Segment
     MOV AX, @DATA
     MOV DS, AX
     
-    ; WHILE (COUNT <= LIMIT)
 WHILE_START:
-    MOV AX, COUNT
-    CMP AX, LIMIT
-    JG WHILE_END     ; Exit if COUNT > LIMIT
+    ;-------------------------------------------------------------------------
+    ; WHILE Condition Check (at START of loop)
+    ; If condition is FALSE, exit loop
+    ;-------------------------------------------------------------------------
+    MOV AX, COUNT                       ; Load counter
+    CMP AX, LIMIT                       ; Compare with limit
+    JGE WHILE_END                       ; If count >= limit, exit loop
     
-    ; Loop body: SUM = SUM + COUNT
-    ADD SUM, AX
-    
-    ; COUNT = COUNT + 1
-    INC COUNT
-    
-    JMP WHILE_START  ; Continue loop
-    
-WHILE_END:
+    ;-------------------------------------------------------------------------
+    ; Loop Body
+    ;-------------------------------------------------------------------------
     ; Display message
     LEA DX, MSG
     MOV AH, 09H
     INT 21H
     
-    ; Display sum (55)
-    MOV AX, SUM
-    CALL PRINT_NUM
-    
-    MOV AH, 4CH      ; Exit to DOS
-    INT 21H
-MAIN ENDP
-
-; Print number in AX
-PRINT_NUM PROC
-    PUSH AX
-    PUSH BX
-    PUSH CX
-    PUSH DX
-    
-    MOV BX, 10
-    XOR CX, CX
-    
-DIVIDE_LOOP:
-    XOR DX, DX
-    DIV BX
-    PUSH DX
-    INC CX
-    CMP AX, 0
-    JNE DIVIDE_LOOP
-    
-PRINT_LOOP:
-    POP DX
-    ADD DL, '0'
+    ; Display counter value
+    MOV AX, COUNT
+    ADD AL, '0'                         ; Convert to ASCII
+    MOV DL, AL
     MOV AH, 02H
     INT 21H
-    LOOP PRINT_LOOP
     
-    POP DX
-    POP CX
-    POP BX
-    POP AX
-    RET
-PRINT_NUM ENDP
-
+    ; Newline
+    LEA DX, NEWLINE
+    MOV AH, 09H
+    INT 21H
+    
+    ;-------------------------------------------------------------------------
+    ; Update Counter
+    ;-------------------------------------------------------------------------
+    INC COUNT                           ; count++
+    
+    ;-------------------------------------------------------------------------
+    ; Jump back to condition check
+    ;-------------------------------------------------------------------------
+    JMP WHILE_START
+    
+WHILE_END:
+    ;-------------------------------------------------------------------------
+    ; Program Termination
+    ;-------------------------------------------------------------------------
+    MOV AH, 4CH                         ; DOS: Terminate program
+    INT 21H
+MAIN ENDP
 END MAIN
+
+;=============================================================================
+; WHILE LOOP PATTERN IN ASSEMBLY
+;=============================================================================
+; 
+; High-level:              Assembly equivalent:
+; -------------------      ---------------------
+; while (condition)    WHILE_START:
+;     loop_body            CMP operand1, operand2
+;                          Jcc WHILE_END    ; Exit if FALSE
+;                          ; loop_body code
+;                          JMP WHILE_START
+;                      WHILE_END:
+; 
+; Key difference from DO-WHILE:
+; - WHILE checks condition BEFORE executing body
+; - DO-WHILE checks condition AFTER executing body
+; - WHILE may execute 0 times, DO-WHILE executes at least once
+;=============================================================================
