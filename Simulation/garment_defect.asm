@@ -1,96 +1,126 @@
-;Design and Emulate a smart automation system for a garment manufacturing unit with
-;the following requirements:-
-; To detect all possible defects.
-; To remove the defective pieces.
-; To provide comprehensive inventory report.
+;=============================================================================
+; Program:     Garment Defect Detection (Simulation)
+; Description: Simulate a quality control station in a textile factory. 
+;              The program scans "pieces" (array elements) against grade
+;              thresholds and logs inventory statistics.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
-data segment
-    num1 db ?
-    num2 db ?
-    line DB 1h,2h,3h,4h,5h,6h,7h,8h,9h,0h;
-    MSG1 DB 10,13,"Threshold 1: $"
-    MSG2 DB 10,13,"Threshold 2: $"
-    MSG3 DB 10,13,"Defect detected $"
-    MSG4 DB 10,13,"Defect removed $"
-    MSG5 DB 10,13,"Good clothes: $"
-    MSG6 DB 10,13,"Bad clothes: $" 
-    good db ?
-    bad db ?
-data ends
- 
-code segment
-assume cs:code, ds:data
-start: mov ax, data
-       mov ds, ax         
-       mov cx, 0bh         ;set up loop counter
-       
-       mov good,0Ah
-       mov bad,0000H
+.MODEL SMALL
+.STACK 100H
 
-       lea dx,msg1         ;load and display message 1
-       mov ah,9h
-       int 21h
-       
-       mov ah,1h           ;read character from console
-       int 21h
-       sub al,30h          ;convert from ASCII to BCD
-       mov num1,al         ;store number as num1
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
+.DATA
+    THRESHOLD1 DB ?                      ; Quality cut-off 1
+    THRESHOLD2 DB ?                      ; Quality cut-off 2
+    
+    ; Array of garment grades (1-9)
+    BATCH      DB 1, 2, 3, 4, 5, 6, 7, 8, 9, 0
+    BATCH_COUNT EQU 10
+    
+    GOOD_COUNT DB 10                     ; Initial assumption
+    BAD_COUNT  DB 0                      ; Counter for defects
+    
+    MSG_T1      DB 10,13,"Enter Minimum Grade (T1): $"
+    MSG_T2      DB 10,13,"Enter Maximum Tolerance (T2): $"
+    MSG_DEFECT  DB 10,13,"[QC] Defect detected at station. $"
+    MSG_FIXED   DB 10,13,"[QC] Defective piece flagged and removed. $"
+    MSG_REPORT_G DB 10,13,"Inventory Report: Good pieces = $"
+    MSG_REPORT_B DB 10,13,"Inventory Report: Defective pieces = $"
 
-       lea dx,msg2         ;load and display message 2
-       mov ah,9h            
-       int 21h
-       
-       mov ah,1h           ;read character from console
-       int 21h
-       sub al,30h          ;convert from ASCII to BCD
-       mov num2,al         ;store number as num2
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
+.CODE
+MAIN PROC
+    ; State init
+    MOV AX, @DATA
+    MOV DS, AX
+    
+    ; 1. Setup Quality Parameters
+    LEA DX, MSG_T1
+    MOV AH, 09H
+    INT 21H
+    MOV AH, 01H
+    INT 21H
+    SUB AL, '0'
+    MOV THRESHOLD1, AL
 
-up:    mov al,byte ptr[SI] ;compare next
-       cmp al,num1
-       jl dft
-       cmp al,num2          
-       jl dft
-       jmp nxt
-       
-dft:   lea dx,msg3         ;load and display message 3
-       mov ah,9h
-       int 21h
-       
-       mov [si],0000H      ;remove defect
-       inc bad
-       
-       lea dx,msg4         ;load and display message 4
-       mov ah,9h
-       int 21h
-       
-       jmp nxt 
-       
-nxt:   inc si              ;point to next grade
-       dec cx
-       jnz up
-       
-       lea dx,msg5         ;load and display message 5
-       mov ah,9h
-       int 21h
-              
-       xor ax,ax
-       mov al,bad
-       sub good,al
-       add good,30h        ;ASCII adjust before displaying
-       mov dl,good
-       mov ah,2h           ;display it
-       int 21h
-       
-       lea dx,msg6         ;load and display message 6
-       mov ah,9h
-       int 21h
-       
-       add bad,30h         ;ASCII adjust before displaying
-       mov dl,bad
-       mov ah,2h           ;display it
-       int 21h
-       
-       hlt
-       
-code ends
-end start
+    LEA DX, MSG_T2
+    MOV AH, 09H
+    INT 21H
+    MOV AH, 01H
+    INT 21H
+    SUB AL, '0'
+    MOV THRESHOLD2, AL
+
+    ; 2. Start Processing Batch
+    LEA SI, BATCH
+    MOV CX, BATCH_COUNT
+    
+PROCESS_LOOP:
+    MOV AL, [SI]                        ; Fetch current piece grade
+    
+    ; Logic: If (Grade < T1) OR (Grade < T2) - specific logic per requirements
+    CMP AL, THRESHOLD1
+    JL LOG_DEFECT
+    CMP AL, THRESHOLD2
+    JL LOG_DEFECT
+    JMP NEXT_PIECE
+
+LOG_DEFECT:
+    LEA DX, MSG_DEFECT
+    MOV AH, 09H
+    INT 21H
+    
+    ; Flag logic: Zero out the buffer and update counts
+    MOV BYTE PTR [SI], 0
+    INC BAD_COUNT
+    DEC GOOD_COUNT
+    
+    LEA DX, MSG_FIXED
+    MOV AH, 09H
+    INT 21H
+
+NEXT_PIECE:
+    INC SI
+    LOOP PROCESS_LOOP
+    
+;-------------------------------------------------------------------------
+; FINAL INVENTORY REPORT
+;-------------------------------------------------------------------------
+    ; Display Good
+    LEA DX, MSG_REPORT_G
+    MOV AH, 09H
+    INT 21H
+    MOV DL, GOOD_COUNT
+    ADD DL, '0'
+    MOV AH, 02H
+    INT 21H
+    
+    ; Display Bad
+    LEA DX, MSG_REPORT_B
+    MOV AH, 09H
+    INT 21H
+    MOV DL, BAD_COUNT
+    ADD DL, '0'
+    MOV AH, 02H
+    INT 21H
+    
+    ; Program Halt
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+END MAIN
+
+;=============================================================================
+; SMART AUTOMATION NOTES:
+; - Array 'BATCH' represents a physical conveyor belt.
+; - Thresholding simulates sensor input.
+; - Inventory reporting is a key feature of Industrial IoT (IIoT) logic.
+;=============================================================================

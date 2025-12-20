@@ -1,63 +1,97 @@
-;Emulate water level controller on emu8086 with the following specifications:
-;a. No. of water levels in the overhead tank is 8
-;b. Display the current level of water with a buzzer
-;c. Switch on the motor if the water level is 1
-;d. Switch off the motor if the water level is 8
-;e. Switch on the buzzer on water overflow
+;=============================================================================
+; Program:     Water Level Controller (Simulation)
+; Description: Emulate an automated pump system for an overhead tank. 
+;              Simulates motor switching, water level monitoring (8 levels), 
+;              and overflow protection logic.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
-DATA SEGMENT
-    msg1 db 10,13,"The water level is: $"
-    msg2 db 10,13,"Switch ON motor. $"
-    msg3 db 10,13,"Switch OFF motor. $"
-    msg4 db 10,13,"Water overflow! $"
-DATA ENDS
+.MODEL SMALL
+.STACK 100H
 
-CODE SEGMENT
-    ASSUME DS:DATA,CS:CODE
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
+.DATA
+    MSG_LEVEL    DB 10,13,"Monitoring: Tank water level is: $"
+    MSG_MOTOR_ON DB 10,13,"[AUTO] Level Critical. Switching ON Motor... $"
+    MSG_MOTOR_OFF DB 10,13,"[AUTO] Level High. Switching OFF Motor... $"
+    MSG_OVERFLOW  DB 10,13,07,"!!! WARNING: WATER OVERFLOW DETECTED !!! $"
 
-START: mov AX,@data ;intialize data segment
-       mov DS,AX
-       
-       mov CL,1H
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
+.CODE
+MAIN PROC
+    ; Initialize System
+    MOV AX, @DATA
+    MOV DS, AX
+    
+    MOV CL, 1                           ; Starting Level (1)
+    
+MONITOR_CYCLE:
+    ; 1. Display Status
+    LEA DX, MSG_LEVEL
+    MOV AH, 09H
+    INT 21H
+    
+    MOV DL, CL
+    ADD DL, '0'                         ; ASCII translation
+    MOV AH, 02H
+    INT 21H
+    
+    ;-------------------------------------------------------------------------
+    ; CONTROL LOGIC (State machine)
+    ;-------------------------------------------------------------------------
+    
+    CMP CL, 8                           ; Check for Max Level
+    JE STOP_PUMP
+    
+    CMP CL, 1                           ; Check for Min Level
+    JE START_PUMP
+    
+RESUME_SENSING:
+    INC CL                              ; Simulating water filling the tank
+    
+    ; Loop condition: Max 8 levels
+    CMP CL, 8
+    JLE MONITOR_CYCLE
+    
+    JMP SYSTEM_EXIT
 
-L1:    lea DX,msg1  ;displaying water level message
-       mov AH,9H
-       int 21H
-       
-       add CL,30H   ;ASCII adjust before displaying
-       mov DL,CL
-       mov AH,2H    ;display
-       int 21H
-       sub CL,30H   ;ASCII adjust after displaying
+;-------------------------------------------------------------------------
+; SYSTEM ACTIONS
+;-------------------------------------------------------------------------
 
-       cmp CL,8H    ;switch off motor
-       je off       ;jump to off if = 8
-       
-       cmp CL,1H    ;switch on motor
-       je on        ;jump to on if = 1
-       
-back:  inc CL       ;increase water level by 1
-       cmp CL,8H    ;check if water level is overflowing
-       jle l1
-       
-       jmp exit
-       
-on:    lea DX,msg2
-       mov AH,9h
-       int 21H
-       jmp back
-       
-off:   lea DX,msg3
-       mov AH,9h
-       int 21H
-       lea DX,msg4  ;displaying overflow 
-       mov AH,9H
-       int 21H
-       jmp back
+START_PUMP:
+    LEA DX, MSG_MOTOR_ON
+    MOV AH, 09H
+    INT 21H
+    JMP RESUME_SENSING
 
+STOP_PUMP:
+    LEA DX, MSG_MOTOR_OFF
+    MOV AH, 09H
+    INT 21H
+    
+    LEA DX, MSG_OVERFLOW
+    MOV AH, 09H
+    INT 21H
+    JMP RESUME_SENSING
 
-exit:  mov AH,4CH
-       int 21H              
-       
-CODE ENDS
-END START
+SYSTEM_EXIT:
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+END MAIN
+
+;=============================================================================
+; CONTROLLER NOTES:
+; - This models a simple logic gate controller (PLC-like behavior).
+; - Level 1 is the 'Low-Water' trigger (Switch ON).
+; - Level 8 is the 'Full' trigger (Switch OFF + Alarm).
+; - 07h is sent to standard output to simulate the physical buzzer.
+;=============================================================================

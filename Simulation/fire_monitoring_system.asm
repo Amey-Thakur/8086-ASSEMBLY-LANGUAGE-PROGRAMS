@@ -1,83 +1,120 @@
-;Emulate a fire monitoring system on emu8086 for the following specifications:
-;Define the threshold for the temperature of two rooms
-;Generate the temperature value in 8b resolution
-;Switch on the alarm and display an alarm message when the threshold of either of the room is reached
-;Remove the alarm and bring the temperature below the threshold
+;=============================================================================
+; Program:     Fire Monitoring System (Simulation)
+; Description: Emulate a temperature-based fire alarm system. The program 
+;              monitors ambient temperature against user-defined thresholds
+;              for two distinct rooms and triggers an alarm if exceeded.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
-DATA SEGMENT
-    num1 db ?
-    num2 db ?
-    MSG1 DB 10,13,"Threshold for 1: $"
-    MSG2 DB 10,13,"Threshold for 2: $"
-    MSG3 DB 10,13,"Alarm on! $"
-    MSG4 DB 10,13,"Threshold reached! $"
-    MSG5 DB 10,13,"Press '1' to restart. $"
-    MSG6 DB 10,13,"Temp: $"
-DATA ENDS
+.MODEL SMALL
+.STACK 100H
 
-CODE SEGMENT
-    ASSUME DS:DATA,CS:CODE
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
+.DATA
+    LIMIT1 DB ?                          ; Threshold for Room 1
+    LIMIT2 DB ?                          ; Threshold for Room 2
     
-START: mov AX,data  ;intialize data segment
-       mov DS,AX
-       
-       lea dx,msg1  ;load and display message 1
-       mov ah,9h
-       int 21h
-       
-       mov ah,1h    ;read character from console
-       int 21h
-       sub al,30h   ;convert from ASCII to BCD
-       mov num1,al  ;store number as num1
+    MSG_LIMIT1  DB 10,13,"Set Threshold for Room 1: $"
+    MSG_LIMIT2  DB 10,13,"Set Threshold for Room 2: $"
+    MSG_ALARM   DB 10,13,07,"!!! ALARM ON !!! Threshold exceeded! $" ; 07 is bell
+    MSG_RESTART DB 10,13,"Press '1' to reset system or any key to exit: $"
+    MSG_STATUS  DB 10,13,"Current Temperature: $"
 
-       lea dx,msg2  ;load and display message 2
-       mov ah,9h
-       int 21h
-       
-       mov ah,1h    ;read character from console
-       int 21h
-       sub al,30h   ;convert from ASCII to BCD
-       mov num2,al  ;store number as num2
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
+.CODE
+MAIN PROC
+    ; Initialize Segment
+    MOV AX, @DATA
+    MOV DS, AX
+    
+    ; 1. System Setup - Internalize Thresholds
+    LEA DX, MSG_LIMIT1
+    MOV AH, 09H
+    INT 21H
+    CALL READ_BCD_DIGIT
+    MOV LIMIT1, AL
 
- l0:   mov cl,0h    ;initial temperature at 0
+    LEA DX, MSG_LIMIT2
+    MOV AH, 09H
+    INT 21H
+    CALL READ_BCD_DIGIT
+    MOV LIMIT2, AL
 
- l1:   lea dx,msg6  ;load and display message 6
-       mov ah,9h
-       int 21h
- 
-       add cl,30h   ;ASCII adjust before displaying
-       mov dl,cl
-       mov ah,2h    ;display it
-       int 21h
-       sub cl,30h   ;ASCII adjust after display
-       
-       inc cl       ;temperature of the room increases
-       cmp cl,num1  ;check against first threshold
-       jge re
+;-------------------------------------------------------------------------
+; MONITORING LOOP
+;-------------------------------------------------------------------------
+START_MONITOR:
+    MOV CL, 0                           ; Starting temperature at 0 degrees
+    
+INC_TEMP:
+    LEA DX, MSG_STATUS
+    MOV AH, 09H
+    INT 21H
+    
+    ; Display current CL as digit
+    MOV DL, CL
+    ADD DL, '0'
+    MOV AH, 02H
+    INT 21H
+    
+    ; Check against safety limits
+    CMP CL, LIMIT1
+    JGE TRIGGER_ALARM
+    CMP CL, LIMIT2
+    JGE TRIGGER_ALARM
+    
+    INC CL                              ; Temperature rises...
+    
+    ; Optional: Add a small delay simulation here if desired
+    JMP INC_TEMP
 
-       cmp cl,num2  ;check against second threshold
-       jge re
+;-------------------------------------------------------------------------
+; ALARM STATE
+;-------------------------------------------------------------------------
+TRIGGER_ALARM:
+    LEA DX, MSG_ALARM
+    MOV AH, 09H
+    INT 21H
+    
+    LEA DX, MSG_RESTART
+    MOV AH, 09H
+    INT 21H
+    
+    MOV AH, 01H                         ; Wait for user interaction
+    INT 21H
+    
+    CMP AL, '1'
+    JE START_MONITOR                    ; System reset
+    
+    ; Program termination
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
 
-       jmp l1       ;continue increasing
+;-----------------------------------------------------------------------------
+; HELPER: READ_BCD_DIGIT
+; Reads one char, returns numeric value in AL.
+;-----------------------------------------------------------------------------
+READ_BCD_DIGIT PROC
+    MOV AH, 01H
+    INT 21H
+    SUB AL, '0'
+    RET
+READ_BCD_DIGIT ENDP
 
-re:    lea dx,msg3  ;load and display alarm is on
-       mov ah,9h
-       int 21h
+END MAIN
 
-       lea dx,msg4  ;load and display threshold
-       mov ah,9h
-       int 21h
-       
-       lea dx,msg5  ;load and display restart
-       mov ah,9h
-       int 21h
-
-       mov ah,1h
-       int 21h
-       sub al,30h
-
-       cmp al,1h
-       je l0
-
- exit: mov ah,4ch
-       int 21h
+;=============================================================================
+; SIMULATION NOTES:
+; - This models a simple "Control Loop" found in embedded systems.
+; - It uses BCD (Binary Coded Decimal) logic for easy I/O.
+; - The ASCII character 07h is sent to standard output to trigger a 
+;   system beep (hardware buzzer simulation).
+;=============================================================================
