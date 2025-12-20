@@ -1,92 +1,144 @@
-;Code for Program to Convert Decimal number to Octal number in Assembly Language
-prnstr macro msg
-        mov ah, 09h
-        lea dx, msg
-        int 21h
-        endm
+;=============================================================================
+; Program:     Decimal to Octal Conversion
+; Description: Convert a decimal number entered by user to its octal
+;              (base-8) representation and display the result.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
-data segment
-        buf1 db "Enter a decimal number : $"
-        buf2 db 0ah, "Invalid Decimal Number...$"
-        buf3 db 0ah, "Equivalent octal number is : $"
-        buf4 db 6
-             db 0
-             db 6 dup(0)
-        multiplier db 0ah
-data ends
+;-----------------------------------------------------------------------------
+; MACRO: Print String
+;-----------------------------------------------------------------------------
+PRNSTR MACRO MSG
+    MOV AH, 09H
+    LEA DX, MSG
+    INT 21H
+ENDM
 
-code segment
-        assume cs:code, ds:data
-start :
-        mov ax, data
-        mov ds, ax
-        mov es, ax
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
+DATA SEGMENT
+    BUF1 DB "Enter a decimal number : $"
+    BUF2 DB 0AH, "Invalid Decimal Number...$"
+    BUF3 DB 0AH, "Equivalent octal number is : $"
+    BUF4 DB 6                            ; Max input length
+         DB 0                            ; Actual length (filled by DOS)
+         DB 6 DUP(0)                     ; Input buffer
+    MULTIPLIER DB 0AH                    ; 10 for decimal conversion
+DATA ENDS
 
-        prnstr buf1
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
+CODE SEGMENT
+    ASSUME CS:CODE, DS:DATA
+    
+START:
+    ; Initialize Data Segment
+    MOV AX, DATA
+    MOV DS, AX
+    MOV ES, AX
 
-        mov ah, 0ah
-        lea dx, buf4
-        int 21h
+    ;-------------------------------------------------------------------------
+    ; Prompt and Read Decimal Number
+    ;-------------------------------------------------------------------------
+    PRNSTR BUF1                          ; Display prompt
 
-        mov si, offset buf4 + 2
-        mov cl, byte ptr [si-1]
-        mov ch, 00h
-subtract :
-        mov al, byte ptr [si]
-        cmp al, 30h
-        jnb cont1
-        prnstr buf2
-        jmp stop
-cont1 :
-        cmp al, 3ah
-        jb cont2
-        prnstr buf2
-        jmp stop
-cont2 :
-        sub al, 30h
-        mov byte ptr [si], al
+    MOV AH, 0AH                          ; DOS: Buffered input
+    LEA DX, BUF4
+    INT 21H
 
-        inc si
-        loop subtract
+    ;-------------------------------------------------------------------------
+    ; Validate and Convert ASCII to Numeric
+    ;-------------------------------------------------------------------------
+    MOV SI, OFFSET BUF4 + 2              ; Point to actual input
+    MOV CL, BYTE PTR [SI-1]              ; Get input length
+    MOV CH, 00H
+    
+SUBTRACT:
+    MOV AL, BYTE PTR [SI]                ; Get character
+    CMP AL, 30H                          ; Check >= '0'
+    JNB CONT1
+    PRNSTR BUF2                          ; Invalid digit
+    JMP STOP
+    
+CONT1:
+    CMP AL, 3AH                          ; Check < ':'(after '9')
+    JB CONT2
+    PRNSTR BUF2                          ; Invalid digit
+    JMP STOP
+    
+CONT2:
+    SUB AL, 30H                          ; Convert ASCII to numeric
+    MOV BYTE PTR [SI], AL                ; Store numeric value
+    INC SI
+    LOOP SUBTRACT
 
-        mov si, offset buf4 + 2
-        mov cl, byte ptr [si-1]
-        mov ch, 00h
-        mov ax, 0000h
-calc :
-        mul multiplier
-        mov bl, byte ptr [si]
-        mov bh, 00h
-        add ax, bx
-        inc si
-        loop calc
+    ;-------------------------------------------------------------------------
+    ; Calculate Decimal Value
+    ;-------------------------------------------------------------------------
+    MOV SI, OFFSET BUF4 + 2
+    MOV CL, BYTE PTR [SI-1]
+    MOV CH, 00H
+    MOV AX, 0000H                        ; Accumulator
+    
+CALC:
+    MUL MULTIPLIER                       ; AX = AX * 10
+    MOV BL, BYTE PTR [SI]
+    MOV BH, 00H
+    ADD AX, BX                           ; Add current digit
+    INC SI
+    LOOP CALC
 
-        mov si, offset buf4 + 2
-        mov bx, ax
-        mov dx, 0000h
-        mov ax, 8000h
-convert :
-        mov cx, 0000h
-conv :
-        cmp bx, ax
-        jb cont3
-        sub bx, ax
-        inc cx
-        jmp conv
-cont3 :
-        add cl, 30h
-        mov byte ptr [si], cl
-        inc si
-        mov cx, 0008h
-        div cx
-        cmp ax, 0000h
-        jnz convert
+    ;-------------------------------------------------------------------------
+    ; Convert to Octal (Divide by 8)
+    ;-------------------------------------------------------------------------
+    MOV SI, OFFSET BUF4 + 2
+    MOV BX, AX                           ; BX = decimal number
+    MOV DX, 0000H
+    MOV AX, 8000H                        ; Start with high place value
+    
+CONVERT:
+    MOV CX, 0000H
+    
+CONV:
+    CMP BX, AX
+    JB CONT3
+    SUB BX, AX
+    INC CX
+    JMP CONV
+    
+CONT3:
+    ADD CL, 30H                          ; Convert to ASCII
+    MOV BYTE PTR [SI], CL                ; Store octal digit
+    INC SI
+    MOV CX, 0008H
+    DIV CX                               ; Next place value / 8
+    CMP AX, 0000H
+    JNZ CONVERT
 
-        mov byte ptr [si], '$'
-        prnstr buf3
-        prnstr buf4+2
-stop :
-        mov ax, 4c00h
-        int 21h
-code ends
-        end star
+    ;-------------------------------------------------------------------------
+    ; Display Result
+    ;-------------------------------------------------------------------------
+    MOV BYTE PTR [SI], '$'               ; Terminate string
+    PRNSTR BUF3                          ; "Equivalent octal number is:"
+    PRNSTR BUF4+2                        ; Octal result
+
+STOP:
+    ;-------------------------------------------------------------------------
+    ; Program Termination
+    ;-------------------------------------------------------------------------
+    MOV AX, 4C00H
+    INT 21H
+CODE ENDS
+END START
+
+;=============================================================================
+; DECIMAL TO OCTAL CONVERSION NOTES:
+; - Octal uses digits 0-7 (base 8)
+; - Algorithm: Repeatedly divide by 8, remainders are octal digits
+; - Example: 100 decimal = 144 octal (1*64 + 4*8 + 4*1)
+;=============================================================================
