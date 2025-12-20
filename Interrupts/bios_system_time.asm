@@ -1,51 +1,73 @@
-; Program: BIOS Interrupt 1AH - Get System Time
-; Description: Get system time using INT 1AH, AH=00H
-; Author: Amey Thakur
+;=============================================================================
+; Program:     BIOS System Time (Ticks)
+; Description: Access the BIOS Clock Tick counter using Interrupt 1AH.
+;              The PC clock increments 18.2 times per second.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
     MSG DB 'System ticks since midnight: $'
     NEWLINE DB 0DH, 0AH, '$'
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
 .CODE
 MAIN PROC
+    ; Initialize Data Segment
     MOV AX, @DATA
     MOV DS, AX
     
-    ; Display message
+    ; Display header message
     LEA DX, MSG
     MOV AH, 09H
     INT 21H
     
-    ; Get system time
-    MOV AH, 00H      ; BIOS function: get system time
-    INT 1AH          ; CX:DX = tick count since midnight
+    ;-------------------------------------------------------------------------
+    ; GET SYSTEM TIME (INT 1AH, AH=00H)
+    ; Returns: CX:DX = Total 32-bit ticks since midnight
+    ;          AL = Midnight flag (reset if midnight passed since last read)
+    ;-------------------------------------------------------------------------
+    MOV AH, 00H                         ; BIOS service: get clock ticks
+    INT 1AH                             ; 
     
-    ; Display CX (high word)
+    ; Display High Word (CX)
     MOV AX, CX
     CALL PRINT_HEX_WORD
     
-    ; Display DX (low word)
+    ; Display Low Word (DX)
     MOV AX, DX
     CALL PRINT_HEX_WORD
     
-    ; Note: 18.2 ticks per second
-    
-    MOV AH, 4CH      ; Exit to DOS
+    ; Exit to DOS
+    MOV AH, 4CH
     INT 21H
 MAIN ENDP
 
+;-----------------------------------------------------------------------------
+; UTILITY PROCEDURES
+;-----------------------------------------------------------------------------
+
+; Print AX as 4 hex digits
 PRINT_HEX_WORD PROC
     PUSH AX
     MOV AL, AH
-    CALL PRINT_HEX_BYTE
+    CALL PRINT_HEX_BYTE                 ; Print high byte
     POP AX
-    CALL PRINT_HEX_BYTE
+    CALL PRINT_HEX_BYTE                 ; Print low byte
     RET
 PRINT_HEX_WORD ENDP
 
+; Print AL as 2 hex digits
 PRINT_HEX_BYTE PROC
     PUSH AX
     SHR AL, 4
@@ -56,6 +78,7 @@ PRINT_HEX_BYTE PROC
     RET
 PRINT_HEX_BYTE ENDP
 
+; Print single hex nibble in AL
 PRINT_DIGIT PROC
     CMP AL, 9
     JA HEX_LETTER
@@ -71,3 +94,11 @@ PRINT_IT:
 PRINT_DIGIT ENDP
 
 END MAIN
+
+;=============================================================================
+; SYSTEM TIME NOTES:
+; - The counter starts at 0 at midnight.
+; - Ticks per second: ~18.2065
+; - To calculate seconds from ticks, divide the result by 18.
+; - Total ticks in a day: approx. 1,573,040 (about 1800B0h).
+;=============================================================================
