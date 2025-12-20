@@ -1,29 +1,44 @@
-; Program: BIOS Interrupt 10H - Set Video Mode
-; Description: Set video mode using INT 10H, AH=00H
-; Author: Amey Thakur
+;=============================================================================
+; Program:     BIOS Video Mode Setup
+; Description: Demonstrate how to use BIOS Interrupt 10H to switch between
+;              text and graphics video modes.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Set video mode to 80x25 text mode
-    MOV AH, 00H      ; BIOS function: set video mode
-    MOV AL, 03H      ; Mode 3: 80x25 16-color text
-    INT 10H          ; Call BIOS interrupt
+    ;-------------------------------------------------------------------------
+    ; SET VIDEO MODE (INT 10H, AH=00H)
+    ; Input: AL = Desired video mode
+    ;-------------------------------------------------------------------------
+    MOV AH, 00H                         ; BIOS service: set mode
+    MOV AL, 03H                         ; Standard 80x25 Color Text
+    INT 10H                             ; Call BIOS
     
-    MOV AH, 4CH      ; Exit to DOS
+    ; Terminates the program immediately
+    MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
 
-; Common Video Modes:
-; AL = 00H : 40x25 B/W text
-; AL = 01H : 40x25 color text
-; AL = 02H : 80x25 B/W text
-; AL = 03H : 80x25 color text
-; AL = 04H : 320x200 4-color graphics
-; AL = 05H : 320x200 B/W graphics
-; AL = 06H : 640x200 2-color graphics
-; AL = 07H : 80x25 monochrome text
-; AL = 13H : 320x200 256-color graphics (VGA)
+;=============================================================================
+; COMMON VIDEO MODES REFERENCE:
+; Mode | Type     | Resolution | Colors | Notes
+; -----|----------|------------|--------|-------------------------------------
+; 00h  | Text     | 40x25      | B/W    | Large characters
+; 01h  | Text     | 40x25      | 16     | 
+; 02h  | Text     | 80x25      | B/W    | 
+; 03h  | Text     | 80x25      | 16     | Standard DOS text mode
+; 04h  | Graphics | 320x200    | 4      | CGA four color mode
+; 12h  | Graphics | 640x480    | 16     | VGA standard graphics
+; 13h  | Graphics | 320x200    | 256    | Popular for 8-bit games
+;=============================================================================
