@@ -1,33 +1,66 @@
-; Program: Exchange Values Using Stack
-; Description: Swap two register values using stack
-; Author: Amey Thakur
+;=============================================================================
+; Program:     Register Swap via Stack
+; Description: Demonstrate how to exchange the values of two registers 
+;              without using a third temporary register.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
-    VAL1 DW 1111H
-    VAL2 DW 2222H
+    VAL1 DW 1111H                        ; Operand A
+    VAL2 DW 2222H                        ; Operand B
+    MSG  DB 'Registers Swapped using Stack Mechanics.$'
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
 .CODE
 MAIN PROC
+    ; Segment Access
     MOV AX, @DATA
     MOV DS, AX
     
-    MOV AX, VAL1     ; AX = 1111H
-    MOV BX, VAL2     ; BX = 2222H
+    ; Load initial states
+    MOV AX, VAL1                        ; AX = 1111H
+    MOV BX, VAL2                        ; BX = 2222H
     
-    ; Swap using stack
-    PUSH AX          ; Push 1111H
-    PUSH BX          ; Push 2222H
-    POP AX           ; AX = 2222H
-    POP BX           ; BX = 1111H
+    ;-------------------------------------------------------------------------
+    ; THE STACK SWAP PATTERN
+    ; Logic: PUSH A, PUSH B -> POP A (gets B), POP B (gets A)
+    ;-------------------------------------------------------------------------
+    PUSH AX                             ; Stack: [1111H]
+    PUSH BX                             ; Stack: [2222H, 1111H]
     
-    ; Store swapped values
-    MOV VAL1, AX     ; VAL1 = 2222H
-    MOV VAL2, BX     ; VAL2 = 1111H
+    POP AX                              ; AX = 2222H (TOS retrieved)
+    POP BX                              ; BX = 1111H
     
-    MOV AH, 4CH      ; Exit to DOS
+    ; Update memory to reflect change
+    MOV VAL1, AX
+    MOV VAL2, BX
+    
+    ; Final message
+    LEA DX, MSG
+    MOV AH, 09H
+    INT 21H
+    
+    ; End Application
+    MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
+
+;=============================================================================
+; SWAPPING NOTES:
+; - This method is safer than the XOR swap for some architectures and 
+;   doesn't require an extra GPR (General Purpose Register).
+; - Important: The order of popping MUST be the same as the order of pushing
+;   into the DESIRED registers.
+;=============================================================================
