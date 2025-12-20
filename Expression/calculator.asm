@@ -1,7 +1,12 @@
-; Program: Simple Calculator
-; Description: Basic calculator with add, subtract, multiply, divide
-; Author: Amey Thakur
-; Keywords: 8086 calculator, assembly calculator, basic calculator
+;=============================================================================
+; Program:     Simple Calculator
+; Description: Basic calculator with add, subtract, multiply, divide.
+;              Demonstrates menu-driven program with procedure calls.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H

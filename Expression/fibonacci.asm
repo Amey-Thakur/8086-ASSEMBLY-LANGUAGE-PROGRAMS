@@ -1,84 +1,126 @@
-;Code for Program to Print the Fibonacci series in Assembly Language
-.MODEL SMALL
+;=============================================================================
+; Program:     Fibonacci Series Generator
+; Description: Print the Fibonacci series up to N terms.
+;              Demonstrates iterative series generation.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
+.MODEL SMALL
 .STACK 64
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
-        VAL1    DB      01H
-        VAL2    DB      01H
-        LP      DB      00H
-        V1      DB      00H
-        V2      DB      00H
-        NL      DB      0DH,0AH,'$'
+    VAL1 DB 01H                         ; First Fibonacci number
+    VAL2 DB 01H                         ; Second Fibonacci number
+    LP DB 00H                           ; Loop counter storage
+    V1 DB 00H                           ; Tens digit
+    V2 DB 00H                           ; Units digit
+    NL DB 0DH, 0AH, '$'                 ; Newline string
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+; Fibonacci: F(n) = F(n-1) + F(n-2)
+; Series: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, ...
+;-----------------------------------------------------------------------------
 .CODE
-
 MAIN PROC
-        MOV AX,@DATA
-        MOV DS,AX
+    ; Initialize Data Segment
+    MOV AX, @DATA
+    MOV DS, AX
 
-        MOV AH,01H
-        INT 21H
-        MOV CL,AL
-        SUB CL,30H
-        SUB CL,2
+    ;-------------------------------------------------------------------------
+    ; Get number of terms from user
+    ;-------------------------------------------------------------------------
+    MOV AH, 01H
+    INT 21H
+    MOV CL, AL
+    SUB CL, 30H                         ; Convert ASCII to number
+    SUB CL, 2                           ; Already displaying first 2
 
-        MOV AH,02H
-        MOV DL,VAL1
-        ADD DL,30H
-        INT 21H
+    ;-------------------------------------------------------------------------
+    ; Display first Fibonacci number (1)
+    ;-------------------------------------------------------------------------
+    MOV AH, 02H
+    MOV DL, VAL1
+    ADD DL, 30H
+    INT 21H
 
-        MOV AH,09H
-        LEA DX,NL
-        INT 21H
+    MOV AH, 09H
+    LEA DX, NL
+    INT 21H
 
-        MOV AH,02H
-        MOV DL,VAL2
-        ADD DL,30H
-        INT 21H
+    ;-------------------------------------------------------------------------
+    ; Display second Fibonacci number (1)
+    ;-------------------------------------------------------------------------
+    MOV AH, 02H
+    MOV DL, VAL2
+    ADD DL, 30H
+    INT 21H
 
-        MOV AH,09H
-        LEA DX,NL
-        INT 21H
+    MOV AH, 09H
+    LEA DX, NL
+    INT 21H
 
-
+    ;-------------------------------------------------------------------------
+    ; Generate and display remaining terms
+    ;-------------------------------------------------------------------------
 DISP:
-        MOV BL,VAL1
-        ADD BL,VAL2
+    ; Calculate next: F(n) = F(n-1) + F(n-2)
+    MOV BL, VAL1
+    ADD BL, VAL2
 
-        MOV AH,00H
-        MOV AL,BL
-        MOV LP,CL
-        MOV CL,10
-        DIV CL
-        MOV CL,LP
+    ; Split into digits for display
+    MOV AH, 00H
+    MOV AL, BL
+    MOV LP, CL                          ; Save loop counter
+    MOV CL, 10
+    DIV CL                              ; AL = tens, AH = units
+    MOV CL, LP                          ; Restore counter
 
-        MOV V1,AL
-        MOV V2,AH
+    MOV V1, AL                          ; Tens digit
+    MOV V2, AH                          ; Units digit
 
-        MOV DL,V1
-        ADD DL,30H
-        MOV AH,02H
-        INT 21H
+    ; Display tens digit
+    MOV DL, V1
+    ADD DL, 30H
+    MOV AH, 02H
+    INT 21H
 
-        MOV DL,V2
-        ADD DL,30H
-        MOV AH,02H
-        INT 21H
+    ; Display units digit
+    MOV DL, V2
+    ADD DL, 30H
+    MOV AH, 02H
+    INT 21H
 
-        MOV DL,VAL2
-        MOV VAL1,DL
-        MOV VAL2,BL
+    ; Update values: shift for next iteration
+    MOV DL, VAL2
+    MOV VAL1, DL
+    MOV VAL2, BL
 
-        MOV AH,09H
-        LEA DX,NL
-        INT 21H
+    ; Newline
+    MOV AH, 09H
+    LEA DX, NL
+    INT 21H
 
+    LOOP DISP
 
-        LOOP DISP
-
-        MOV AH,4CH
-        INT 21H
-
+    ;-------------------------------------------------------------------------
+    ; Program Termination
+    ;-------------------------------------------------------------------------
+    MOV AH, 4CH
+    INT 21H
 MAIN ENDP
 END MAIN
+
+;=============================================================================
+; FIBONACCI SERIES NOTES:
+; - Each number is sum of two preceding numbers
+; - F(1)=1, F(2)=1, F(n)=F(n-1)+F(n-2)
+; - Appears in nature: sunflower seeds, pine cones, shell spirals
+; - Ratio approaches Golden Ratio (φ ≈ 1.618)
+;=============================================================================
