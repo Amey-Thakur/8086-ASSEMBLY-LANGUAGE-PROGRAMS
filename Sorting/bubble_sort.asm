@@ -1,36 +1,78 @@
-;ALP to Sort a set of unsigned integer numbers in ascending/ descending
-;order using Bubble sort algorithm.
+;=============================================================================
+; Program:     Bubble Sort (16-bit)
+; Description: Implementation of Bubble Sort algorithm for a set of 
+;              unsigned 16-bit word integers.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
+.MODEL SMALL
+.STACK 100H
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 DATA SEGMENT
-    A DW 0005H, 0ABCDH, 5678H, 1234H, 0EFCDH, 45EFH
+    ; Word array (DW)
+    A   DW 0005H, 0ABCDH, 5678H, 1234H, 0EFCDH, 45EFH
+    NUM EQU 6                           ; Total count of words
+    MSG DB 'Word-sized Bubble Sort completed.$'
 DATA ENDS
 
-ASSUME CS:CODE,DS:DATA
-
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
 CODE SEGMENT
-    START: MOV AX,DATA
-           MOV DS,AX
-           MOV SI,0000H
-           MOV BX,A[SI]
-           DEC BX
-       
-       X2: MOV CX,BX
-           MOV SI,02H
-           
-       X1: MOV AX,A[SI]
-           INC SI
-           INC SI
-           CMP AX,A[SI]
-           JA X3
-           XCHG AX,A[SI]
-           MOV A[SI-2],AX
-           
-       X3: LOOP X1
-           DEC BX
-           JNZ X2
-           
-           MOV AH,4CH
-           INT 21H
+    ASSUME CS:CODE, DS:DATA
+
+START:
+    ; Context setup
+    MOV AX, DATA
+    MOV DS, AX
+    
+    MOV BX, NUM                         ; Load count
+    DEC BX                              ; N-1 comparisons per pass
+
+;-------------------------------------------------------------------------
+; BUBBLE SORT OPERATION
+;-------------------------------------------------------------------------
+PASS_LOOP:
+    MOV CX, BX                          ; Inner loop counter
+    LEA SI, A                           ; Reset SI for each new pass
+    
+SWAP_INNER:
+    MOV AX, [SI]                        ; Load current Word
+    CMP AX, [SI+2]                      ; Compare with next Word (+2 byte offset)
+    JBE NO_EXCH                         ; If AX <= Next, continue
+    
+    ; Exchange contents
+    XCHG AX, [SI+2]
+    MOV [SI], AX
+
+NO_EXCH:
+    ADD SI, 2                           ; Move to next Word address
+    LOOP SWAP_INNER                     ; Repeat for this pass
+    
+    DEC BX                              ; Optimization: one less comparison next time
+    JNZ PASS_LOOP                       ; Repeat until done
+    
+    ; Result output
+    LEA DX, MSG
+    MOV AH, 09H
+    INT 21H
+    
+    ; End process
+    MOV AH, 4CH
+    INT 21H
+
 CODE ENDS
 END START
+
+;=============================================================================
+; BUBBLE SORT NOTES:
+; - This version handles 16-bit data (Words). SI increments by 2 accordingly.
+; - Bubble sort derives its name from smaller values "bubbling" to the surface.
+; - Average and worst-case complexity: O(N^2).
+;=============================================================================

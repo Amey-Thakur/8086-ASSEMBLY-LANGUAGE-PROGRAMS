@@ -1,48 +1,80 @@
-;Code for An Assembly Language Program sort a given series in ascending order in Assembly ;Language
-Data Segment
-  arr1 db 8,2,7,4,3
-Data Ends
+;=============================================================================
+; Program:     Array Ascending Sort
+; Description: Implementation of an exchange-based sorting algorithm to 
+;              arrange a given byte array in ascending order.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
-Code Segment
-  Assume cs:code, ds:data
+.MODEL SMALL
+.STACK 100H
 
-  Begin:
-    mov ax, data
-    mov ds, ax
-    mov es, ax
-    mov bx, OFFSET arr1
-    mov cx, 5
-    mov dx, cx
-    L1:      
-       mov si, 0
-       mov ax, si
-       inc ax
-       mov di, ax
-       mov dx, cx
-    L2:
-       mov al, [bx][si]
-       cmp al, [bx][di]
-       jg L4
-    L3:
-       inc si
-       inc di
-       dec dx
-       cmp dx, 00
-       je L1
-       jg L2
-    L4:
-       mov al, [bx][si]
-       mov ah, [bx][di]
-       mov [bx][si], ah
-       mov [bx][di], al
-       inc si
-       inc di       
-       dec dx
-       cmp dx, 00
-       je L1
-       jg L2
-    Exit:
-       mov ax, 4c00h
-       int 21h
-Code Ends
-End Begin
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
+DATA SEGMENT
+    ARR   DB 8, 2, 7, 4, 3               ; Target array
+    LIMIT EQU 5                          ; Array size
+    MSG   DB 'Array successfully sorted in Ascending order.$'
+DATA ENDS
+
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
+CODE SEGMENT
+    ASSUME CS:CODE, DS:DATA
+
+START:
+    ; Register initialization
+    MOV AX, DATA
+    MOV DS, AX
+    
+    MOV CX, LIMIT                       ; Setup outer loop counter (N)
+    DEC CX                              ; Need N-1 passes
+
+;-------------------------------------------------------------------------
+; OUTER BUBBLE PASS
+;-------------------------------------------------------------------------
+OUTER_PASS:
+    PUSH CX                             ; Save outer counter
+    LEA SI, ARR                         ; Reset pointer to start of array
+    
+;-------------------------------------------------------------------------
+; INNER COMPARISON LOOP
+;-------------------------------------------------------------------------
+INNER_COMPARE:
+    MOV AL, [SI]                        ; Get current element
+    CMP AL, [SI+1]                      ; Compare with next neighbor
+    JLE SKIP_SWAP                       ; If AL <= Next, no swap needed
+    
+    ; Perform the Swap
+    XCHG AL, [SI+1]
+    MOV [SI], AL
+
+SKIP_SWAP:
+    INC SI                              ; Move to next pair
+    LOOP INNER_COMPARE                  ; Repeat CX times for this pass
+    
+    POP CX                              ; Restore outer counter
+    LOOP OUTER_PASS                     ; Start next pass
+    
+    ; Output Result Message
+    LEA DX, MSG
+    MOV AH, 09H
+    INT 21H
+    
+    ; Terminal exit
+    MOV AH, 4CH
+    INT 21H
+
+CODE ENDS
+END START
+
+;=============================================================================
+; SORTING NOTES:
+; - Algorithm: Standard Bubble Sort.
+; - Complexity: O(N^2). Suitable for very small datasets only.
+; - In-place: No additional memory used outside the original array.
+;=============================================================================
