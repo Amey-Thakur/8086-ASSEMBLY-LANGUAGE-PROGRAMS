@@ -1,124 +1,135 @@
-; Program: Diamond Pattern
-; Description: Print a diamond pattern using asterisks
-; Author: Amey Thakur
-; Keywords: 8086 diamond pattern, star diamond
+;=============================================================================
+; Program:     Diamond Star Pattern
+; Description: Generate and display a symmetric diamond pattern using 
+;              asterisks (*) and spaces through nested loop logic.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
-    ROWS DB 5        ; Half height of diamond
-    MSG DB 'Diamond Pattern:', 0DH, 0AH, '$'
+    HALF_HEIGHT DB 5                    ; Number of rows for the upper half
+    MSG DB 'Symmetric Diamond Pattern:', 0DH, 0AH, '$'
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
     
+    ; Display header
     LEA DX, MSG
     MOV AH, 09H
     INT 21H
     
-    ; Upper half (including middle)
-    MOV CL, 1        ; Stars count
-    MOV BL, ROWS     ; Row counter
+    ;-------------------------------------------------------------------------
+    ; PART 1: UPPER HALF (Including Middle Row)
+    ;-------------------------------------------------------------------------
+    MOV BL, 1                           ; Current row star count
+    MOV BH, HALF_HEIGHT                 ; Remaining rows to print
     
-UPPER_HALF:
+UPPER_HALF_LOOP:
     PUSH BX
-    PUSH CX
     
-    ; Print leading spaces
-    MOV AL, ROWS
-    SUB AL, CL
-    MOV CH, AL
-SPACE_LOOP1:
-    CMP CH, 0
-    JE PRINT_STARS1
+    ; 1. Print Leading Spaces: (HALF_HEIGHT - current_row)
+    MOV AL, HALF_HEIGHT
+    SUB AL, BL
+    MOV CL, AL
+    JZ SKIP_SPACES_UPPER
+    
+SPACE_UPPER:
     MOV DL, ' '
     MOV AH, 02H
     INT 21H
-    DEC CH
-    JMP SPACE_LOOP1
-    
-PRINT_STARS1:
-    POP CX
-    PUSH CX
-    MOV CH, CL
-STAR_LOOP1:
+    LOOP SPACE_UPPER
+
+SKIP_SPACES_UPPER:
+    ; 2. Print Stars with space padding
+    MOV CL, BL
+STAR_UPPER:
     MOV DL, '*'
     MOV AH, 02H
     INT 21H
-    MOV DL, ' '
-    MOV AH, 02H
+    MOV DL, ' '                         ; Space between stars for aesthetics
     INT 21H
-    DEC CH
-    JNZ STAR_LOOP1
+    LOOP STAR_UPPER
     
-    ; Newline
-    MOV DL, 0DH
-    MOV AH, 02H
-    INT 21H
-    MOV DL, 0AH
-    MOV AH, 02H
-    INT 21H
+    ; 3. Move to next line
+    CALL PRINT_NEWLINE
     
-    POP CX
     POP BX
-    INC CL
-    DEC BL
-    JNZ UPPER_HALF
+    INC BL                              ; Increase stars for next row
+    DEC BH                              ; Decrease row counter
+    JNZ UPPER_HALF_LOOP
     
-    ; Lower half
-    MOV CL, ROWS
-    DEC CL           ; Start from ROWS-1
+    ;-------------------------------------------------------------------------
+    ; PART 2: LOWER HALF (Remaining HALF_HEIGHT - 1 rows)
+    ;-------------------------------------------------------------------------
+    MOV BL, HALF_HEIGHT
+    DEC BL                              ; Start with one less than max stars
+    MOV BH, BL                          ; Row counter
     
-LOWER_HALF:
-    CMP CL, 0
-    JE DONE
+LOWER_HALF_LOOP:
+    PUSH BX
     
-    PUSH CX
-    
-    ; Print leading spaces
-    MOV AL, ROWS
-    SUB AL, CL
-    MOV CH, AL
-SPACE_LOOP2:
-    CMP CH, 0
-    JE PRINT_STARS2
+    ; 1. Print Leading Spaces
+    MOV AL, HALF_HEIGHT
+    SUB AL, BL
+    MOV CL, AL
+SPACE_LOWER:
     MOV DL, ' '
     MOV AH, 02H
     INT 21H
-    DEC CH
-    JMP SPACE_LOOP2
+    LOOP SPACE_LOWER
     
-PRINT_STARS2:
-    POP CX
-    PUSH CX
-    MOV CH, CL
-STAR_LOOP2:
+    ; 2. Print Stars
+    MOV CL, BL
+STAR_LOWER:
     MOV DL, '*'
     MOV AH, 02H
     INT 21H
     MOV DL, ' '
-    MOV AH, 02H
     INT 21H
-    DEC CH
-    JNZ STAR_LOOP2
+    LOOP STAR_LOWER
     
-    ; Newline
-    MOV DL, 0DH
-    MOV AH, 02H
-    INT 21H
-    MOV DL, 0AH
-    MOV AH, 02H
-    INT 21H
+    ; 3. Newline
+    CALL PRINT_NEWLINE
     
-    POP CX
-    DEC CL
-    JMP LOWER_HALF
+    POP BX
+    DEC BL                              ; Decrease stars for next row
+    DEC BH                              ; Decrease row counter
+    JNZ LOWER_HALF_LOOP
     
-DONE:
+    ; Exit
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
+
+; Simple Helper for CR/LF
+PRINT_NEWLINE PROC
+    MOV DL, 0DH
+    MOV AH, 02H
+    INT 21H
+    MOV DL, 0AH
+    INT 21H
+    RET
+PRINT_NEWLINE ENDP
+
 END MAIN
+
+;=============================================================================
+; PATTERN LOGIC NOTES:
+; - The diamond consists of an increasing triangle followed by a decreasing one.
+; - Space indentation is calculated as: MaxRows - CurrentRow.
+; - Pushing CX/BX to the stack is essential when using nested LOOP instructions
+;   to prevent register corruption.
+;=============================================================================

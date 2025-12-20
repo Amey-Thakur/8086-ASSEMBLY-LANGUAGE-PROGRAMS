@@ -1,69 +1,97 @@
-; Program: Print Number Pyramid
-; Description: Print a pyramid with numbers
-; Author: Amey Thakur
+;=============================================================================
+; Program:     Number Pyramid Pattern
+; Description: Display a centered pyramid where each row contains 
+;              consecutive numbers starting from 1.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
-    ROWS DB 5
-    MSG DB 'Number Pyramid:', 0DH, 0AH, '$'
+    MAX_ROWS DB 5
+    MSG      DB 'Numeric Pyramid Structure:', 0DH, 0AH, '$'
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
 .CODE
 MAIN PROC
+    ; Setup Data Segment
     MOV AX, @DATA
     MOV DS, AX
     
+    ; Print Header
     LEA DX, MSG
     MOV AH, 09H
     INT 21H
     
-    MOV CL, ROWS
-    MOV BL, 1        ; Current row number
+    MOV BL, 1                           ; Current row number
+    MOV BH, MAX_ROWS                    ; Total rows
     
+;-------------------------------------------------------------------------
+; OUTER ROW LOOP
+;-------------------------------------------------------------------------
 ROW_LOOP:
-    PUSH CX
+    PUSH BX
     
-    ; Print leading spaces
-    MOV AL, ROWS
+    ; 1. Print Leading Spaces: (MAX_ROWS - Current_Row)
+    MOV AL, MAX_ROWS
     SUB AL, BL
     MOV CL, AL
-    CMP CL, 0
-    JE PRINT_NUMS
+    JZ START_NUMS                       ; Skip if no spaces needed
     
 SPACE_LOOP:
     MOV DL, ' '
     MOV AH, 02H
     INT 21H
-    DEC CL
-    JNZ SPACE_LOOP
+    LOOP SPACE_LOOP
     
-PRINT_NUMS:
-    ; Print numbers
-    MOV CL, BL
-    MOV DL, '1'
+;-------------------------------------------------------------------------
+; 2. PRINT CONSECUTIVE NUMBERS
+;-------------------------------------------------------------------------
+START_NUMS:
+    MOV CL, BL                          ; Numbers per row = row number
+    MOV DL, '1'                         ; Always start row with '1'
     
-NUM_LOOP:
+NUM_GEN:
     MOV AH, 02H
     INT 21H
-    INC DL
-    DEC CL
-    JNZ NUM_LOOP
+    INC DL                              ; Increment ASCII character: '1' -> '2' ...
+    LOOP NUM_GEN
     
-    ; New line
+    ; 3. Print Newline
     MOV DL, 0DH
     MOV AH, 02H
     INT 21H
     MOV DL, 0AH
-    MOV AH, 02H
     INT 21H
     
-    INC BL
-    POP CX
-    DEC CL
+    POP BX
+    INC BL                              ; Increment for next row
+    DEC BH                              ; Row counter
     JNZ ROW_LOOP
     
+    ; Return to DOS
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
+
+;=============================================================================
+; NUMBER PYRAMID NOTES:
+; - ASCII math: To print digits 1-9, we simply increment the starting char '1'.
+; - Alignment is achieved by calculating padding spaces before numbers.
+; - Expected Output (5 rows):
+;       1
+;      12
+;     123
+;    1234
+;   12345
+;=============================================================================
