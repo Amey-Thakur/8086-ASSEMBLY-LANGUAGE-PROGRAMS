@@ -1,7 +1,12 @@
-; Program: Swap Two Numbers
-; Description: Swap two numbers with and without temporary variable
-; Author: Amey Thakur
-; Keywords: 8086 swap, swap numbers, exchange
+;=============================================================================
+; Program:     Swap Two Numbers
+; Description: Swap two numbers using XCHG instruction and XOR method.
+;              Demonstrates exchange without temporary variable.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
