@@ -1,53 +1,79 @@
-; Program: Conditional Assembly Macros
-; Description: Macros with conditional assembly directives
-; Author: Amey Thakur
+;=============================================================================
+; Program:     Conditional Assembly Macros
+; Description: Demonstrate the use of IF/ELSE/ENDIF conditional directives 
+;              within macros to handle different data types (Byte vs Word).
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-; Macro with conditional assembly
+;-----------------------------------------------------------------------------
+; MACRO DEFINITIONS
+;-----------------------------------------------------------------------------
+
+; Macro: MOVE_DATA
+; Logic: Uses TYPE operator to decide whether to generate MOV AL (8-bit)
+;        or MOV AX (16-bit) machine code during assembly.
 MOVE_DATA MACRO DEST, SOURCE
-    IF TYPE SOURCE EQ 1      ; If byte
+    IF (TYPE SOURCE) EQ 1            ; If 'SOURCE' is a Byte
         MOV AL, SOURCE
         MOV DEST, AL
-    ELSE                     ; If word
+    ELSE                             ; If 'SOURCE' is a Word
         MOV AX, SOURCE
         MOV DEST, AX
     ENDIF
 ENDM
 
-; Macro: Check if zero
+; Macro: CHECK_ZERO
+; Logic: Conditional jumps within a macro to print status messages.
 CHECK_ZERO MACRO VALUE, ZERO_MSG, NONZERO_MSG
     MOV AX, VALUE
     CMP AX, 0
     JNE NOT_ZERO
     LEA DX, ZERO_MSG
-    JMP DISPLAY
+    JMP DISPLAY_RESULT
 NOT_ZERO:
     LEA DX, NONZERO_MSG
-DISPLAY:
+DISPLAY_RESULT:
     MOV AH, 09H
     INT 21H
 ENDM
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
-    BYTE_VAL DB 10
-    WORD_VAL DW 1000
-    RESULT_B DB ?
-    RESULT_W DW ?
-    TEST_VAL DW 0
-    MSG_ZERO DB 'Value is zero$'
-    MSG_NONZERO DB 'Value is not zero$'
+    TEST_VAL DW 0                        ; Value to check
+    MSG_ZERO DB 'Status: Value is zero!$'
+    MSG_NONZERO DB 'Status: Value is NOT zero!$'
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
 .CODE
 MAIN PROC
+    ; Initialize segment register
     MOV AX, @DATA
     MOV DS, AX
     
-    ; Use CHECK_ZERO macro
+    ; Expand the CHECK_ZERO macro
+    ; Note: Macro code is literally pasted here by the assembler.
     CHECK_ZERO TEST_VAL, MSG_ZERO, MSG_NONZERO
     
-    MOV AH, 4CH      ; Exit to DOS
+    ; Exit gracefully
+    MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
+
+;=============================================================================
+; CONDITIONAL MACRO NOTES:
+; - MACROS are expanded at compile-time, not run-time.
+; - 'IF TYPE' allows for "generic" macros that adapt to operand sizes.
+; - Labels inside conditional macros should be declared as 'LOCAL' to avoid
+;   redefinition errors if the macro is called multiple times.
+;=============================================================================
