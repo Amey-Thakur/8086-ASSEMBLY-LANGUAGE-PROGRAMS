@@ -1,57 +1,81 @@
-; Program: Print Inverted Triangle Pattern
-; Description: Print an inverted triangle pattern
-; Author: Amey Thakur
+;=============================================================================
+; Program:     Inverted Triangle Pattern
+; Description: Generate and display a top-heavy (inverted) right-angled 
+;              triangle using the decrementing loop technique.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
-    ROWS DB 5
-    MSG DB 'Inverted Triangle:', 0DH, 0AH, '$'
+    MAX_ROWS DB 5
+    MSG      DB 'Inverted Star Triangle:', 0DH, 0AH, '$'
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
 .CODE
 MAIN PROC
+    ; Initialize segment
     MOV AX, @DATA
     MOV DS, AX
     
+    ; Print header
     LEA DX, MSG
     MOV AH, 09H
     INT 21H
     
-    MOV CL, ROWS
-    MOV BL, ROWS     ; Start with max stars
+    MOV BL, MAX_ROWS                    ; Start with the long row
+    MOV BH, MAX_ROWS                    ; Total rows to print
     
+;-------------------------------------------------------------------------
+; MAIN ROW LOOP
+;-------------------------------------------------------------------------
 ROW_LOOP:
-    PUSH CX
-    MOV CL, BL
+    PUSH BX                             ; Save parameters
     
-STAR_LOOP:
+    ; 1. Print Stars for this row
+    MOV CL, BL                          ; Load count into CL
+STAR_ITER:
     MOV DL, '*'
     MOV AH, 02H
     INT 21H
-    DEC CL
-    JNZ STAR_LOOP
+    LOOP STAR_ITER                      ; Loop CX times
     
+    ; 2. Print Newline (CR/LF)
     MOV DL, 0DH
     MOV AH, 02H
     INT 21H
     MOV DL, 0AH
-    MOV AH, 02H
     INT 21H
     
-    DEC BL           ; Less stars next row
-    POP CX
-    DEC CL
-    JNZ ROW_LOOP
+    POP BX                              ; Restore counters
+    DEC BL                              ; Reduce star count for next row
+    DEC BH                              ; Decrement row limit
+    JNZ ROW_LOOP                        ; Continue until 0 rows left
     
+    ; Termination
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
 
-; Output:
-; *****
-; ****
-; ***
-; **
-; *
+;=============================================================================
+; INVERTED PATTERN NOTES:
+; - Logic: Row 1 = 5 stars, Row 2 = 4 stars ... Row 5 = 1 star.
+; - This utilizes a 'double-nested' control structure where the inner count
+;   decreases on every outer iteration.
+; - Expected Output:
+;   *****
+;   ****
+;   ***
+;   **
+;   *
+;=============================================================================

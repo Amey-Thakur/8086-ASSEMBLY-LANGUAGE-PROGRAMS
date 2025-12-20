@@ -1,60 +1,82 @@
-; Program: Print Triangle Pattern
-; Description: Print a right-angled triangle pattern using asterisks
-; Author: Amey Thakur
-; Keywords: 8086 pattern, star pattern, triangle pattern assembly
+;=============================================================================
+; Program:     Right-Angled Triangle Pattern
+; Description: Generate an increasing star pattern (*) using nested loops 
+;              to iterate through rows and columns.
+; 
+; Author:      Amey Thakur
+; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; License:     MIT License
+;=============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+;-----------------------------------------------------------------------------
+; DATA SEGMENT
+;-----------------------------------------------------------------------------
 .DATA
-    ROWS DB 5        ; Number of rows
-    MSG DB 'Triangle Pattern:', 0DH, 0AH, '$'
+    ROWS DB 5                           ; Total height of the triangle
+    MSG  DB 'Right-Angled Star Triangle:', 0DH, 0AH, '$'
 
+;-----------------------------------------------------------------------------
+; CODE SEGMENT
+;-----------------------------------------------------------------------------
 .CODE
 MAIN PROC
+    ; Segment registers initialization
     MOV AX, @DATA
     MOV DS, AX
     
-    ; Display message
+    ; Header text
     LEA DX, MSG
     MOV AH, 09H
     INT 21H
     
-    MOV CL, ROWS     ; Row counter
-    MOV BL, 1        ; Stars per row
+    MOV BL, 1                           ; Number of stars for first row
+    MOV BH, ROWS                        ; Counter for total rows
     
-ROW_LOOP:
-    PUSH CX
-    MOV CL, BL       ; Stars to print
+;-------------------------------------------------------------------------
+; OUTER ROW LOOP: Managed by BH
+;-------------------------------------------------------------------------
+ROW_START:
+    PUSH BX                             ; Preserve state for inner processing
     
-STAR_LOOP:
+    ;-------------------------------------------------------------------------
+    ; INNER COLUMN LOOP: Managed by CL
+    ;-------------------------------------------------------------------------
+    MOV CL, BL                          ; Load current star count
+STAR_PRINT:
     MOV DL, '*'
     MOV AH, 02H
     INT 21H
-    DEC CL
-    JNZ STAR_LOOP
+    LOOP STAR_PRINT                     ; Automatically decrements CX and loops
     
-    ; New line
+    ; Print Newline (CR/LF sequence)
     MOV DL, 0DH
     MOV AH, 02H
     INT 21H
     MOV DL, 0AH
-    MOV AH, 02H
     INT 21H
     
-    INC BL           ; More stars next row
-    POP CX
-    DEC CL
-    JNZ ROW_LOOP
+    POP BX                              ; Restore counters
+    INC BL                              ; Increase star count for next row
+    DEC BH                              ; One less row to process
+    JNZ ROW_START                       ; Continue until BH is 0
     
+    ; Exit
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
 
-; Output:
-; *
-; **
-; ***
-; ****
-; *****
+;=============================================================================
+; TRIANGLE PATTERN NOTES:
+; - Standard nested loop architecture (O(N^2)).
+; - Uses CX register with the 'LOOP' opcode for efficient inner iteration.
+; - Expected Output:
+;   *
+;   **
+;   ***
+;   ****
+;   *****
+;=============================================================================
