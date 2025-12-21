@@ -94,33 +94,33 @@ All programs in this repository were developed, verified, and documented by me d
 ```
 8086-ASSEMBLY-LANGUAGE-PROGRAMS/
 │
-├── Addressing Modes/        # Register, Immediate, Direct, etc.
-├── Arithmetic/              # Basic math (Add, Sub, Mul, Div)
-├── Array Operations/        # Sum, Average, Min/Max finding
-├── Bitwise Operations/      # AND, OR, XOR, NOT, Shifts, Rotates
-├── Control Flow/            # Loops (LOOP), Conditional Jumps (JE, JNE)
-├── Conversion/              # Hex-BCD, BCD-Hex, ASCII conversions
-├── Data Structures/         # Stack, Queue implementation
-├── Expression/              # Series evaluation, Factorial, Fibonacci
-├── External Devices/        # Interfacing Logic (Keyboard, Mouse)
-├── File Operations/         # File Creation, Reading, Writing (DOS)
-├── Flags/                   # Carry, Parity, Zero, Sign flag manipulations
-├── Graphics/                # VGA Graphics Mode, Shape Drawing
-├── Input Output/            # Single char, String I/O
-├── Interrupts/              # BIOS & DOS Interrupt vectors
-├── Introduction/            # Basic Hello World & Syntax examples
-├── Macros/                  # Macro definitions & usage
-├── Mathematics/             # Advanced math (GCD, LCM, Power)
-├── Matrix/                  # Matrix addition/manipulation
-├── Memory Operations/       # Block transfer, Overlap handling
-├── Patterns/                # Star patterns, Pyramids
-├── Procedures/              # Modular programming examples
-├── Searching/               # Linear & Binary Search
-├── Simulation/              # Hardware simulations (Fire, Water Level)
-├── Sorting/                 # Bubble, Selection, Insertion sorts
-├── Stack Operations/        # Push, Pop, Reversal applications
-├── String Operations/       # Length, Reverse, Palindrome, Case conversion
-├── Utilities/               # Delays, Screen clear, Sound generation
+├── Addressing Modes/        # Comprehensive Addressing Modes Reference
+├── Arithmetic/              # Basic Math (Add, Sub, Mul, Div, BCD)
+├── Array Operations/        # Sum, Min/Max, Deletion, Insertion
+├── Bitwise Operations/      # AND, OR, XOR, Shifts (SHL/SHR), Rotates
+├── Control Flow/            # Loops, If-Else, Switch-Case, Jumps
+├── Conversion/              # Hex-BCD, Binary, Octal, ASCII, 7-Segment
+├── Data Structures/         # Stack (LIFO) & Queue (FIFO) Implementations
+├── Expression/              # Factorial, Fibonacci, GCD, Power, Series
+├── External Devices/        # Traffic Lights, Stepper Motor, Keyboard, Mouse
+├── File Operations/         # Create, Read, Write, Delete Files (DOS)
+├── Flags/                   # Carry, Parity, Zero, Sign, Overflow Flags
+├── Graphics/                # VGA Mode, Line, Rectangle, Pixel Drawing
+├── Input Output/            # Read/Display Decimal, Hex, Binary Numbers
+├── Interrupts/              # BIOS (INT 10h/16h) & DOS (INT 21h) Interrupts
+├── Introduction/            # Hello World, Syntax Demo, System Time
+├── Macros/                  # Conditional Macros, Nested Macros, Parameters
+├── Mathematics/             # LCM, Square Root, Perfect Number, Armstrong
+├── Matrix/                  # Matrix Addition & Transpose Operations
+├── Memory Operations/       # Block Transfer, Compare, Fill, Scan
+├── Patterns/                # Pyramids, Triangles, Diamond Shapes
+├── Procedures/              # Recursion, Parameters, Local Variables
+├── Searching/               # Binary Search, Linear Search, Char Count
+├── Simulation/              # Fire Alarm, Water Level, Defect Detection
+├── Sorting/                 # Bubble, Selection, Insertion, Asc/Desc Sorts
+├── Stack Operations/        # String Reverse, Swap, Push/Pop Demos
+├── String Operations/       # Length, Reverse, Palindrome, Case Conv.
+├── Utilities/               # Delays, Password Input, Sound, Clear Screen
 │
 ├── LICENSE                  # MIT License
 └── README.md                # Project Documentation
