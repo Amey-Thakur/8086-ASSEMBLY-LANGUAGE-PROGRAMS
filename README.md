@@ -114,11 +114,7 @@ All programs in this repository were developed, verified, and documented by me d
 ---
 
 <!-- USAGE -->
-## Usage
-
-### Prerequisites
-- **Emu8086** (Recommended) or **DOSBox** with MASM/TASM installed.
-- A text editor (VS Code with Assembly extensions recommended).
+## Usage Guidelines
 
 ### Execution Steps
 1.  **Clone the Repository**:
@@ -133,6 +129,15 @@ All programs in this repository were developed, verified, and documented by me d
 3.  **Assemble and Run**:
     - Click the `emulate` button to compile.
     - Use the `Run` or `Single Step` controls to execute the code and observe register changes.
+
+### Academic Use
+This repository is openly shared to support learning and knowledge exchange across the academic community.
+
+**For Students**  
+Use these programs as reference materials for understanding assembly logic, instruction syntax, and modular programming. Code is heavily commented to facilitate self-paced learning.
+
+**For Educators**  
+The programs may serve as practical lab examples or supplementary teaching resources for Microprocessor courses (`CSC501`/`CSL501`). Attribution is appreciated when utilizing content.
 
 ---
 
@@ -155,11 +160,15 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 **Institution**: [Terna Engineering College](https://ternaengg.ac.in/), Navi Mumbai  
 **University**: [University of Mumbai](https://mu.ac.in/)
 
+This repository represents a comprehensive collection of 8086 assembly programs developed, verified, and documented during my academic journey. All content has been carefully organized to serve as a valuable resource for mastering low-level system architecture.
+
 **Connect**: [GitHub](https://github.com/Amey-Thakur) · [LinkedIn](https://www.linkedin.com/in/amey-thakur)
 
 ### Acknowledgments
 
-Grateful acknowledgment to the faculty members of the **Department of Computer Engineering** at Terna Engineering College. This repository was developed to support the **Microprocessor Lab (CSL501)** curriculum, aiming to bridge the gap between theoretical architecture and practical coding.
+Special thanks to the faculty members of the **Department of Computer Engineering** at Terna Engineering College for their guidance and instruction in Microprocessors. Their clear teaching and continued support helped develop a strong understanding of low-level system architecture.
+
+Special thanks to the peers whose discussions and support contributed meaningfully to this learning experience.
 
 ---
 
