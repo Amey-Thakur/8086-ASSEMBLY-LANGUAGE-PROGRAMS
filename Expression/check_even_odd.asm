@@ -1,78 +1,80 @@
-;=============================================================================
-; Program:     Check Even or Odd
-; Description: Check whether a number is even or odd using division.
-;              Even numbers have remainder 0 when divided by 2.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Parity Check (Even/Odd) using Division
+; DESCRIPTION: Determines if a user-supplied number is Even or Odd by 
+;              checking the remainder of division by 2.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
-;-----------------------------------------------------------------------------
-; MACRO: Display String
-;-----------------------------------------------------------------------------
-DISPLAY MACRO MSG
-    MOV AH, 9
-    LEA DX, MSG
-    INT 21H
-ENDM
+.MODEL SMALL
+.STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
-DATA SEGMENT
-    MSG1 DB 10, 13, 'Enter number here: $'
-    MSG2 DB 10, 13, 'Entered value is EVEN$'
-    MSG3 DB 10, 13, 'Entered value is ODD$'
-DATA ENDS
+; -----------------------------------------------------------------------------
+.DATA
+    MSG_PROMPT DB 0DH, 0AH, 'Enter a single digit number: $'
+    MSG_EVEN   DB 0DH, 0AH, 'Result: EVEN$'
+    MSG_ODD    DB 0DH, 0AH, 'Result: ODD$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
-CODE SEGMENT
-    ASSUME CS:CODE, DS:DATA
-    
-START:
-    ; Initialize Data Segment
-    MOV AX, DATA
+; -----------------------------------------------------------------------------
+.CODE
+MAIN PROC
+    ; --- Step 1: Initialize Data Segment ---
+    MOV AX, @DATA
     MOV DS, AX
     
-    ; Prompt for input
-    DISPLAY MSG1
-    
-    ; Read single digit from user
-    MOV AH, 1
+    ; --- Step 2: Input ---
+    LEA DX, MSG_PROMPT
+    MOV AH, 09H
     INT 21H
     
-    ;-------------------------------------------------------------------------
-    ; Check Even/Odd
-    ; Divide by 2: if remainder (AH) = 0, number is even
-    ;-------------------------------------------------------------------------
-    MOV AH, 0                           ; Clear high byte
-CHECK:
-    MOV DL, 2
-    DIV DL                              ; AL = quotient, AH = remainder
-    CMP AH, 0                           ; Compare remainder with 0
-    JNE ODD                             ; If not zero, number is odd
+    MOV AH, 01H
+    INT 21H
+    SUB AL, '0'                         ; Convert ASCII to Integer
     
-EVEN:
-    DISPLAY MSG2
-    JMP DONE
+    ; --- Step 3: Check Parity (Division Method) ---
+    MOV AH, 0                           ; Clear heavy byte
+    MOV BL, 2
+    DIV BL                              ; AX / 2 -> AL=Quotient, AH=Remainder
     
-ODD:
-    DISPLAY MSG3
+    CMP AH, 0                           ; Remainder == 0?
+    JE L_IS_EVEN
     
-DONE:
-    ; Exit to DOS
+L_IS_ODD:
+    LEA DX, MSG_ODD
+    JMP L_DISPLAY
+    
+L_IS_EVEN:
+    LEA DX, MSG_EVEN
+    
+L_DISPLAY:
+    MOV AH, 09H
+    INT 21H
+    
+    ; --- Step 4: Exit ---
     MOV AH, 4CH
     INT 21H
-CODE ENDS
-END START
+MAIN ENDP
 
-;=============================================================================
-; EVEN/ODD CHECK NOTES:
-; - Even: Divisible by 2 (remainder = 0)
-; - Odd: Not divisible by 2 (remainder = 1)
-; - Alternative method: TEST AL, 1 (check LSB)
-;   If LSB = 0, even; if LSB = 1, odd
-;=============================================================================
+END MAIN
+
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. PARITY LOGIC:
+;    - Even numbers are divisible by 2 with no remainder.
+;    - Odd numbers leave a remainder of 1.
+;
+; 2. ALTERNATIVE METHOD (BITWISE):
+;    A faster way is `TEST AL, 1`. If Zero Flag (ZF) is 0, the LSB is 1 (Odd).
+;    If ZF is 1, the LSB is 0 (Even). This avoids the costly DIV instruction.
+;    However, this program demonstrates the Division principle.
+;
+; 3. ASCII ADJUSTMENT:
+;    We subtract '0' (30H) to convert the character input to a raw number 
+;    before performing arithmetic.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

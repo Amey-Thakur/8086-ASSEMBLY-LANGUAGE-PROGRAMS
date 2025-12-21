@@ -1,98 +1,101 @@
-;=============================================================================
-; Program:     File Reading
-; Description: Demonstrate how to open, read content from, and close a 
-;              file using DOS interrupts.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Read File Content
+; DESCRIPTION: Opens an existing text file ("INPUT.TXT") and reads its content 
+;              into a buffer, then displays it to standard output.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    FILENAME DB 'INPUT.TXT', 0          ; Primary input source
-    BUFFER DB 256 DUP('$')               ; Read buffer (initialized with $)
-    HANDLE DW ?                          ; File handle
-    MSG_CONTENT DB 'File content:', 0DH, 0AH, '$'
-    MSG_ERROR DB 'Error: Could not read file!$'
+    FILE_NAME   DB "INPUT.TXT", 0       ; Target file
+    FILE_HANDLE DW ?
+    
+    BUFFER      DB 512 DUP('$')         ; Read buffer (initialized with Terminator)
+    
+    MSG_HEADER  DB 0DH, 0AH, "--- File Contents ---", 0DH, 0AH, "$"
+    MSG_ERR     DB 0DH, 0AH, "Error: Could not read file.$"
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize Data Segment ---
     MOV AX, @DATA
     MOV DS, AX
     
-    ;-------------------------------------------------------------------------
-    ; OPEN EXISTING FILE (INT 21H, AH=3DH)
-    ; Input: AH = 3DH
-    ;        AL = Access mode (0=read, 1=write, 2=read/write)
-    ;        DS:DX = ASCIIZ filename
-    ; Output: AX = Handle (if CF=0)
-    ;-------------------------------------------------------------------------
+    ; --- Step 2: Open File (INT 21h / AH=3Dh) ---
+    ; AL = Access Mode (0=Read, 1=Write, 2=Read/Write)
+    MOV AL, 0
+    LEA DX, FILE_NAME
     MOV AH, 3DH
-    MOV AL, 0                           ; Read-only mode
-    LEA DX, FILENAME
     INT 21H
-    JC ERROR
-    MOV HANDLE, AX                      ; Store handle
     
-    ;-------------------------------------------------------------------------
-    ; READ FROM FILE (INT 21H, AH=3FH)
-    ; Input: AH = 3FH
-    ;        BX = File handle
-    ;        CX = Number of bytes to read
-    ;        DS:DX = Buffer offset
-    ; Output: AX = Number of bytes actually read
-    ;-------------------------------------------------------------------------
-    MOV AH, 3FH
-    MOV BX, HANDLE
-    MOV CX, 255                         ; Leave space for terminating '$'
+    JC L_ERROR
+    MOV FILE_HANDLE, AX                 ; Save Handle
+    
+    ; --- Step 3: Read File (INT 21h / AH=3Fh) ---
+    ; BX = Handle
+    ; CX = Byte Count to Read
+    ; DS:DX = Buffer
+    MOV BX, FILE_HANDLE
+    MOV CX, 510                         ; Read up to 510 bytes (safe limit)
     LEA DX, BUFFER
+    MOV AH, 3FH
     INT 21H
-    JC ERROR
     
-    ;-------------------------------------------------------------------------
-    ; CLOSE FILE
-    ;-------------------------------------------------------------------------
+    JC L_ERROR
+    
+    ; Note: AX now holds the actual number of bytes read.
+    ; Since we initialized BUFFER with '$', we can print directly if it's text.
+    
+    ; --- Step 4: Display Content ---
+    LEA DX, MSG_HEADER
+    MOV AH, 09H
+    INT 21H
+    
+    LEA DX, BUFFER
+    MOV AH, 09H
+    INT 21H
+    
+    ; --- Step 5: Close File (INT 21h / AH=3Eh) ---
+    MOV BX, FILE_HANDLE
     MOV AH, 3EH
-    MOV BX, HANDLE
     INT 21H
     
-    ;-------------------------------------------------------------------------
-    ; DISPLAY CONTENT
-    ;-------------------------------------------------------------------------
-    LEA DX, MSG_CONTENT
+    JMP L_EXIT
+
+L_ERROR:
+    LEA DX, MSG_ERR
     MOV AH, 09H
     INT 21H
-    
-    LEA DX, BUFFER                      ; Display read data
-    MOV AH, 09H
-    INT 21H
-    JMP EXIT
-    
-ERROR:
-    LEA DX, MSG_ERROR
-    MOV AH, 09H
-    INT 21H
-    
-EXIT:
-    ; Exit to DOS
+
+L_EXIT:
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
+
 END MAIN
 
-;=============================================================================
-; FILE READING NOTES:
-; - Handlers: Use the handle returned by AH=3Dh for subsequent operations.
-; - Buffering: CX specifies max read; AX returns actual read count.
-; - End of File (EOF): If AX returns 0, the end of file has been reached.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. BUFFER MANAGEMENT:
+;    We read a chunk of data into memory. If the file is larger than the buffer, 
+;    we would need a loop to read -> print -> read until AX (bytes read) is 0.
+;
+; 2. FILE POINTER:
+;    DOS maintains a read/write pointer for each handle. It advances automatically 
+;    after each read operation.
+;
+; 3. DISPLAY LIMITATION:
+;    Using AH=09h (Print String) requires the data to be '$' terminated. 
+;    Binary files would need a different display method (e.g., Hex Dump).
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

@@ -1,94 +1,93 @@
-;=============================================================================
-; Program:     If-Then-Else Structure
-; Description: Implement high-level if-then-else logic in assembly.
-;              Shows how to translate conditional statements.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: If-Then-Else Conditional Logic Structure
+; DESCRIPTION: This program demonstrates the implementation of high-level 
+;              if-then-else selection logic in 8086 Assembly. It highlights 
+;              comparison mechanics (CMP) and the use of conditional vs 
+;              unconditional jumps to redirect program execution flow.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    NUM DW 75                           ; Student score
-    THRESHOLD DW 50                     ; Passing threshold
-    MSG_PASS DB 'Result: PASS$'
-    MSG_FAIL DB 'Result: FAIL$'
+    VAL_SCORE     DW 75                 ; Student score (0-100)
+    VAL_THRESHOLD DW 50                 ; Passing threshold
+    
+    ; Result strings
+    MSG_PASS      DB 'Status: PASS (Score meets threshold)$'
+    MSG_FAIL      DB 'Status: FAIL (Score below threshold)$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-; 
-; High-level equivalent:
-;   if (NUM >= THRESHOLD)
-;       print "PASS"
-;   else
-;       print "FAIL"
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize Data Segment ---
     MOV AX, @DATA
     MOV DS, AX
     
-    ;-------------------------------------------------------------------------
-    ; IF Condition: Compare NUM with THRESHOLD
-    ;-------------------------------------------------------------------------
-    MOV AX, NUM                         ; AX = 75
-    CMP AX, THRESHOLD                   ; Compare with 50
+    ; --- Step 2: Comparison (The 'IF' Condition) ---
+    ; CMP AX, BX evaluates (AX - BX) and sets the processor flags.
+    MOV AX, VAL_SCORE                   
+    CMP AX, VAL_THRESHOLD               
     
-    ;-------------------------------------------------------------------------
-    ; Branch based on condition
-    ; JGE: Jump if Greater or Equal (signed)
-    ;-------------------------------------------------------------------------
-    JGE PASS_BLOCK                      ; If NUM >= 50, jump to PASS
+    ; --- Step 3: Branch Decision ---
+    ; JGE: Jump if Greater or Equal. If condition matches, skip the FAIL block.
+    JGE L_PASS_THEN                     
     
-    ;-------------------------------------------------------------------------
-    ; ELSE Block (executed if condition is FALSE)
-    ;-------------------------------------------------------------------------
-    LEA DX, MSG_FAIL                    ; Load "FAIL" message
-    JMP ENDIF                           ; Skip THEN block
+    ; --- Step 4: 'ELSE' Block (Negative Case) ---
+    LEA DX, MSG_FAIL                    
+    JMP L_ENDIF                         ; Must jump over the THEN block
     
-PASS_BLOCK:
-    ;-------------------------------------------------------------------------
-    ; THEN Block (executed if condition is TRUE)
-    ;-------------------------------------------------------------------------
-    LEA DX, MSG_PASS                    ; Load "PASS" message
+L_PASS_THEN:
+    ; --- Step 5: 'THEN' Block (Positive Case) ---
+    LEA DX, MSG_PASS                    
     
-ENDIF:
-    ;-------------------------------------------------------------------------
-    ; Display Result (common exit point)
-    ;-------------------------------------------------------------------------
-    MOV AH, 09H
+L_ENDIF:
+    ; --- Step 6: Common Execution Path ---
+    MOV AH, 09H                         ; DOS Display String
     INT 21H
     
-    ;-------------------------------------------------------------------------
-    ; Program Termination
-    ;-------------------------------------------------------------------------
-    MOV AH, 4CH                         ; DOS: Terminate program
+    ; --- Step 7: Termination ---
+    MOV AH, 4CH
     INT 21H
 MAIN ENDP
+
 END MAIN
 
-;=============================================================================
-; IF-THEN-ELSE PATTERN IN ASSEMBLY
-;=============================================================================
-; 
-; High-level:          Assembly equivalent:
-; -----------------    ---------------------
-; if (condition)       CMP operand1, operand2
-;     then_block       Jcc ELSE_BLOCK     ; Jump if condition FALSE
-;                      ; then_block code
-; else                 JMP ENDIF
-;     else_block   ELSE_BLOCK:
-; endif                ; else_block code
-;                  ENDIF:
-; 
-; Note: The conditional jump is for the OPPOSITE condition!
-; if (A >= B)  =>  JL ELSE_BLOCK (jump if less)
-; if (A == B)  =>  JNE ELSE_BLOCK (jump if not equal)
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. FLAG EVALUATION MECHANICS:
+;    The 'JGE' (Jump if Greater or Equal) instruction in signed arithmetic 
+;    expects that the Sign Flag (SF) is equal to the Overflow Flag (OF). 
+;    This hardware check ensures correct logic even if an arithmetic wrap-around 
+;    occurred during the 'CMP' subtraction.
+;
+; 2. THE PIPELINE PENALTY (BRANCH PREDICTION):
+;    On modern processors, branches are predicted. On the 8086, any jump 
+;    causes the instruction prefetch queue to be flushed. This makes sequential 
+;    code slightly faster than code with many jumps.
+;
+; 3. THE "JUMP OVER" PATTERN:
+;    In assembly, high-level 'if-then-else' requires an explicit unconditional 
+;    'JMP' at the end of the first block to avoid "falling through" into 
+;    the else-code. Negating the condition (e.g., using JL instead of JGE 
+;    to jump to ELSE) can sometimes simplify the instruction count.
+;
+; 4. SIGNED VS UNSIGNED LOGIC:
+;    - JGE/JL/JG/JLE: Used for signed integers (where MSB is sign).
+;    - JAE/JB/JA/JBE: Used for unsigned integers (where MSB represents magnitude).
+;    Using the wrong jump type for your data can lead to critical logic errors 
+;    when comparing negative numbers.
+;
+; 5. LABELLING CONVENTION:
+;    Professional assembly often uses 'L_' prefixes for local labels to distinguish 
+;    conditional branch targets from procedures (PROCs) or data variables.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

@@ -9,10 +9,13 @@
 ; LICENSE: MIT License
 ; =============================================================================
 
+.MODEL SMALL
+.STACK 100H
+
 ; -----------------------------------------------------------------------------
 ; DATA SEGMENT
 ; -----------------------------------------------------------------------------
-DATA SEGMENT
+.DATA
     ; Dividend (16-bit Word): 6827H = 26,663 decimal
     VAL_DIVIDEND DW 6827H               
     
@@ -20,43 +23,37 @@ DATA SEGMENT
     VAL_DIVISOR  DB 0FEH                
     
     ; Buffers to store results
-    RESULT_QUO   DB ?                   ; Quotient (Expected: 69H = 105)
-    RESULT_REM   DB ?                   ; Remainder (Expected: 0D5H = 213)
-DATA ENDS          
+    RES_QUO      DB ?                   ; Quotient (Expected: 69H = 105)
+    RES_REM      DB ?                   ; Remainder (Expected: 0D5H = 213)
 
 ; -----------------------------------------------------------------------------
 ; CODE SEGMENT
 ; -----------------------------------------------------------------------------
-CODE SEGMENT
-    ASSUME CS:CODE, DS:DATA
-
-START: 
+.CODE
+MAIN PROC
     ; --- Step 1: Initialization ---
-    MOV AX, DATA
+    MOV AX, @DATA
     MOV DS, AX
     
     ; --- Step 2: Prepare Operands ---
-    ; For an 8-bit divisor, the 8086 hardware REQUIRES the dividend to be in AX.
+    ; For an 8-bit divisor, the 8086 hardware REQUIRES the dividend in AX.
     MOV AX, VAL_DIVIDEND                
     MOV BL, VAL_DIVISOR                 
     
     ; --- Step 3: Perform Unsigned Division ---
-    ; Execution Logic of 'DIV BL':
-    ; 1. The 16-bit value in AX is divided by the 8-bit value in BL.
-    ; 2. The 8-bit QUOTIENT is stored in AL.
-    ; 3. The 8-bit REMAINDER is stored in AH.
     ; Calculation: 26663 / 254 = 105 (69H) with remainder 213 (D5H).
     DIV BL                              
     
-    ; --- Step 4: Store results in Memory ---
-    MOV RESULT_QUO, AL                  
-    MOV RESULT_REM, AH                  
+    ; --- Step 4: Store Results ---
+    MOV RES_QUO, AL                     ; Quotient is in AL
+    MOV RES_REM, AH                     ; Remainder is in AH
     
     ; --- Step 5: Clean Exit ---
     MOV AH, 4CH
     INT 21H
-            
-CODE ENDS
+MAIN ENDP
+
+END MAIN
 
 ; =============================================================================
 ; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
@@ -67,33 +64,17 @@ CODE ENDS
 ;    - Mode B (16-bit divisor): DX:AX / Reg16 -> AX (Quotient), DX (Remainder)
 ;
 ; 2. DIVIDE ERROR (INTERRUPT 0):
-;    The processor will automatically trigger a "Divide-by-Zero" internal 
-;    interrupt (Type 0) if:
+;    The processor triggers a "Divide-by-Zero" interrupt (Type 0) if:
 ;    - The divisor is 0.
-;    - The resulting quotient is too large to fit in the target register 
-;      (AL for 8-bit, AX for 16-bit).
+;    - The quotient is too large to fit in the target register (Overflow).
 ;
 ; 3. SIGNED vs UNSIGNED:
 ;    - 'DIV' is strictly for unsigned (positive) numbers.
 ;    - 'IDIV' must be used for signed (Two's Complement) arithmetic.
 ;
 ; 4. REGISTER PRESERVATION:
-;    Note that the DIV instruction destroys the original values in AX (and 
-;    potentially DX) to store the results.
+;    The DIV instruction destroys original AX (and DX for 16-bit DIV) values.
 ;
 ; 5. EXAMPLE VERIFICATION:
-;    Dividend (26,663) = (Quotient * Divisor) + Remainder
-;    26,663 = (105 * 254) + 213
-;    26,663 = 26,450 + 213 -> Correct!
+;    Dividend (26,663) = (Quotient [105] * Divisor [254]) + Remainder [213]
 ; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-END START
-
-;=============================================================================
-; NOTES:
-; - DIV performs unsigned division
-; - For 8-bit divisor: AX / operand -> AL=quotient, AH=remainder
-; - For 16-bit divisor: DX:AX / operand -> AX=quotient, DX=remainder
-; - Division by zero causes interrupt (type 0)
-; - Use IDIV for signed division
-;=============================================================================

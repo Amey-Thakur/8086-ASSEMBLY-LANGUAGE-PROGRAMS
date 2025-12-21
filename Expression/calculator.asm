@@ -1,186 +1,253 @@
-;=============================================================================
-; Program:     Simple Calculator
-; Description: Basic calculator with add, subtract, multiply, divide.
-;              Demonstrates menu-driven program with procedure calls.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Interactive 8086 Calculator
+; DESCRIPTION: A menu-driven integer calculator supporting Addition, 
+;              Subtraction, Multiplication, and Division. It demonstrates 
+;              switch-case logic, string I/O, and procedure-based architecture.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+; -----------------------------------------------------------------------------
+; DATA SEGMENT
+; -----------------------------------------------------------------------------
 .DATA
-    MENU DB 0DH, 0AH, '=== 8086 Calculator ===', 0DH, 0AH
-         DB '1. Add', 0DH, 0AH
-         DB '2. Subtract', 0DH, 0AH
-         DB '3. Multiply', 0DH, 0AH
-         DB '4. Divide', 0DH, 0AH
-         DB '5. Exit', 0DH, 0AH
-         DB 'Choice: $'
+    ; Menu Strings
+    STR_MENU   DB 0DH, 0AH, 0DH, 0AH, '=== 8086 CALCULATOR ===', 0DH, 0AH
+               DB '1. Addition', 0DH, 0AH
+               DB '2. Subtraction', 0DH, 0AH
+               DB '3. Multiplication', 0DH, 0AH
+               DB '4. Division', 0DH, 0AH
+               DB '5. Exit', 0DH, 0AH
+               DB 'Enter Choice: $'
+               
+    STR_NUM1   DB 0DH, 0AH, 'Enter First Number:  $'
+    STR_NUM2   DB 0DH, 0AH, 'Enter Second Number: $'
+    STR_RES    DB 0DH, 0AH, 'Result: $'
+    STR_ERR    DB 0DH, 0AH, 'Error: Division by Zero!$'
     
-    MSG_NUM1 DB 0DH, 0AH, 'Enter first number: $'
-    MSG_NUM2 DB 0DH, 0AH, 'Enter second number: $'
-    MSG_RESULT DB 0DH, 0AH, 'Result: $'
-    MSG_DIV_BY_ZERO DB 0DH, 0AH, 'Error: Division by zero!$'
-    NEWLINE DB 0DH, 0AH, '$'
-    
-    NUM1 DW ?
-    NUM2 DW ?
-    RESULT DW ?
+    ; Storage
+    VAL_NUM1   DW ?
+    VAL_NUM2   DW ?
+    VAL_RES    DW ?
 
+; -----------------------------------------------------------------------------
+; CODE SEGMENT
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
+    ; --- Step 1: Initialize Data Segment ---
     MOV AX, @DATA
     MOV DS, AX
-
-MENU_LOOP:
-    ; Display menu
-    LEA DX, MENU
+    
+APP_LOOP:
+    ; --- Step 2: Show Menu ---
+    LEA DX, STR_MENU
     MOV AH, 09H
     INT 21H
     
-    ; Read choice
+    ; --- Step 3: Get User Choice ---
     MOV AH, 01H
     INT 21H
     
+    ; --- Step 4: Dispatcher (Switch-Case) ---
     CMP AL, '5'
-    JE EXIT_PROG
+    JE L_EXIT
     
     CMP AL, '1'
-    JB MENU_LOOP
+    JL APP_LOOP                         ; Ignore invalid low input
     CMP AL, '4'
-    JA MENU_LOOP
+    JG APP_LOOP                         ; Ignore invalid high input
     
-    PUSH AX          ; Save choice
+    PUSH AX                             ; Save Choice
     
-    ; Get first number
-    LEA DX, MSG_NUM1
-    MOV AH, 09H
-    INT 21H
-    CALL READ_NUM
-    MOV NUM1, AX
+    ; --- Step 5: Get Operands ---
+    CALL GET_OPERANDS
     
-    ; Get second number
-    LEA DX, MSG_NUM2
-    MOV AH, 09H
-    INT 21H
-    CALL READ_NUM
-    MOV NUM2, AX
+    POP AX                              ; Restore Choice
     
-    POP AX           ; Restore choice
-    
-    ; Perform operation
+    ; Dispatch Execution
     CMP AL, '1'
-    JE DO_ADD
+    JE OP_ADD
     CMP AL, '2'
-    JE DO_SUB
+    JE OP_SUB
     CMP AL, '3'
-    JE DO_MUL
+    JE OP_MUL
     CMP AL, '4'
-    JE DO_DIV
-    JMP MENU_LOOP
+    JE OP_DIV
+    JMP APP_LOOP
     
-DO_ADD:
-    MOV AX, NUM1
-    ADD AX, NUM2
-    MOV RESULT, AX
-    JMP SHOW_RESULT
+OP_ADD:
+    MOV AX, VAL_NUM1
+    ADD AX, VAL_NUM2
+    MOV VAL_RES, AX
+    JMP DISPLAY_RESULT
     
-DO_SUB:
-    MOV AX, NUM1
-    SUB AX, NUM2
-    MOV RESULT, AX
-    JMP SHOW_RESULT
+OP_SUB:
+    MOV AX, VAL_NUM1
+    SUB AX, VAL_NUM2
+    MOV VAL_RES, AX
+    JMP DISPLAY_RESULT
     
-DO_MUL:
-    MOV AX, NUM1
-    MUL NUM2
-    MOV RESULT, AX
-    JMP SHOW_RESULT
+OP_MUL:
+    MOV AX, VAL_NUM1
+    MUL VAL_NUM2
+    MOV VAL_RES, AX
+    JMP DISPLAY_RESULT
+
+OP_DIV:
+    CMP VAL_NUM2, 0
+    JE L_DIV_ERR
     
-DO_DIV:
-    CMP NUM2, 0
-    JE DIV_ZERO
-    MOV AX, NUM1
-    XOR DX, DX
-    DIV NUM2
-    MOV RESULT, AX
-    JMP SHOW_RESULT
-    
-DIV_ZERO:
-    LEA DX, MSG_DIV_BY_ZERO
+    MOV AX, VAL_NUM1
+    XOR DX, DX                          ; Clear DX for 32/16 division prep
+    DIV VAL_NUM2
+    MOV VAL_RES, AX
+    JMP DISPLAY_RESULT
+
+L_DIV_ERR:
+    LEA DX, STR_ERR
     MOV AH, 09H
     INT 21H
-    JMP MENU_LOOP
-    
-SHOW_RESULT:
-    LEA DX, MSG_RESULT
+    JMP APP_LOOP
+
+DISPLAY_RESULT:
+    LEA DX, STR_RES
     MOV AH, 09H
     INT 21H
-    MOV AX, RESULT
-    CALL PRINT_NUM
-    JMP MENU_LOOP
     
-EXIT_PROG:
+    MOV AX, VAL_RES
+    CALL PRINT_DECIMAL
+    JMP APP_LOOP
+    
+L_EXIT:
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 
-; Read decimal number, result in AX
-READ_NUM PROC
+; -----------------------------------------------------------------------------
+; PROCEDURE: GET_OPERANDS
+; DESCRIPTION: Prompts for and reads two 16-bit decimal numbers.
+; -----------------------------------------------------------------------------
+GET_OPERANDS PROC
+    ; Input Number 1
+    LEA DX, STR_NUM1
+    MOV AH, 09H
+    INT 21H
+    CALL READ_DECIMAL
+    MOV VAL_NUM1, AX
+    
+    ; Input Number 2
+    LEA DX, STR_NUM2
+    MOV AH, 09H
+    INT 21H
+    CALL READ_DECIMAL
+    MOV VAL_NUM2, AX
+    
+    RET
+GET_OPERANDS ENDP
+
+; -----------------------------------------------------------------------------
+; PROCEDURE: READ_DECIMAL
+; OUTPUT: AX = 16-bit Value
+; DESCRIPTION: Reads ASCII digits until CR, converts to binary.
+; -----------------------------------------------------------------------------
+READ_DECIMAL PROC
     PUSH BX
     PUSH CX
-    XOR BX, BX
-READ_LOOP:
+    PUSH DX
+    
+    XOR BX, BX                          ; BX = Total
+    
+L_READ_CHAR:
     MOV AH, 01H
     INT 21H
-    CMP AL, 0DH
-    JE READ_DONE
-    SUB AL, '0'
+    
+    CMP AL, 0DH                         ; Check for Enter (CR)
+    JE L_READ_DONE
+    
+    SUB AL, '0'                         ; ASCII to Int
     XOR AH, AH
+    
     PUSH AX
     MOV AX, BX
     MOV CX, 10
-    MUL CX
+    MUL CX                              ; Total * 10
     MOV BX, AX
     POP AX
-    ADD BX, AX
-    JMP READ_LOOP
-READ_DONE:
+    
+    ADD BX, AX                          ; Total + Digit
+    JMP L_READ_CHAR
+    
+L_READ_DONE:
     MOV AX, BX
+    
+    POP DX
     POP CX
     POP BX
     RET
-READ_NUM ENDP
+READ_DECIMAL ENDP
 
-; Print decimal number in AX
-PRINT_NUM PROC
+; -----------------------------------------------------------------------------
+; PROCEDURE: PRINT_DECIMAL
+; INPUT: AX = 16-bit Value
+; DESCRIPTION: Converts binary to ASCII and prints to standard output.
+; -----------------------------------------------------------------------------
+PRINT_DECIMAL PROC
     PUSH AX
     PUSH BX
     PUSH CX
     PUSH DX
+    
     XOR CX, CX
     MOV BX, 10
-DIV_LOOP:
+    
+L_DIV_STACK:
     XOR DX, DX
     DIV BX
-    PUSH DX
-    INC CX
+    PUSH DX                             ; Save Remainder
+    INC CX                              ; Count Digits
     CMP AX, 0
-    JNE DIV_LOOP
-PRINT_LOOP:
+    JNE L_DIV_STACK
+    
+L_PRINT_STACK:
     POP DX
     ADD DL, '0'
     MOV AH, 02H
     INT 21H
-    LOOP PRINT_LOOP
+    LOOP L_PRINT_STACK
+    
     POP DX
     POP CX
     POP BX
     POP AX
     RET
-PRINT_NUM ENDP
+PRINT_DECIMAL ENDP
 
 END MAIN
+
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. MODULAR DESIGN:
+;    Breaking the program into procedures (READ_DECIMAL, PRINT_DECIMAL) makes 
+;    the MAIN loop clean and readable. This is "Structured Programming".
+;
+; 2. INPUT CONVERSION (ASCII to BINARY):
+;    The CPU deals in binary. User input '1', '2' comes as 31H, 32H. 
+;    Algorithm: Total = (Total * 10) + (Input - 30H).
+;
+; 3. OUTPUT CONVERSION (BINARY to ASCII):
+;    To print 123, we repeatedly divide by 10.
+;    123 / 10 = 12 R 3
+;    12 / 10  = 1  R 2
+;    1 / 10   = 0  R 1
+;    Push Remainders: 3, 2, 1. Pop & Print: "1", "2", "3".
+;
+; 4. DIVISION SAFETY:
+;    Checking for zero divisor prevents the dreaded "Divide Overflow" interrupt, 
+;    which crashes 8086 programs instantly.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

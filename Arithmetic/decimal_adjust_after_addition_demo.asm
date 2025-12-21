@@ -26,41 +26,36 @@
 ; CODE SEGMENT
 ; -----------------------------------------------------------------------------
 .CODE
-START:
+MAIN PROC
     ; --- Step 1: Initialize Data Segment ---
     MOV AX, @DATA
     MOV DS, AX
 
     ; --- Step 2: Perform Native Binary Addition ---
-    ; The 8086 ALU adds the values in binary format.
-    MOV AL, VAL1                        ; AL = 0010 0111 (27H)
-    ADD AL, VAL2                        ; AL = 0011 0101 (35H)
-                                        ; Result = 0101 1100 (5CH)
-                                        ; Note: 1100 (C) is > 9 (Illegal BCD)
+    ; Result = 5CH (Illegal BCD)
+    MOV AL, VAL1                        
+    ADD AL, VAL2                        
     
     ; --- Step 3: Invoke the Decimal Adjust (DAA) ---
-    ; DAA inspects AL and the Auxiliary Carry (AF) flag.
     ; Process:
     ; 1. Low Nibble (C) > 9? Yes.
     ; 2. ALU adds 06H to AL: 5CH + 06H = 62H.
     ; 3. ALU sets Auxiliary Carry (AF) to 1.
-    ; 4. High Nibble (6) <= 9? Yes.
     ; Final AL = 62H (Human-readable 62).
     DAA                                 
     
     ; --- Step 4: Clean Exit ---
-    ; Return control to DOS
     MOV AH, 4CH
     INT 21H
+MAIN ENDP
 
-END START
+END MAIN
 
 ; =============================================================================
 ; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
 ; =============================================================================
 ; 1. WHY DAA IS NECESSARY:
-;    Processors calculate in base-2 (binary), while humans prefer base-10 
-;    (decimal). Binary addition of BCD numbers often results in "holes" (values 
+;    Binary addition of BCD numbers often results in "holes" (values 
 ;    between 1010 and 1111) that don't map to decimal digits. DAA refills 
 ;    these holes by adding 6.
 ;

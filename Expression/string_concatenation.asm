@@ -1,107 +1,121 @@
-;=============================================================================
-; Program:     String Concatenation
-; Description: Concatenate two strings entered by the user.
-;              Demonstrates string manipulation and procedures.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
-
-;-----------------------------------------------------------------------------
-; MACRO: Print String
-;-----------------------------------------------------------------------------
-PRINT MACRO M
-    MOV AH, 09H
-    MOV DX, OFFSET M
-    INT 21H
-ENDM
+; =============================================================================
+; TITLE: String Concatenation
+; DESCRIPTION: Joins (concatenates) two user-provided strings into a single 
+;              output string. Manages string length calculation and memory copy.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
+.STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    EMPTY DB 10, 13, "   $"
-    STR1 DB 25, ?, 25 DUP('$')          ; First string buffer
-    STR2 DB 25, ?, 25 DUP('$')          ; Second string buffer
-    MSTRING DB 10, 13, "Enter the first string: $"
-    MSTRING2 DB 10, 13, "Enter second string: $"
-    MCONCAT DB 10, 13, "Concatenated string: $"
+    ; Input Buffers (Format: Max, Actual, Buffer)
+    STR_A_BUF   DB 50, ?, 50 DUP('$')   
+    STR_B_BUF   DB 50, ?, 50 DUP('$')
+    
+    PROMPT_1    DB 0DH, 0AH, "Enter String 1: $"
+    PROMPT_2    DB 0DH, 0AH, "Enter String 2: $"
+    MSG_RES     DB 0DH, 0AH, "Concatenated:   $"
+    
+    ; The Output Buffer (Large enough to hold both)
+    FINAL_STR   DB 101 DUP('$')
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
-START:
-    ; Initialize Data Segment
+MAIN PROC
+    ; --- Step 1: Initialize Data Segment ---
     MOV AX, @DATA
     MOV DS, AX
-
-    ;-------------------------------------------------------------------------
-    ; Input First String
-    ;-------------------------------------------------------------------------
-    PRINT MSTRING
-    MOV AH, 0AH                         ; Buffered input
-    LEA DX, STR1
+    MOV ES, AX                          
+    
+    ; --- Step 2: Get Inputs ---
+    LEA DX, PROMPT_1
+    MOV AH, 09H
     INT 21H
     
-    ;-------------------------------------------------------------------------
-    ; Input Second String
-    ;-------------------------------------------------------------------------
-    PRINT MSTRING2
+    LEA DX, STR_A_BUF
     MOV AH, 0AH
-    LEA DX, STR2
     INT 21H
     
-    ;-------------------------------------------------------------------------
-    ; Find End of First String
-    ;-------------------------------------------------------------------------
-    MOV CL, STR1+1                      ; Length of string1
-    MOV SI, OFFSET STR1
-NEXT:
-    INC SI
-    DEC CL
-    JNZ NEXT
-    INC SI
-    INC SI                              ; SI now points to end of STR1
+    LEA DX, PROMPT_2
+    MOV AH, 09H
+    INT 21H
     
-    ;-------------------------------------------------------------------------
-    ; Copy Second String to End of First String
-    ;-------------------------------------------------------------------------
-    MOV DI, OFFSET STR2
-    INC DI
-    INC DI                              ; DI points to start of STR2 content
+    LEA DX, STR_B_BUF
+    MOV AH, 0AH
+    INT 21H
     
-    MOV CL, STR2+1                      ; Length of string2
-MOVE_NEXT:
-    MOV AL, [DI]                        ; Get char from string2
-    MOV [SI], AL                        ; Append to string1
+    ; --- Step 3: Concatenation ---
+    LEA DI, FINAL_STR                   ; Destination Pointer
+    
+    ; Copy String A
+    LEA SI, STR_A_BUF + 2               ; Skin Metadata
+    MOV CL, STR_A_BUF + 1               ; Length
+    CMP CL, 0
+    JE COPY_B
+    XOR CH, CH
+    
+L_COPY_A:
+    MOV AL, [SI]
+    MOV [DI], AL
     INC SI
     INC DI
-    DEC CL
-    JNZ MOVE_NEXT
+    LOOP L_COPY_A
     
-    ;-------------------------------------------------------------------------
-    ; Display Concatenated String
-    ;-------------------------------------------------------------------------
-    PRINT MCONCAT
-    PRINT STR1+2                        ; Print from actual string content
+COPY_B:
+    ; Copy String B
+    LEA SI, STR_B_BUF + 2
+    MOV CL, STR_B_BUF + 1
+    CMP CL, 0
+    JE L_SHOW
+    XOR CH, CH
     
-    ;-------------------------------------------------------------------------
-    ; Program Termination
-    ;-------------------------------------------------------------------------
-EXIT:
+L_COPY_B:
+    MOV AL, [SI]
+    MOV [DI], AL
+    INC SI
+    INC DI
+    LOOP L_COPY_B
+    
+    ; Force Terminator
+    MOV BYTE PTR [DI], '$'
+    
+L_SHOW:
+    ; --- Step 4: Display Result ---
+    LEA DX, MSG_RES
+    MOV AH, 09H
+    INT 21H
+    
+    LEA DX, FINAL_STR
+    MOV AH, 09H
+    INT 21H
+    
+    ; --- Step 5: Exit ---
     MOV AH, 4CH
     INT 21H
+MAIN ENDP
 
-END START
+END MAIN
 
-;=============================================================================
-; STRING CONCATENATION NOTES:
-; - "Hello" + "World" = "HelloWorld"
-; - Find end of first string
-; - Append second string character by character
-; - Buffered input format: [max_len][actual_len][string_data...]
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. MEMORY LAYOUT:
+;    We use a dedicated 'FINAL_STR' buffer to avoid creating a new dynamic 
+;    memory block (which 8086 DOS doesn't do easily). This is "static allocation".
+;
+; 2. BUFFER ACCESS:
+;    DOS Input Buffer starts with [MAX_LEN] [ACTUAL_LEN]. The actual chars 
+;    start at Offset + 2. We must skip the first two bytes to access the text.
+;
+; 3. POINTER CONTINUITY:
+;    DI (Destination Index) is NOT reset between copies. It continues from 
+;    where String A left off, ensuring String B is appended immediately after.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

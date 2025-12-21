@@ -1,126 +1,119 @@
-;=============================================================================
-; Program:     Fibonacci Series Generator
-; Description: Print the Fibonacci series up to N terms.
-;              Demonstrates iterative series generation.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Fibonacci Series Generator
+; DESCRIPTION: Generates and displays the Fibonacci sequence (1, 1, 2, 3...) 
+;              up to a specified count. Demonstrates iterative sequence 
+;              generation and register swapping logic.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
-.STACK 64
+.STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    VAL1 DB 01H                         ; First Fibonacci number
-    VAL2 DB 01H                         ; Second Fibonacci number
-    LP DB 00H                           ; Loop counter storage
-    V1 DB 00H                           ; Tens digit
-    V2 DB 00H                           ; Units digit
-    NL DB 0DH, 0AH, '$'                 ; Newline string
-
-;-----------------------------------------------------------------------------
+    COUNT       DB 10                   ; Generate 10 terms
+    TERM_A      DB 1                    ; T(n-2)
+    TERM_B      DB 1                    ; T(n-1)
+    
+    MSG_SEP     DB ', $'
+    
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-; Fibonacci: F(n) = F(n-1) + F(n-2)
-; Series: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, ...
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize Data Segment ---
     MOV AX, @DATA
     MOV DS, AX
-
-    ;-------------------------------------------------------------------------
-    ; Get number of terms from user
-    ;-------------------------------------------------------------------------
-    MOV AH, 01H
-    INT 21H
-    MOV CL, AL
-    SUB CL, 30H                         ; Convert ASCII to number
-    SUB CL, 2                           ; Already displaying first 2
-
-    ;-------------------------------------------------------------------------
-    ; Display first Fibonacci number (1)
-    ;-------------------------------------------------------------------------
-    MOV AH, 02H
-    MOV DL, VAL1
-    ADD DL, 30H
-    INT 21H
-
+    
+    ; --- Step 2: Handle First Two Terms ---
+    ; Print Term 1 (1)
+    MOV AL, TERM_A
+    CALL PRINT_NUM
+    LEA DX, MSG_SEP
     MOV AH, 09H
-    LEA DX, NL
     INT 21H
-
-    ;-------------------------------------------------------------------------
-    ; Display second Fibonacci number (1)
-    ;-------------------------------------------------------------------------
-    MOV AH, 02H
-    MOV DL, VAL2
-    ADD DL, 30H
-    INT 21H
-
+    
+    ; Print Term 2 (1)
+    MOV AL, TERM_B
+    CALL PRINT_NUM
+    
+    ; Adjust Loop Counter (Total - 2)
+    MOV CH, 0
+    MOV CL, COUNT
+    SUB CL, 2
+    
+    ; --- Step 3: Generation Loop ---
+GEN_LOOP:
+    LEA DX, MSG_SEP
     MOV AH, 09H
-    LEA DX, NL
     INT 21H
-
-    ;-------------------------------------------------------------------------
-    ; Generate and display remaining terms
-    ;-------------------------------------------------------------------------
-DISP:
-    ; Calculate next: F(n) = F(n-1) + F(n-2)
-    MOV BL, VAL1
-    ADD BL, VAL2
-
-    ; Split into digits for display
-    MOV AH, 00H
-    MOV AL, BL
-    MOV LP, CL                          ; Save loop counter
-    MOV CL, 10
-    DIV CL                              ; AL = tens, AH = units
-    MOV CL, LP                          ; Restore counter
-
-    MOV V1, AL                          ; Tens digit
-    MOV V2, AH                          ; Units digit
-
-    ; Display tens digit
-    MOV DL, V1
-    ADD DL, 30H
-    MOV AH, 02H
-    INT 21H
-
-    ; Display units digit
-    MOV DL, V2
-    ADD DL, 30H
-    MOV AH, 02H
-    INT 21H
-
-    ; Update values: shift for next iteration
-    MOV DL, VAL2
-    MOV VAL1, DL
-    MOV VAL2, BL
-
-    ; Newline
-    MOV AH, 09H
-    LEA DX, NL
-    INT 21H
-
-    LOOP DISP
-
-    ;-------------------------------------------------------------------------
-    ; Program Termination
-    ;-------------------------------------------------------------------------
+    
+    ; Calculate Next: C = A + B
+    MOV AL, TERM_A
+    ADD AL, TERM_B
+    MOV BL, AL                  ; Save C in BL
+    
+    ; Output C
+    CALL PRINT_NUM
+    
+    ; Shift: A = B, B = C
+    MOV AL, TERM_B
+    MOV TERM_A, AL
+    MOV TERM_B, BL
+    
+    LOOP GEN_LOOP
+    
+    ; --- Step 4: Exit ---
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
+
+; -----------------------------------------------------------------------------
+; PROCEDURE: PRINT_NUM
+; INPUT:  AL = Number to print (0-99 supported for simplicity)
+; -----------------------------------------------------------------------------
+PRINT_NUM PROC
+    PUSH AX
+    PUSH DX
+    
+    AAM                         ; Split Byte to Digits (AH=Tens, AL=Units)
+    ADD AX, 3030H               ; Convert to ASCII
+    
+    PUSH AX
+    MOV DL, AH                  ; Print Tens
+    MOV AH, 02H
+    INT 21H
+    POP AX
+    
+    MOV DL, AL                  ; Print Units
+    MOV AH, 02H
+    INT 21H
+    
+    POP DX
+    POP AX
+    RET
+PRINT_NUM ENDP
+
 END MAIN
 
-;=============================================================================
-; FIBONACCI SERIES NOTES:
-; - Each number is sum of two preceding numbers
-; - F(1)=1, F(2)=1, F(n)=F(n-1)+F(n-2)
-; - Appears in nature: sunflower seeds, pine cones, shell spirals
-; - Ratio approaches Golden Ratio (φ ≈ 1.618)
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. SERIES LOGIC:
+;    Fibonacci(n) = Fibonacci(n-1) + Fibonacci(n-2).
+;    We maintain the "trailing two" numbers in TERM_A and TERM_B.
+;
+; 2. REGISTER SWAPPING:
+;    To advance the window [A, B] -> [B, A+B], we perform a 3-step value swap.
+;    Since efficient swapping is key, keeping values in registers (AL, BL) 
+;    inside the loop is preferred over memory access.
+;
+; 3. OVERFLOW:
+;    Using 8-bit registers limits the series to 255 (Term 13 is 233, Term 14 
+;    is 377). For larger series, 16-bit (DW) or 32-bit arithmetic is required.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

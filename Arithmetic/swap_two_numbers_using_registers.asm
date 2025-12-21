@@ -17,14 +17,14 @@
 ; DATA SEGMENT
 ; -----------------------------------------------------------------------------
 .DATA
-    VAL_A DW 10                         ; Original Value A
-    VAL_B DW 20                         ; Original Value B
+    VAL_A DW 10                         
+    VAL_B DW 20                         
     
     ; Display Strings
-    STR_BEFORE DB 'State [BEFORE Swap]: $'
-    STR_AFTER1 DB 0DH, 0AH, 'State [AFTER XCHG]: $'
-    STR_AFTER2 DB 0DH, 0AH, 'State [AFTER XOR ]: $'
-    STR_SEP    DB ', $'
+    MSG_BEFORE DB 'State [BEFORE Swap]: $'
+    MSG_AFTER1 DB 0DH, 0AH, 'State [AFTER XCHG]: $'
+    MSG_AFTER2 DB 0DH, 0AH, 'State [AFTER XOR ]: $'
+    MSG_SEP    DB ', $'
 
 ; -----------------------------------------------------------------------------
 ; CODE SEGMENT
@@ -36,14 +36,17 @@ MAIN PROC
     MOV DS, AX
     
     ; --- Step 2: Show Initial State ---
-    LEA DX, STR_BEFORE
+    LEA DX, MSG_BEFORE
     MOV AH, 09H
     INT 21H
+    
     MOV AX, VAL_A
     CALL PRINT_DECIMAL
-    LEA DX, STR_SEP
+    
+    LEA DX, MSG_SEP
     MOV AH, 09H
     INT 21H
+    
     MOV AX, VAL_B
     CALL PRINT_DECIMAL
     
@@ -56,29 +59,29 @@ MAIN PROC
     MOV VAL_B, BX
     
     ; Display Results
-    LEA DX, STR_AFTER1
+    LEA DX, MSG_AFTER1
     MOV AH, 09H
     INT 21H
+    
     MOV AX, VAL_A
     CALL PRINT_DECIMAL
-    LEA DX, STR_SEP
+    
+    LEA DX, MSG_SEP
     MOV AH, 09H
     INT 21H
+    
     MOV AX, VAL_B
     CALL PRINT_DECIMAL
     
     ; --- Step 4: Method 2 - The Bitwise XOR Algorithm ---
-    ; Reset values for clear demonstration
+    ; Reset values for demonstration
     MOV VAL_A, 10
     MOV VAL_B, 20
     
     MOV AX, VAL_A
     MOV BX, VAL_B
     
-    ; Logical Swap:
-    ; 1. A = A XOR B
-    ; 2. B = A XOR B (yields original A)
-    ; 3. A = A XOR B (yields original B)
+    ; Logical Swap: A=A^B, B=A^B, A=A^B
     XOR AX, BX       
     XOR BX, AX       
     XOR AX, BX       
@@ -87,14 +90,17 @@ MAIN PROC
     MOV VAL_B, BX
     
     ; Display Results
-    LEA DX, STR_AFTER2
+    LEA DX, MSG_AFTER2
     MOV AH, 09H
     INT 21H
+    
     MOV AX, VAL_A
     CALL PRINT_DECIMAL
-    LEA DX, STR_SEP
+    
+    LEA DX, MSG_SEP
     MOV AH, 09H
     INT 21H
+    
     MOV AX, VAL_B
     CALL PRINT_DECIMAL
     
@@ -116,20 +122,20 @@ PRINT_DECIMAL PROC
     XOR CX, CX
     MOV BX, 10
     
-DIV_LOOP:
+L_DIV_LOOP:
     XOR DX, DX
     DIV BX
     PUSH DX
     INC CX
     CMP AX, 0
-    JNE DIV_LOOP
+    JNE L_DIV_LOOP
     
-PRINT_LOOP:
+L_PRINT_LOOP:
     POP DX
     ADD DL, '0'
     MOV AH, 02H
     INT 21H
-    LOOP PRINT_LOOP
+    LOOP L_PRINT_LOOP
     
     POP DX
     POP CX
@@ -156,17 +162,14 @@ END MAIN
 ;      same memory address (aliasing), as A XOR A results in 0.
 ;
 ; 3. REGISTER-MEMORY LIMITATION:
-;    Note that the 8086 cannot perform XCHG directly between two memory 
-;    locations (e.g., XCHG [500], [600] is illegal). One value must be loaded 
-;    into a register first.
+;    The 8086 cannot perform XCHG directly between two memory locations. 
+;    One value must be loaded into a register first.
 ;
 ; 4. ATOMICITY:
-;    XCHG is considered an atomic operation at the CPU level, meaning it 
-;    cannot be interrupted halfway through by another process or thread.
+;    XCHG is considered an atomic operation at the CPU level.
 ;
 ; 5. PERFORMANCE:
 ;    On an original 8086:
 ;    - XCHG Reg, Reg: 4 clock cycles.
 ;    - XOR Reg, Reg (x3): 3 * 3 = 9 clock cycles.
-;    XCHG is significantly faster.
 ; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

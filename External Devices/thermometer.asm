@@ -1,66 +1,61 @@
-;=============================================================================
-; Program:     Digital Thermostat Control
-; Description: Simulate a temperature control system using a heater and
-;              a virtual thermometer. Maintains temperature between 60'C and 80'C.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Digital Thermostat Controller
+; DESCRIPTION: Simulates a hysteresis-based temperature control system. 
+;              Monitors a virtual thermometer and toggles a heater component 
+;              to maintain temperature between 60"C and 80"C.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 #start=thermometer.exe#
-#make_bin#
 NAME "thermo"
+#make_bin#
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
-; Logic: Hysteresis-based temperature control.
-; - If Temp < 60'C: Turn Heater ON
-; - If Temp > 80'C: Turn Heater OFF
-; - Ports: 125 (Input from Thermometer), 127 (Output to Heater)
-;-----------------------------------------------------------------------------
-
-; Initialize segments
-MOV AX, CS
-MOV DS, AX
-
+; -----------------------------------------------------------------------------
 START:
-    ; Read current temperature from port 125
+    ; --- Step 1: Main Control Loop ---
+    ; READ Temperature (Input Port 125)
     IN AL, 125
-
-    ; Check lower threshold (60'C)
+    
+    ; --- Step 2: Hysteresis Logic ---
+    ; Low Threshold: 60 degrees
     CMP AL, 60
-    JL  LOW_TEMP                    ; If under 60, heat up
-
-    ; Check upper threshold (80'C)
+    JL L_HEAT_ON
+    
+    ; High Threshold: 80 degrees
     CMP AL, 80
-    JG   HIGH_TEMP                  ; If over 80, cool down
+    JG L_HEAT_OFF
+    
+    ; Else: Maintain State
+    JMP START
 
-    ; If between 60 and 80, maintain current heater state
-    JMP OK
-
-LOW_TEMP:
-    ; Temperature is too low (< 60)
+L_HEAT_ON:
+    ; Turn Heater ON (Output Port 127 = 1)
     MOV AL, 1
-    OUT 127, AL                     ; Turn heater "ON" by sending 1 to port 127
-    JMP OK
+    OUT 127, AL
+    JMP START
 
-HIGH_TEMP:
-    ; Temperature is too high (> 80)
+L_HEAT_OFF:
+    ; Turn Heater OFF (Output Port 127 = 0)
     MOV AL, 0
-    OUT 127, AL                     ; Turn heater "OFF" by sending 0 to port 127
-
-OK:
-    JMP START                       ; Endless control loop
+    OUT 127, AL
+    JMP START
 
 END
 
-;=============================================================================
-; THERMOSTAT LOGIC NOTES:
-; - Goal: Maintain temperature in safety range (60-80).
-; - Port 125: Returns current temp as a byte.
-; - Port 127: Heater control (1=on, 0=off).
-; - Air temp is assumed < 60 so default state cools down without heater.
-; - Hysteresis prevents rapid oscillation (jitter) at a single degree threshold.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. HYSTERESIS CONTROL:
+;    Simple On/Off control at a single point causes rapid switching (chatter) 
+;    if the temperature fluctuates near the setpoint.
+;    Hysteresis adds a "deadband" (60-80 range) where the heater state 
+;    remains unchanged, ensuring system stability.
+;
+; 2. VIRTUAL HARDWARE:
+;    - Port 125: Thermometer Data (0-255 degrees)
+;    - Port 127: Heater Relay Control (1=On, 0=Off)
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
