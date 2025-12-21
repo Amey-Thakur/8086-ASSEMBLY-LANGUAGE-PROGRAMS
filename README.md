@@ -514,8 +514,6 @@ All programs in this repository were developed, verified, and documented by me d
 
 ---
 
----
-
 <!-- PREREQUISITES -->
 ## ⚙️ Prerequisites
 
