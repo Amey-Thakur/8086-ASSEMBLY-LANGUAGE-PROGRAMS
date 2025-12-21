@@ -1,40 +1,67 @@
-; Program: Beep Sound
-; Description: Generate beep sound using speaker
-; Author: Amey Thakur
-; Keywords: 8086 beep, sound assembly, speaker
+; TITLE: Beep Sound Generation
+; DESCRIPTION: A utility program to generate a beep sound using two methods: DOS Bell character and direct speaker control concepts.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
 
 .MODEL SMALL
 .STACK 100H
 
 .DATA
-    MSG DB 'Beeping...$'
+    MSG DB 'Generating system beep sound...', 0DH, 0AH, '$'
 
 .CODE
 MAIN PROC
+    ; Initialize the Data Segment
     MOV AX, @DATA
     MOV DS, AX
     
+    ; Display status message
     LEA DX, MSG
     MOV AH, 09H
     INT 21H
     
-    ; Method 1: Using INT 21H (Beep character)
-    MOV DL, 07H      ; ASCII Bell character
-    MOV AH, 02H
-    INT 21H
+    ; --- Method 1: Using DOS Interrupt 21H ---
+    ; Writing the ASCII Bell character (07H) to standard output triggers a beep.
+    MOV DL, 07H      ; ASCII Bell character code
+    MOV AH, 02H      ; DOS function: Display character in DL
+    INT 21H          ; Execute interrupt
     
-    ; Method 2: Direct speaker control (for custom tones)
-    ; Enable speaker
-    ; IN AL, 61H
-    ; OR AL, 03H
-    ; OUT 61H, AL
-    ; ... delay ...
-    ; Disable speaker
-    ; IN AL, 61H
-    ; AND AL, 0FCH
-    ; OUT 61H, AL
+    ; --- Method 2: Conceptual Direct Speaker Control ---
+    ; In professional hardware-level programming, we interact with the PIT 
+    ; (Programmable Interval Timer) and Port 61H (System Control Port B).
+    ; Below is the logic used to toggle the speaker manually (commented out).
     
+    ; Step 1: Enable Speaker and Timer 2 Gate
+    ; IN AL, 61H         ; Read current state of System Control Port B
+    ; OR AL, 03H         ; Set bits 0 (Timer 2 Gate) and 1 (Speaker Data)
+    ; OUT 61H, AL        ; Update Port 61H to turn on the speaker
+    
+    ; ... Insert delay loop here to produce a specific duration ...
+    
+    ; Step 2: Disable Speaker
+    ; IN AL, 61H         ; Read current state again
+    ; AND AL, 0FCH       ; Clear bits 0 and 1 (0FCH = 11111100B)
+    ; OUT 61H, AL        ; Update Port 61H to turn off the speaker
+    
+    ; Clean termination
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
+
+; =============================================================================
+; NOTES:
+; 1. BELL CHARACTER: ASCII 07H (known as BEL) is a standard control character.
+;    When sent to a terminal or DOS console, it instructs the OS to produce 
+;    the default system beep.
+; 2. SPEAKER INTERFACE: The PC speaker is controlled by the Intel 8253/8254 
+;    Timer and Port 61H. Bit 0 of Port 61H connects the output of Timer 2 to 
+;    the speaker, and bit 1 controls the data signal.
+; 3. PROGRAMMABLE INTERVAL TIMER (PIT): To generate specific frequencies, one
+;    would program Timer 2 (Port 42H) with a divisor for the 1.19318 MHz clock.
+; 4. REGISTER USAGE:
+;    - DL: Holds the character to be printed.
+;    - AH: DOS function selector.
+; =============================================================================
+
 END MAIN
