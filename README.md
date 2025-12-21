@@ -51,9 +51,17 @@
 <!-- OVERVIEW -->
 ## Overview
 
-The **8086 Assembly Language Programs** repository is a curated archive of low-level code designed to demonstrate the capabilities of the Intel 8086 microprocessor. It serves as a practical resource for students and engineers learning computer architecture, instruction sets, and memory management.
+The **8086 Assembly Language Programs** repository represents a comprehensive collection of assembly code compiled during my academic journey to master the Intel 8086 microprocessor.
 
-Each program is rigorously verified using the **Emu8086** emulator and follows a "Gold Standard" of documentation, ensuring that every line of logic is explained with clarity and architectural context. The repository covers a wide spectrum of topics, from basic arithmetic to complex hardware simulations like traffic light controllers and fire monitoring systems.
+**Purpose:**
+This repository was created primarily for **self-learning** and serves as a detailed documentation of my understanding of low-level system architecture, instruction sets, and memory management. It acts as an intellectual reference point, preserving the knowledge gained through practical experimentation and coding.
+
+**Key Goals:**
+- **Knowledge Preservation**: To document and organize concepts for future reference.
+- **Authentic Learning**: To demonstrate a clear understanding of 8086 assembly through rigorous coding and "Gold Standard" documentation.
+- **Skill Development**: To master the nuances of direct hardware manipulation using the Emu8086 environment.
+
+Each program in this archive serves as a testament to the learning process, evolving from basic arithmetic to complex hardware simulations.
 
 ---
 
