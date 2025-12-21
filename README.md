@@ -18,7 +18,11 @@
 
 <div align="center">
 
-  [👥 Authors](#authors) &nbsp;·&nbsp; [📖 Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Program Details](#program-details) &nbsp;·&nbsp; [🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [📜 License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository) &nbsp;·&nbsp; [🙏 Acknowledgments](#acknowledgments)
+  [ Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Program Details](#program-details) &nbsp;·&nbsp; [�️ Roadmap](#learning-roadmap)
+  <br>
+  [⚙️ Prerequisites](#prerequisites) &nbsp;·&nbsp; [�🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [🌟 Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [🔧 Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [🔗 Resources](#useful-resources)
+  <br>
+  [👥 Authors](#authors) &nbsp;·&nbsp; [� License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository)
 
 </div>
 
@@ -624,6 +628,19 @@ Essential tools and documentation for 8086 programming:
 
 ---
 
+<!-- CONTRIBUTING -->
+## 🤝 Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/NewAlgorithm`)
+3.  Commit your Changes (`git commit -m 'Add some NewAlgorithm'`)
+4.  Push to the Branch (`git push origin feature/NewAlgorithm`)
+5.  Open a Pull Request
+
+---
+
 <!-- LICENSE -->
 ## License
 
@@ -658,7 +675,13 @@ Special thanks to the peers whose discussions and support contributed meaningful
 <!-- FOOTER -->
 <div align="center">
 
-  **[⬆ Back to Top](#8086-assembly-language-programs)** &nbsp;·&nbsp; [👥 Authors](#authors) &nbsp;·&nbsp; [📖 Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Program Details](#program-details) &nbsp;·&nbsp; [🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [📜 License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository) &nbsp;·&nbsp; [🙏 Acknowledgments](#acknowledgments)
+  **[⬆ Back to Top](#8086-assembly-language-programs)**
+  <br>
+  [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Programs](#program-details) &nbsp;·&nbsp; [Roadmap](#learning-roadmap)
+  <br>
+  [Prerequisites](#prerequisites) &nbsp;·&nbsp; [Usage](#usage-guidelines) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [Resources](#useful-resources)
+  <br>
+  [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
 
   <br>
 
