@@ -537,6 +537,19 @@ Suggested progression for mastering 8086 assembly using this repository:
 
 ---
 
+<!-- BEST PRACTICES -->
+## 🌟 Best Practices for Assembly
+
+Writing maintainable assembly code is an art. Follow these principles used in this repository:
+
+-   **Consistent Commenting**: Assembly is cryptic. Comment *every* logical block, not just instructions (e.g., `; Check if divisible by 2` instead of `; Compare AX with 0`).
+-   **Meaningful Labels**: Use descriptive labels like `calculate_sum:` or `handle_error:` instead of generic `L1:`, `NEXT:`.
+-   **Modular Design**: Break complex tasks into `PROC` (Procedures) or `MACRO`s to reduce redundancy.
+-   **Register Preservation**: Always `PUSH` registers onto the stack before modifying them in a procedure, and `POP` them back before returning.
+-   **Data Segmentation**: Clearly separate your `DATA`, `CODE`, and `STACK` segments to avoid memory overlaps.
+
+---
+
 <!-- QUICK REFERENCE -->
 ## 📌 Quick 8086 Reference
 
