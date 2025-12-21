@@ -74,14 +74,15 @@ All programs in this repository were developed, verified, and documented by me d
 
 <!-- FEATURES -->
 ## Features
-
-| Feature | Description |
-|---------|-------------|
-| **Modular Logic** | Programs are structured using Procedures (`PROC`) for reusability |
-| **Gold Standard Docs** | Every file includes professional headers, algorithm breakdowns, and technical notes |
-| **Wide Coverage** | Includes Arithmetic, Sorting, Searching, String Ops, and Hardware Interfacing |
-| **Optimized Code** | Efficient register usage and memory addressing modes |
-| **Hardware Simulation** | Virtual simulation code for LED displays, Stepper Motors, and Traffic Lights |
+  
+  | Feature | Description |
+  |---------|-------------|
+  | **Instruction Implementation** | Practical demonstrations of Arithmetic, Logical, string, and Transfer instruction sets |
+  | **System Interfacing** | Direct hardware simulation for Traffic Lights, Stepper Motors, and LED Displays |
+  | **Memory Management** | Implementation of various 8086 Addressing Modes and Stack pointer operations |
+  | **Algorithm Design** | Low-level implementation of Sorting (Bubble/Selection) and Binary Search algorithms |
+  | **Modular Programming** | Usage of Macros (`MACRO`) and Procedures (`PROC`) for structured code reusability |
+  | **Interrupt Handling** | Utilization of DOS (`INT 21h`) and BIOS (`INT 10h`) interrupts for System I/O |
 
 ### 🛠️ Tech Stack
 - **Architecture**: Intel 8086 (16-bit)
