@@ -538,11 +538,11 @@ As a computer engineer, understanding the underlying hardware-software interface
 
 Suggested progression for mastering 8086 assembly using this repository:
 
-1.  **🟢 Basics (Level 1)**: Start with `Introduction` to understand syntax (`MOV`, variables) and `Addressing Modes`.
-2.  **🟡 Logic (Level 2)**: Move to `Arithmetic`, `Bitwise Operations`, and `Flags` to grasp data manipulation.
-3.  **🟠 Control (Level 3)**: Master `Control Flow` (loops/jumps) and `Conversion` logic.
-4.  **🔴 Advanced (Level 4)**: Tackle `Procedures`, `Macros`, and `Stack Operations` for modular code.
-5.  **🟣 System (Level 5)**: Explore `Interrupts`, `File Operations`, and `External Devices` for real-world interaction.
+1.  **Basics (Level 1)**: Start with `Introduction` to understand syntax (`MOV`, variables) and `Addressing Modes`.
+2.  **Logic (Level 2)**: Move to `Arithmetic`, `Bitwise Operations`, and `Flags` to grasp data manipulation.
+3.  **Control (Level 3)**: Master `Control Flow` (loops/jumps) and `Conversion` logic.
+4.  **Advanced (Level 4)**: Tackle `Procedures`, `Macros`, and `Stack Operations` for modular code.
+5.  **System (Level 5)**: Explore `Interrupts`, `File Operations`, and `External Devices` for real-world interaction.
 
 ---
 
