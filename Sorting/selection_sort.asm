@@ -1,27 +1,26 @@
-;=============================================================================
-; Program:     Selection Sort
-; Description: Implementation of Selection Sort algorithm for an 8-bit
+; =============================================================================
+; TITLE: Selection Sort
+; DESCRIPTION: Implementation of Selection Sort algorithm for an 8-bit
 ;              byte array.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     ARR DB 64, 25, 12, 22, 11            ; Input Data
     LEN EQU 5
     MSG DB 'Selection Sort execution finished.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Segment registers
@@ -35,9 +34,9 @@ MAIN PROC
     MOV CX, LEN - 1                     ; Outer loop counter (passes)
     XOR SI, SI                          ; SI = current boundary (i)
     
-;-------------------------------------------------------------------------
-; OUTER BATCH LOOP
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; OUTER BATCH LOOP
+    ; -------------------------------------------------------------------------
 OUTER_PASS:
     PUSH CX
     
@@ -52,9 +51,9 @@ OUTER_PASS:
     MOV CX, AX
     JZ CHECK_SWAP                       ; If no neighbors left, skip search
     
-;-------------------------------------------------------------------------
-; INNER MINIMUM FINDER
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; INNER MINIMUM FINDER
+    ; -------------------------------------------------------------------------
 SEARCH_MIN:
     MOV AL, ARR[BX]
     CMP AL, ARR[DI]                     ; If current < current_min
@@ -91,10 +90,12 @@ NO_SWAP:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; SELECTION SORT NOTES:
-; - Selection sort never makes more than O(N) swaps, which is beneficial 
-;   if the write operation is expensive.
-; - Total comparisons: O(N^2).
-; - Simple to implement but not adaptive (same work regardless of initial order).
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. SELECTION SORT:
+;    - Selection sort never makes more than O(N) swaps, which is beneficial 
+;      if the write operation is expensive.
+;    - Total comparisons: O(N^2).
+;    - Simple to implement but not adaptive (same work regardless of initial order).
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

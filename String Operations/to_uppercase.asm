@@ -1,20 +1,28 @@
+; =============================================================================
 ; TITLE: String to Uppercase Conversion
-; DESCRIPTION: A program that iterates through a string and converts all lowercase characters (a-z) to uppercase (A-Z).
+; DESCRIPTION: A program that iterates through a string and converts all 
+;              lowercase characters (a-z) to uppercase (A-Z).
 ; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
 ; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
 ; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+; -----------------------------------------------------------------------------
+; DATA SEGMENT
+; -----------------------------------------------------------------------------
 .DATA
-    ; Source string with mixed or lowercase letters
-    STR1 DB 'hello world', '$'
+    STR1    DB 'hello world', '$'
     
     NEWLINE DB 0DH, 0AH, '$' ; String for carriage return and line feed
-    MSG1 DB 'Original: $'
-    MSG2 DB 'Uppercase: $'
+    MSG1    DB 'Original: $'
+    MSG2    DB 'Uppercase: $'
 
+; -----------------------------------------------------------------------------
+; CODE SEGMENT
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize the Data Segment
@@ -51,8 +59,7 @@ CONVERT_LOOP:
     JA NEXT               ; If greater than 'z', skip
     
     ; Conversion: SUB 20H to convert Lower to Upper
-    ; 'a' is 61H (0110 0001)
-    ; 'A' is 41H (0100 0001)
+    ; 'a' is 61H (0110 0001) -> 'A' is 41H (0100 0001)
     SUB AL, 20H           
     MOV [SI], AL          ; Update the character in memory
     
@@ -75,17 +82,17 @@ DISPLAY:
     MOV AH, 4CH           
     INT 21H
 MAIN ENDP
-
-; =============================================================================
-; NOTES:
-; 1. ASCII RELATIONSHIP: Uppercase and lowercase letters in ASCII differ by 
-;    exactly 32 (20H). Bit 5 (the "32" bit) is 1 for Lower and 0 for Upper.
-; 2. LOGIC: SUB AL, 20H is equivalent to AND AL, 11011111B. It effectively 
-;    forces the 5th bit to be cleared.
-; 3. RANGE VALIDATION: It is critical to check if the character is actually 
-;    within 'a'-'z' to avoid corrupting symbols, numbers, or already uppercase chars.
-; 4. IN-PLACE MODIFICATION: This program modifies the string directly in the 
-;    Data Segment buffer.
-; =============================================================================
-
 END MAIN
+
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. ASCII RELATIONSHIP:
+;    - Uppercase and lowercase letters differ by 32 (20H).
+;    - Bit 5 is 1 for Lower and 0 for Upper.
+; 2. LOGIC:
+;    - SUB AL, 20H effectively clears the 5th bit (like AND AL, DFH).
+; 3. SAFETY:
+;    - Range checking ('a' <= char <= 'z') is mandatory to prevent corrupting
+;      non-alphabetic characters.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

@@ -56,7 +56,7 @@ MSG_INTRO   DB "Type anything...", 0DH, 0AH
             DB "Keys are echoed using BIOS Teletype.", 0DH, 0AH
             DB "Press [Esc] to exit.", 0DH, 0AH, "$"
 
-END START
+END START 
 
 ; =============================================================================
 ; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS

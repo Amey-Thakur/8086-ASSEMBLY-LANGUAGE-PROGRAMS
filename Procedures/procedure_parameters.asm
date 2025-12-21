@@ -1,27 +1,26 @@
-;=============================================================================
-; Program:     Procedure Parameter Passing
-; Description: Demonstrate the standard register-based method for 
+; =============================================================================
+; TITLE: Procedure Parameter Passing
+; DESCRIPTION: Demonstrate the standard register-based method for 
 ;              passing arguments to a subroutine.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     NUM1   DW 10
     NUM2   DW 20
     RESULT DW ?
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 
 ; Procedure: ADD_NUMBERS
@@ -52,10 +51,12 @@ MAIN ENDP
 
 END MAIN
 
-;=============================================================================
-; PARAMETER NOTES:
-; - Passing via registers is the fastest method but limited by register count.
-; - Other methods include passing via Stack (unlimited count) or Global 
-;   Variables (low reentrancy/security).
-; - AX is conventionally used to return values to the caller.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. PARAMETERS:
+;    - Passing via registers is the fastest method but limited by register count.
+;    - Other methods include passing via Stack (unlimited count) or Global 
+;      Variables (low reentrancy/security).
+;    - AX is conventionally used to return values to the caller.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

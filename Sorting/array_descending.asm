@@ -1,42 +1,38 @@
-;=============================================================================
-; Program:     Array Descending Sort
-; Description: Arrange an 8-bit numeric array in descending order using 
+; =============================================================================
+; TITLE: Array Descending Sort
+; DESCRIPTION: Arrange an 8-bit numeric array in descending order using 
 ;              the bubble-exchange technique.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
-DATA SEGMENT
+; -----------------------------------------------------------------------------
+.DATA
     VALUES DB 99H, 12H, 56H, 45H, 36H    ; Random input bytes
     V_LEN  EQU 5
     MSG    DB 'Array successfully sorted in Descending order.$'
-DATA ENDS
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
-CODE SEGMENT
-    ASSUME CS:CODE, DS:DATA
-
+; -----------------------------------------------------------------------------
+.CODE
 START:
     ; Setup Segment
-    MOV AX, DATA
+    MOV AX, @DATA
     MOV DS, AX
     
     MOV CX, V_LEN                       ; Outer loop counter
     DEC CX                              ; N-1 passes
 
-;-------------------------------------------------------------------------
-; DESCENDING BUBBLE LOGIC
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; DESCENDING BUBBLE LOGIC
+    ; -------------------------------------------------------------------------
 OUTER_SORT:
     PUSH CX
     LEA SI, VALUES                      ; Start of array
@@ -68,13 +64,14 @@ NO_ACTION:
     MOV AH, 4CH
     INT 21H
 
-CODE ENDS
 END START
 
-;=============================================================================
-; SORTING NOTES:
-; - This is the mirror of the ascending sort. 
-; - The 'JAE' (Jump if Above or Equal) is the key control flow here for 
-;   the descending property.
-; - Final sorted order will be: 99h, 56h, 45h, 36h, 12h.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. LOGIC:
+;    - This is the mirror of the ascending sort. 
+;    - The 'JAE' (Jump if Above or Equal) is the key control flow here for 
+;      the descending property.
+;    - Final sorted order will be: 99h, 56h, 45h, 36h, 12h.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

@@ -1,43 +1,39 @@
-;=============================================================================
-; Program:     Bubble Sort (16-bit)
-; Description: Implementation of Bubble Sort algorithm for a set of 
+; =============================================================================
+; TITLE: Bubble Sort (16-bit)
+; DESCRIPTION: Implementation of Bubble Sort algorithm for a set of 
 ;              unsigned 16-bit word integers.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
-DATA SEGMENT
+; -----------------------------------------------------------------------------
+.DATA
     ; Word array (DW)
     A   DW 0005H, 0ABCDH, 5678H, 1234H, 0EFCDH, 45EFH
     NUM EQU 6                           ; Total count of words
     MSG DB 'Word-sized Bubble Sort completed.$'
-DATA ENDS
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
-CODE SEGMENT
-    ASSUME CS:CODE, DS:DATA
-
+; -----------------------------------------------------------------------------
+.CODE
 START:
     ; Context setup
-    MOV AX, DATA
+    MOV AX, @DATA
     MOV DS, AX
     
     MOV BX, NUM                         ; Load count
     DEC BX                              ; N-1 comparisons per pass
 
-;-------------------------------------------------------------------------
-; BUBBLE SORT OPERATION
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; BUBBLE SORT OPERATION
+    ; -------------------------------------------------------------------------
 PASS_LOOP:
     MOV CX, BX                          ; Inner loop counter
     LEA SI, A                           ; Reset SI for each new pass
@@ -67,12 +63,13 @@ NO_EXCH:
     MOV AH, 4CH
     INT 21H
 
-CODE ENDS
 END START
 
-;=============================================================================
-; BUBBLE SORT NOTES:
-; - This version handles 16-bit data (Words). SI increments by 2 accordingly.
-; - Bubble sort derives its name from smaller values "bubbling" to the surface.
-; - Average and worst-case complexity: O(N^2).
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. DATA SIZE:
+;    - This version handles 16-bit data (Words). SI increments by 2 accordingly.
+;    - Bubble sort derives its name from smaller values "bubbling" to the surface.
+;    - Average and worst-case complexity: O(N^2).
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

@@ -1,26 +1,25 @@
-;=============================================================================
-; Program:     Number Pyramid Pattern
-; Description: Display a centered pyramid where each row contains 
+; =============================================================================
+; TITLE: Number Pyramid Pattern
+; DESCRIPTION: Display a centered pyramid where each row contains 
 ;              consecutive numbers starting from 1.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     MAX_ROWS DB 5
     MSG      DB 'Numeric Pyramid Structure:', 0DH, 0AH, '$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Setup Data Segment
@@ -35,9 +34,9 @@ MAIN PROC
     MOV BL, 1                           ; Current row number
     MOV BH, MAX_ROWS                    ; Total rows
     
-;-------------------------------------------------------------------------
-; OUTER ROW LOOP
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; OUTER ROW LOOP
+    ; -------------------------------------------------------------------------
 ROW_LOOP:
     PUSH BX
     
@@ -53,9 +52,9 @@ SPACE_LOOP:
     INT 21H
     LOOP SPACE_LOOP
     
-;-------------------------------------------------------------------------
-; 2. PRINT CONSECUTIVE NUMBERS
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; 2. PRINT CONSECUTIVE NUMBERS
+    ; -------------------------------------------------------------------------
 START_NUMS:
     MOV CL, BL                          ; Numbers per row = row number
     MOV DL, '1'                         ; Always start row with '1'
@@ -84,14 +83,16 @@ NUM_GEN:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; NUMBER PYRAMID NOTES:
-; - ASCII math: To print digits 1-9, we simply increment the starting char '1'.
-; - Alignment is achieved by calculating padding spaces before numbers.
-; - Expected Output (5 rows):
-;       1
-;      12
-;     123
-;    1234
-;   12345
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. ALIGNMENT:
+;    - ASCII math: To print digits 1-9, we simply increment the starting char '1'.
+;    - Alignment is achieved by calculating padding spaces before numbers.
+;    - Expected Output (5 rows):
+;          1
+;         12
+;        123
+;       1234
+;      12345
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

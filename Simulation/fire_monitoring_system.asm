@@ -1,23 +1,22 @@
-;=============================================================================
-; Program:     Fire Monitoring System (Simulation)
-; Description: Emulate a temperature-based fire alarm system. The program 
+; =============================================================================
+; TITLE: Fire Monitoring System (Simulation)
+; DESCRIPTION: Emulate a temperature-based fire alarm system. The program 
 ;              monitors ambient temperature against user-defined thresholds
 ;              for two distinct rooms and triggers an alarm if exceeded.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    LIMIT1 DB ?                          ; Threshold for Room 1
-    LIMIT2 DB ?                          ; Threshold for Room 2
+    LIMIT1      DB ?                     ; Threshold for Room 1
+    LIMIT2      DB ?                     ; Threshold for Room 2
     
     MSG_LIMIT1  DB 10,13,"Set Threshold for Room 1: $"
     MSG_LIMIT2  DB 10,13,"Set Threshold for Room 2: $"
@@ -25,9 +24,9 @@
     MSG_RESTART DB 10,13,"Press '1' to reset system or any key to exit: $"
     MSG_STATUS  DB 10,13,"Current Temperature: $"
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize Segment
@@ -47,9 +46,9 @@ MAIN PROC
     CALL READ_BCD_DIGIT
     MOV LIMIT2, AL
 
-;-------------------------------------------------------------------------
-; MONITORING LOOP
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; MONITORING LOOP
+    ; -------------------------------------------------------------------------
 START_MONITOR:
     MOV CL, 0                           ; Starting temperature at 0 degrees
     
@@ -75,9 +74,9 @@ INC_TEMP:
     ; Optional: Add a small delay simulation here if desired
     JMP INC_TEMP
 
-;-------------------------------------------------------------------------
-; ALARM STATE
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; ALARM STATE
+    ; -------------------------------------------------------------------------
 TRIGGER_ALARM:
     LEA DX, MSG_ALARM
     MOV AH, 09H
@@ -98,10 +97,10 @@ TRIGGER_ALARM:
     INT 21H
 MAIN ENDP
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; HELPER: READ_BCD_DIGIT
 ; Reads one char, returns numeric value in AL.
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 READ_BCD_DIGIT PROC
     MOV AH, 01H
     INT 21H
@@ -111,10 +110,12 @@ READ_BCD_DIGIT ENDP
 
 END MAIN
 
-;=============================================================================
-; SIMULATION NOTES:
-; - This models a simple "Control Loop" found in embedded systems.
-; - It uses BCD (Binary Coded Decimal) logic for easy I/O.
-; - The ASCII character 07h is sent to standard output to trigger a 
-;   system beep (hardware buzzer simulation).
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. SIMULATION LOGIC:
+;    - This models a simple "Control Loop" found in embedded systems.
+;    - It uses BCD (Binary Coded Decimal) logic for easy I/O.
+;    - The ASCII character 07h is sent to standard output to trigger a 
+;      system beep (hardware buzzer simulation).
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

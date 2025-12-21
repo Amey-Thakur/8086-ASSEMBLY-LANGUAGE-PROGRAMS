@@ -1,27 +1,26 @@
-;=============================================================================
-; Program:     Insertion Sort
-; Description: Sort a byte array using the Insertion Sort algorithm, which
+; =============================================================================
+; TITLE: Insertion Sort
+; DESCRIPTION: Sort a byte array using the Insertion Sort algorithm, which
 ;              is efficient for small data sets and partially sorted arrays.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     ARR DB 64, 25, 12, 22, 11            ; Example data
     LEN EQU 5
     MSG DB 'Insertion Sort sequence finalized successfully.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; State init
@@ -31,9 +30,9 @@ MAIN PROC
     MOV CX, LEN - 1                     ; Total passes required
     MOV SI, 1                           ; i = 1 (start with second element)
     
-;-------------------------------------------------------------------------
-; OUTER LOOP: Pick 'Key' and Compare with Sorted Sub-array
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; OUTER LOOP: Pick 'Key' and Compare with Sorted Sub-array
+    ; -------------------------------------------------------------------------
 OUTER_PASS:
     PUSH CX
     
@@ -41,9 +40,9 @@ OUTER_PASS:
     MOV BX, SI
     DEC BX                              ; j = i - 1
     
-;-------------------------------------------------------------------------
-; INNER LOOP: Shift elements greater than Key to the right
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; INNER LOOP: Shift elements greater than Key to the right
+    ; -------------------------------------------------------------------------
 SHIFT_SEARCH:
     CMP BX, 0                           ; Check if we reached array start
     JL INSERT_NOW
@@ -77,10 +76,12 @@ INSERT_NOW:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; INSERTION SORT NOTES:
-; - Algorithm: Simulates sorting a hand of playing cards.
-; - Performance: Excellent for small N.
-; - Stability: It is a stable sort (preserves relative order of equal items).
-; - O(N) in best case (already sorted), O(N^2) in worst case.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. ALGORITHM:
+;    - Simulates sorting a hand of playing cards.
+;    - Performance: Excellent for small N.
+;    - Stability: It is a stable sort (preserves relative order of equal items).
+;    - O(N) in best case (already sorted), O(N^2) in worst case.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

@@ -1,27 +1,26 @@
-;=============================================================================
-; Program:     Register Swap via Stack
-; Description: Demonstrate how to exchange the values of two registers 
+; =============================================================================
+; TITLE: Register Swap via Stack
+; DESCRIPTION: Demonstrate how to exchange the values of two registers 
 ;              without using a third temporary register.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    VAL1 DW 1111H                        ; Operand A
-    VAL2 DW 2222H                        ; Operand B
-    MSG  DB 'Registers Swapped using Stack Mechanics.$'
+    VAL1    DW 1111H                     ; Operand A
+    VAL2    DW 2222H                     ; Operand B
+    MSG     DB 'Registers Swapped using Stack Mechanics.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Segment Access
@@ -32,10 +31,10 @@ MAIN PROC
     MOV AX, VAL1                        ; AX = 1111H
     MOV BX, VAL2                        ; BX = 2222H
     
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     ; THE STACK SWAP PATTERN
     ; Logic: PUSH A, PUSH B -> POP A (gets B), POP B (gets A)
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     PUSH AX                             ; Stack: [1111H]
     PUSH BX                             ; Stack: [2222H, 1111H]
     
@@ -57,10 +56,12 @@ MAIN PROC
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; SWAPPING NOTES:
-; - This method is safer than the XOR swap for some architectures and 
-;   doesn't require an extra GPR (General Purpose Register).
-; - Important: The order of popping MUST be the same as the order of pushing
-;   into the DESIRED registers.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. SWAPPING:
+;    - This method is safer than the XOR swap for some architectures and 
+;      doesn't require an extra GPR (General Purpose Register).
+;    - Important: The order of popping MUST be the same as the order of pushing
+;      into the DESIRED registers.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

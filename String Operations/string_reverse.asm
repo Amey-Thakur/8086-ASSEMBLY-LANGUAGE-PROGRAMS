@@ -1,21 +1,29 @@
+; =============================================================================
 ; TITLE: String Reverse
-; DESCRIPTION: A program to reverse a string in-place using two-pointer swap logic.
+; DESCRIPTION: A program to reverse a string in-place using two-pointer 
+;              swap logic (SI and DI).
 ; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
 ; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
 ; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+; -----------------------------------------------------------------------------
+; DATA SEGMENT
+; -----------------------------------------------------------------------------
 .DATA
-    ; Original string (must be terminated with '$' for display)
-    STR1 DB 'ASSEMBLY', '$'
-    LEN EQU 8             ; Constant defined for string length
+    STR1    DB 'ASSEMBLY', '$'
+    LEN     EQU 8             ; Constant defined for string length
     
     NEWLINE DB 0DH, 0AH, '$' ; String for carriage return and line feed
-    MSG1 DB 'Original: $'
-    MSG2 DB 'Reversed: $'
+    MSG1    DB 'Original: $'
+    MSG2    DB 'Reversed: $'
 
+; -----------------------------------------------------------------------------
+; CODE SEGMENT
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize the Data Segment
@@ -71,22 +79,18 @@ REVERSE_LOOP:
     INT 21H
     
     ; Clean termination
-    MOV AH, 4CH           ; DOS function: Exit to DOS
+    MOV AH, 4CH           
     INT 21H
 MAIN ENDP
-
-; =============================================================================
-; NOTES:
-; 1. IN-PLACE SWAP: This program modifies the original memory buffer of STR1.
-;    It doesn't require extra memory for a second string, making it O(1) space.
-; 2. TWO-POINTER TECHNIQUE: SI (Source Index) and DI (Destination Index) work
-;    symmetrically from both ends of the string towards the middle.
-; 3. LOOP COUNT: For an N-length string, we perform N/2 swaps. If N is odd,
-;    the middle character remains in its place.
-; 4. REGISTER USAGE:
-;    - AL, BL: Used as byte data buffers for the swap operation.
-;    - SI, DI: Memory pointers (indexes).
-;    - CX: Hardware loop counter.
-; =============================================================================
-
 END MAIN
+
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. IN-PLACE SWAP:
+;    - This program modifies the original memory buffer of STR1.
+;    - It is O(1) space complexity.
+; 2. TWO-POINTER TECHNIQUE:
+;    - SI (Source Index) and DI (Destination Index) work symmetrically.
+;    - Loop runs N/2 times. If N is odd, the middle char is untouched.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

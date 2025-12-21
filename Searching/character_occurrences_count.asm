@@ -1,36 +1,35 @@
-;=============================================================================
-; Program:     Character Occurrences Count
-; Description: Scan a user-provided string to count the number of times 
+; =============================================================================
+; TITLE: Character Occurrences Count
+; DESCRIPTION: Scan a user-provided string to count the number of times 
 ;              a specific character appears.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    MSG1 DB 10,13,'Enter string: $'
-    MSG2 DB 10,13,'Enter character to find: $'
-    MSG3 DB 10,13,'Occurrences: $'
-    MSG4 DB 10,13,'Character not found.$'
+    MSG1        DB 10,13,'Enter string: $'
+    MSG2        DB 10,13,'Enter character to find: $'
+    MSG3        DB 10,13,'Occurrences: $'
+    MSG4        DB 10,13,'Character not found.$'
     
-    COUNT DB 0
+    COUNT       DB 0
     SEARCH_CHAR DB ?
     
     ; Buffered input structure for DOS AH=0Ah
-    BUFFER DB 100                       ; Max length
-           DB ?                          ; Actual length (filled by DOS)
-           DB 100 DUP('$')               ; Real data
+    BUFFER      DB 100                   ; Max length
+                DB ?                     ; Actual length (filled by DOS)
+                DB 100 DUP('$')          ; Real data
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; State initialization
@@ -99,9 +98,11 @@ FINISH:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; STRING SEARCH NOTES:
-; - This implementation uses the DOS buffered input (Function 0Ah).
-; - Byte-by-byte comparison is performed to build the frequency count.
-; - Limitation: Only displays counts from 0 to 9 correctly.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. INPUT:
+;    - This implementation uses the DOS buffered input (Function 0Ah).
+;    - Byte-by-byte comparison is performed to build the frequency count.
+;    - Limitation: Only displays counts from 0 to 9 correctly.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

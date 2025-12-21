@@ -1,19 +1,27 @@
+; =============================================================================
 ; TITLE: String Length Calculation
-; DESCRIPTION: A program to calculate the length of a '$' terminated string in 8086 Assembly.
+; DESCRIPTION: A program to calculate the length of a '$' terminated string 
+;              in 8086 Assembly.
 ; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
 ; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
 ; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+; -----------------------------------------------------------------------------
+; DATA SEGMENT
+; -----------------------------------------------------------------------------
 .DATA
-    ; Input string (must be terminated with '$' for this logic)
-    STR1 DB 'Hello World', '$'
-    LEN DB ?              ; Variable to store the calculated length
+    STR1    DB 'Hello World', '$'
+    LEN     DB ?              ; Variable to store the calculated length
     
-    MSG DB 'Length: $'    ; Descriptive message for output
+    MSG     DB 'Length: $'    ; Descriptive message for output
 
+; -----------------------------------------------------------------------------
+; CODE SEGMENT
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize the Data Segment
@@ -52,17 +60,17 @@ DONE:
     MOV AH, 4CH           ; DOS function: Exit to DOS
     INT 21H
 MAIN ENDP
-
-; =============================================================================
-; NOTES:
-; 1. STRING TERMINATION: In 8086 DOS programming, '$' is the standard string 
-;    terminator used by INT 21H, AH=09H. This program scans for '$' to find length.
-; 2. XOR CX, CX: Using XOR is a common and efficient way to zero out a register
-;    compared to 'MOV CX, 0', as it is typically a smaller and faster instruction.
-; 3. ASCII CONVERSION: To display a number as a character, we add 30H (48).
-;    E.g., 5 + 30H = 35H, which is the ASCII code for '5'.
-; 4. LIMITATION: This program's display logic handles lengths only up to 9. 
-;    For larger strings, a more complex number-to-string conversion is needed.
-; =============================================================================
-
 END MAIN
+
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. TERMINATION:
+;    - In 8086 DOS programming, '$' is the standard terminator for INT 21H/09H.
+;    - This program scans specifically for '$'.
+; 2. OPTIMIZATION:
+;    - XOR CX, CX is a standard idiom to zero out a register efficiently.
+; 3. LIMITATION:
+;    - Calculating and displaying multi-digit numbers requires a separate routine
+;      (dividing by 10 repeatedly), which is omitted here for simplicity.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

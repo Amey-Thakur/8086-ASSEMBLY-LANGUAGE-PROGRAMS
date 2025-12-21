@@ -1,20 +1,28 @@
+; =============================================================================
 ; TITLE: Palindrome String Check
-; DESCRIPTION: A program to determine if a given string is a palindrome using bi-directional pointers.
+; DESCRIPTION: A program to determine if a given string is a palindrome using 
+;              bi-directional pointers (beginning and end).
 ; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
 ; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
 ; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+; -----------------------------------------------------------------------------
+; DATA SEGMENT
+; -----------------------------------------------------------------------------
 .DATA
-    ; The input string to check (must be followed by '$' for DOS display)
-    STR1 DB 'MADAM', '$'
-    LEN EQU 5             ; Length of the string (excluding the '$')
+    STR1        DB 'MADAM', '$'
+    LEN         EQU 5            ; Length of the string
     
-    MSG_YES DB 'String is a Palindrome$', 0DH, 0AH, '$'
-    MSG_NO DB 'String is NOT a Palindrome$', 0DH, 0AH, '$'
+    MSG_YES     DB 'String is a Palindrome$', 0DH, 0AH, '$'
+    MSG_NO      DB 'String is NOT a Palindrome$', 0DH, 0AH, '$'
 
+; -----------------------------------------------------------------------------
+; CODE SEGMENT
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize Data Segment
@@ -56,20 +64,14 @@ DISPLAY:
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
-
-; =============================================================================
-; NOTES:
-; 1. PALINDROME LOGIC: A string is a palindrome if it reads the same forwards 
-;    and backwards. This program uses a two-pointer approach (SI and DI).
-; 2. TIME COMPLEXITY: O(N/2), where N is the length of the string, as we only
-;    need to compare characters up to the midpoint.
-; 3. CASE SENSITIVITY: This implementation is case-sensitive (e.g., 'Madam' 
-;    would not be considered a palindrome unless character normalization is added).
-; 4. REGISTER USAGE:
-;    - SI: Source Index (starting pointer)
-;    - DI: Destination Index (ending pointer)
-;    - AL/BL: Temporary storage for byte comparison
-;    - CX: Loop counter
-; =============================================================================
-
 END MAIN
+
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. PALINDROME LOGIC:
+;    - A string is a palindrome if it reads the same forwards and backwards.
+;    - This program uses a two-pointer approach (SI and DI).
+;    - Complexity: O(N/2), as we only need to compare up to the midpoint.
+;    - This implementation is case-sensitive (e.g., 'Madam' != 'MADAM').
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

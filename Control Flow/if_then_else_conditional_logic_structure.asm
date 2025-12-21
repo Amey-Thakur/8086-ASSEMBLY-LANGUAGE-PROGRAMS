@@ -59,7 +59,7 @@ L_ENDIF:
     INT 21H
 MAIN ENDP
 
-END MAIN
+END MAIN 
 
 ; =============================================================================
 ; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS

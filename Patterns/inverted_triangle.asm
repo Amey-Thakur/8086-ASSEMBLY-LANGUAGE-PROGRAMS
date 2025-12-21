@@ -1,26 +1,25 @@
-;=============================================================================
-; Program:     Inverted Triangle Pattern
-; Description: Generate and display a top-heavy (inverted) right-angled 
+; =============================================================================
+; TITLE: Inverted Triangle Pattern
+; DESCRIPTION: Generate and display a top-heavy (inverted) right-angled 
 ;              triangle using the decrementing loop technique.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     MAX_ROWS DB 5
     MSG      DB 'Inverted Star Triangle:', 0DH, 0AH, '$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize segment
@@ -35,9 +34,9 @@ MAIN PROC
     MOV BL, MAX_ROWS                    ; Start with the long row
     MOV BH, MAX_ROWS                    ; Total rows to print
     
-;-------------------------------------------------------------------------
-; MAIN ROW LOOP
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; MAIN ROW LOOP
+    ; -------------------------------------------------------------------------
 ROW_LOOP:
     PUSH BX                             ; Save parameters
     
@@ -67,15 +66,17 @@ STAR_ITER:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; INVERTED PATTERN NOTES:
-; - Logic: Row 1 = 5 stars, Row 2 = 4 stars ... Row 5 = 1 star.
-; - This utilizes a 'double-nested' control structure where the inner count
-;   decreases on every outer iteration.
-; - Expected Output:
-;   *****
-;   ****
-;   ***
-;   **
-;   *
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. LOGIC:
+;    - Row 1 = 5 stars, Row 2 = 4 stars ... Row 5 = 1 star.
+;    - This utilizes a 'double-nested' control structure where the inner count
+;      decreases on every outer iteration.
+;    - Expected Output:
+;      *****
+;      ****
+;      ***
+;      **
+;      *
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
