@@ -18,11 +18,11 @@
 
 <div align="center">
 
-  [ Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Program Details](#program-details) &nbsp;·&nbsp; [�️ Roadmap](#learning-roadmap)
+  [📖 Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Program Details](#program-details) &nbsp;·&nbsp; [🗺️ Roadmap](#learning-roadmap)
   <br>
-  [⚙️ Prerequisites](#prerequisites) &nbsp;·&nbsp; [�🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [🌟 Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [🔧 Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [🔗 Resources](#useful-resources)
+  [⚙️ Prerequisites](#prerequisites) &nbsp;·&nbsp; [🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [🌟 Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [🔧 Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [🔗 Resources](#useful-resources)
   <br>
-  [👥 Authors](#authors) &nbsp;·&nbsp; [� License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository)
+  [👥 Authors](#authors) &nbsp;·&nbsp; [📜 License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository)
 
 </div>
 
@@ -679,11 +679,11 @@ Special thanks to the peers whose discussions and support contributed meaningful
 
   **[⬆ Back to Top](#8086-assembly-language-programs)**
   <br>
-  [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Programs](#program-details) &nbsp;·&nbsp; [Roadmap](#learning-roadmap)
+  [📖 Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Programs](#program-details) &nbsp;·&nbsp; [🗺️ Roadmap](#learning-roadmap)
   <br>
-  [Prerequisites](#prerequisites) &nbsp;·&nbsp; [Usage](#usage-guidelines) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [Resources](#useful-resources)
+  [⚙️ Prerequisites](#prerequisites) &nbsp;·&nbsp; [🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [🌟 Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [🔧 Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [🔗 Resources](#useful-resources)
   <br>
-  [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
+  [📜 License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository) &nbsp;·&nbsp; [🙏 Acknowledgments](#acknowledgments)
 
   <br>
 
