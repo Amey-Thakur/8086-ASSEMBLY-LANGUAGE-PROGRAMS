@@ -524,6 +524,19 @@ To successfully run these programs, you need the following environment:
 
 ---
 
+<!-- LEARNING ROADMAP -->
+## 🗺️ Learning Roadmap
+
+Suggested progression for mastering 8086 assembly using this repository:
+
+1.  **🟢 Basics (Level 1)**: Start with `Introduction` to understand syntax (`MOV`, variables) and `Addressing Modes`.
+2.  **🟡 Logic (Level 2)**: Move to `Arithmetic`, `Bitwise Operations`, and `Flags` to grasp data manipulation.
+3.  **🟠 Control (Level 3)**: Master `Control Flow` (loops/jumps) and `Conversion` logic.
+4.  **🔴 Advanced (Level 4)**: Tackle `Procedures`, `Macros`, and `Stack Operations` for modular code.
+5.  **🟣 System (Level 5)**: Explore `Interrupts`, `File Operations`, and `External Devices` for real-world interaction.
+
+---
+
 <!-- QUICK REFERENCE -->
 ## 📌 Quick 8086 Reference
 
@@ -569,6 +582,18 @@ The programs may serve as practical lab examples or supplementary teaching resou
 
 **For Researchers**  
 The documentation and organization may provide insights into academic resource curation and educational content structuring.
+
+---
+
+<!-- TROUBLESHOOTING -->
+## 🔧 Common Issues & Troubleshooting
+
+| Issue | Possible Cause | Solution |
+|:---|:---|:---|
+| **"Wrong parameters"** | Mismatched operand sizes (e.g., `MOV AX, BL`) | Ensure both operands are 8-bit or 16-bit. Use `MOV AX, BX` or `MOV AL, BL`. |
+| **"Undefined symbol"** | Variable not declared in `DATA` segment | Define variables using `DB` (byte) or `DW` (word) before usage. |
+| **Infinite Loop** | Counter register (`CX`) not decrementing | Ensure `LOOP` or `DEC CX` is used correctly. Avoid modifying `CX` inside the loop body unnecessarily. |
+| **Garbage Output** | Missing string terminator | Ensure all strings displayed via `INT 21h/09h` end with a `$` character. |
 
 ---
 
