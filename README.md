@@ -18,11 +18,7 @@
 
 <div align="center">
 
-  [👥 Authors](#authors) &nbsp;·&nbsp; [📖 Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Program Details](#program-details)
-  <br>
-  [⚙️ Prerequisites](#prerequisites) &nbsp;·&nbsp; [🗺️ Roadmap](#learning-roadmap) &nbsp;·&nbsp; [🌟 Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [📌 Quick Reference](#quick-8086-reference)
-  <br>
-  [🔧 Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [🔗 Resources](#useful-resources) &nbsp;·&nbsp; [🤝 Contributing](#contributing) &nbsp;·&nbsp; [🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [📜 License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository)
+  [👥 Authors](#authors) &nbsp;·&nbsp; [📖 Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Program Details](#program-details) &nbsp;·&nbsp; [⚙️ Prerequisites](#prerequisites) &nbsp;·&nbsp; [🗺️ Roadmap](#learning-roadmap) &nbsp;·&nbsp; [🌟 Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [📌 Quick Reference](#quick-8086-reference) &nbsp;·&nbsp; [🔧 Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [🔗 Resources](#useful-resources) &nbsp;·&nbsp; [🤝 Contributing](#contributing) &nbsp;·&nbsp; [🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [📜 License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository)
 
 </div>
 
@@ -691,13 +687,7 @@ Special thanks to the peers whose discussions and support contributed meaningful
 <!-- FOOTER -->
 <div align="center">
 
-  **[⬆ Back to Top](#8086-assembly-language-programs)**
-  <br>
-  [👥 Authors](#authors) &nbsp;·&nbsp; [📖 Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Programs](#program-details)
-  <br>
-  [⚙️ Prerequisites](#prerequisites) &nbsp;·&nbsp; [🗺️ Roadmap](#learning-roadmap) &nbsp;·&nbsp; [🌟 Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [📌 Quick Reference](#quick-8086-reference)
-  <br>
-  [🔧 Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [🔗 Resources](#useful-resources) &nbsp;·&nbsp; [🤝 Contributing](#contributing) &nbsp;·&nbsp; [🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [📜 License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository)
+  **[⬆ Back to Top](#8086-assembly-language-programs)** &nbsp;·&nbsp; [👥 Authors](#authors) &nbsp;·&nbsp; [📖 Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Programs](#program-details) &nbsp;·&nbsp; [⚙️ Prerequisites](#prerequisites) &nbsp;·&nbsp; [🗺️ Roadmap](#learning-roadmap) &nbsp;·&nbsp; [🌟 Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [📌 Quick Reference](#quick-8086-reference) &nbsp;·&nbsp; [🔧 Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [🔗 Resources](#useful-resources) &nbsp;·&nbsp; [🤝 Contributing](#contributing) &nbsp;·&nbsp; [🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [📜 License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository)
 
   <br>
 
