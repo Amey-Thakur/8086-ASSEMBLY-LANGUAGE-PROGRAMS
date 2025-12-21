@@ -510,6 +510,36 @@ All programs in this repository were developed, verified, and documented by me d
 
 ---
 
+---
+
+<!-- PREREQUISITES -->
+## ⚙️ Prerequisites
+
+To successfully run these programs, you need the following environment:
+
+-   **Operating System**: Windows 7, 8, 10, or 11 (Emu8086 is strictly a Windows application).
+-   **Emulator**: **[Emu8086](https://github.com/Acurr/Emu8086)** (Recommended) or DOSBox with TASM/MASM.
+-   **Text Editor**: [VS Code](https://code.visualstudio.com/) (Optional, for better syntax highlighting using Assembly extensions).
+
+---
+
+<!-- QUICK REFERENCE -->
+## 📌 Quick 8086 Reference
+
+A handy cheat sheet of the most frequently used interrupts in this repository:
+
+| Interrupt | Function (AH) | Description | Usage Example |
+|:---:|:---:|:---|:---|
+| **INT 21h** | `01h` | Read Single Character | `MOV AH, 01h; INT 21h` |
+| **INT 21h** | `02h` | Print Single Character | `MOV AH, 02h; MOV DL, 'A'; INT 21h` |
+| **INT 21h** | `09h` | Print String (ends with `$`) | `MOV AH, 09h; LEA DX, MSG; INT 21h` |
+| **INT 21h** | `4Ch` | Terminate Program | `MOV AH, 4Ch; INT 21h` |
+| **INT 10h** | `00h` | Set Video Mode | `MOV AH, 00h; MOV AL, 13h; INT 10h` |
+| **INT 10h** | `0Eh` | Teletype Output | `MOV AH, 0Eh; MOV AL, 'X'; INT 10h` |
+| **INT 16h** | `00h` | Read Key Press (Wait) | `MOV AH, 00h; INT 16h` |
+
+---
+
 <!-- USAGE -->
 ## Usage Guidelines
 
