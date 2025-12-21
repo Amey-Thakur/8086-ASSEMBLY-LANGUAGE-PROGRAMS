@@ -1,99 +1,76 @@
-;=============================================================================
-; Program:     Display Hexadecimal
-; Description: Convert a 16-bit value into its 4-digit hexadecimal ASCII
-;              representation (0-9, A-F).
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Display Hexadecimal Representation
+; DESCRIPTION: Converts a 16-bit integer into its Hexadecimal (Base 16) ASCII 
+;              string using bitwise rotation and lookup logic.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    NUM DW 0ABCDH                       ; Example hexadecimal value
-    MSG DB 'Hexadecimal Value: $'
+    TEST_VAL    DW 0BEEFH               ; Example Value
+    MSG_OUT     DB "Hex Output: 0x$"
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize DS ---
     MOV AX, @DATA
     MOV DS, AX
-    
-    ; Display header message
-    LEA DX, MSG
+
+    ; --- Step 2: Display Header ---
+    LEA DX, MSG_OUT
     MOV AH, 09H
     INT 21H
+
+    ; --- Step 3: Print Hex ---
+    MOV AX, TEST_VAL
+    MOV BX, AX                          ; Copy to BX
+    MOV CX, 4                           ; 4 Nibbles in 16 bits (4x4=16)
+
+L_HEX_LOOP:
+    ROL BX, 4                           ; Rotate Left 4 to bring high nibble to low
+    MOV DL, BL                          ; Move LOW Byte to DL
+    AND DL, 0FH                         ; Mask out High Nibble of DL (0000xxxx)
     
-    ; Load number and print in hex
-    MOV AX, NUM
-    CALL PRINT_HEX
+    ; Convert 0-15 to ASCII
+    CMP DL, 9
+    JG L_LETTER
+    ADD DL, '0'
+    JMP L_PRINT
     
-    ; Print 'H' suffix for clarity
-    MOV DL, 'H'
+L_LETTER:
+    ADD DL, 'A' - 10                    ; Convert 10-15 to A-F
+
+L_PRINT:
     MOV AH, 02H
     INT 21H
-    
-    ; Exit to DOS
+    LOOP L_HEX_LOOP
+
+    ; --- Step 4: Exit ---
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
-
-;-----------------------------------------------------------------------------
-; PROCEDURE: PRINT_HEX
-; Input: AX (16-bit value)
-; Logic: Process 4 nibbles (4 bits each). Uses ROL and Masking.
-;-----------------------------------------------------------------------------
-PRINT_HEX PROC
-    PUSH AX
-    PUSH BX
-    PUSH CX
-    PUSH DX
-    
-    MOV BX, AX                          ; Use BX as working register
-    MOV CX, 4                           ; 4 hex digits in a 16-bit word
-    
-ROTATE_LOOP:
-    ROL BX, 4                           ; Bring next nibble to low 4 bits of BL
-    MOV AL, BL
-    AND AL, 0FH                         ; Mask out everything except the nibble
-    
-    ; Convert 0-F to '0'-'9' or 'A'-'F'
-    CMP AL, 9
-    JA HEX_LETTER
-    ADD AL, '0'                         ; Digit 0-9
-    JMP PRINT_DIGIT
-    
-HEX_LETTER:
-    ADD AL, 'A' - 10                    ; Letter A-F (Offset 10)
-    
-PRINT_DIGIT:
-    MOV DL, AL
-    MOV AH, 02H                         ; DOS: Print character
-    INT 21H
-    
-    LOOP ROTATE_LOOP                    ; Repeat for all nibbles
-    
-    POP DX
-    POP CX
-    POP BX
-    POP AX
-    RET
-PRINT_HEX ENDP
-
 END MAIN
 
-;=============================================================================
-; HEXADECIMAL NOTES:
-; - One hex digit represents exactly 4 bits (a nibble).
-; - ROL BX, 4 is an efficient way to iterate nibbles from High to Low.
-; - ASCII math: 'A' follows '9' with a gap in the ASCII table, 
-;   handled here by CMP and conditional branches.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. NIBBLE PROCESSING:
+;    Hexadecimal maps directly to binary 4-bit chunks (nibbles).
+;    - A word has 4 nibbles.
+;    - ROL BX, 4 brings the next MS-Nibble to the LS-Nibble position sequentially.
+;
+; 2. ASCII CONVERSION:
+;    - Values 0-9 map to '0'-'9' (0x30-0x39).
+;    - Values 10-15 map to 'A'-'F' (0x41-0x46).
+;    - 'A' is 65 (0x41). 10 + ('A'-10) = 65 correctly aligns the offset.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
