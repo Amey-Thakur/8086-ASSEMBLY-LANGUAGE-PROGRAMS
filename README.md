@@ -18,7 +18,7 @@
 
 <div align="center">
 
-  [👥 Authors](#authors) &nbsp;·&nbsp; [📖 Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Program Details](#program-details) &nbsp;·&nbsp; [⚙️ Prerequisites](#prerequisites) &nbsp;·&nbsp; [🗺️ Roadmap](#learning-roadmap) &nbsp;·&nbsp; [🌟 Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [📌 Quick Reference](#quick-8086-reference) &nbsp;·&nbsp; [🔧 Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [🔗 Resources](#useful-resources) &nbsp;·&nbsp; [🤝 Contributing](#contributing) &nbsp;·&nbsp; [🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [📜 License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository)
+  [👥 Authors](#authors) &nbsp;·&nbsp; [📖 Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Program Details](#program-details) &nbsp;·&nbsp; [⚙️ Prerequisites](#prerequisites) &nbsp;·&nbsp; [🗺️ Roadmap](#learning-roadmap) &nbsp;·&nbsp; [🌟 Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [📌 Quick Reference](#quick-8086-reference) &nbsp;·&nbsp; [🔧 Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [🔗 Resources](#useful-resources) &nbsp;·&nbsp; [🤝 Contributing](#contributing) &nbsp;·&nbsp; [🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [📜 License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository) &nbsp;·&nbsp; [🙏 Acknowledgments](#acknowledgments)
 
 </div>
 
@@ -47,7 +47,7 @@
 ---
 
 <!-- OVERVIEW -->
-## 📖 Overview
+## Overview
 
 The **8086 Assembly Language Programs** repository is a curated collection of low-level assembly code designed to verify and strengthen the understanding of the 8086 microprocessor architecture. It demonstrates the practical implementation of instruction sets, memory management, and hardware simulation using the **Emu8086** emulator.
 
@@ -73,7 +73,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 ---
 
 <!-- FEATURES -->
-## ✨ Features
+## Features
 
 | Feature | Description |
 |---------|-------------|
@@ -94,7 +94,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 ---
 
 <!-- STRUCTURE -->
-## 📁 Project Structure
+## Project Structure
 
 ```
 8086-ASSEMBLY-LANGUAGE-PROGRAMS/
@@ -134,7 +134,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 ---
 
 <!-- PROGRAM DETAILS -->
-## 💾 Program Details
+## Program Details
 
 > [!IMPORTANT]
 > Click on each section below to expand and view all programs with direct links to source code.
@@ -519,7 +519,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 ---
 
 <!-- PREREQUISITES -->
-## ⚙️ Prerequisites
+## Prerequisites
 
 > [!WARNING]
 > **System Requirements**: Ensure your environment meets these requirements before running the programs.
@@ -534,7 +534,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 ---
 
 <!-- LEARNING ROADMAP -->
-## 🗺️ Learning Roadmap
+## Learning Roadmap
 
 Suggested progression for mastering 8086 assembly using this repository:
 
@@ -547,7 +547,7 @@ Suggested progression for mastering 8086 assembly using this repository:
 ---
 
 <!-- BEST PRACTICES -->
-## 🌟 Best Practices for Assembly
+## Best Practices for Assembly
 
 Writing maintainable assembly code is an art. Follow these principles used in this repository:
 
@@ -560,7 +560,7 @@ Writing maintainable assembly code is an art. Follow these principles used in th
 ---
 
 <!-- QUICK REFERENCE -->
-## 📌 Quick 8086 Reference
+## Quick 8086 Reference
 
 A handy cheat sheet of the most frequently used interrupts in this repository:
 
@@ -579,7 +579,7 @@ A handy cheat sheet of the most frequently used interrupts in this repository:
 
 
 <!-- TROUBLESHOOTING -->
-## 🔧 Common Issues & Troubleshooting
+## Common Issues & Troubleshooting
 
 | Issue | Possible Cause | Solution |
 |:---|:---|:---|
@@ -593,7 +593,7 @@ A handy cheat sheet of the most frequently used interrupts in this repository:
 ---
 
 <!-- RESOURCES -->
-## 🔗 Useful Resources
+## Useful Resources
 
 Essential tools and documentation for 8086 programming:
 
@@ -605,7 +605,7 @@ Essential tools and documentation for 8086 programming:
 ---
 
 <!-- CONTRIBUTING -->
-## 🤝 Contributing
+## Contributing
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
@@ -618,7 +618,7 @@ Contributions are what make the open-source community such an amazing place to l
 ---
 
 <!-- USAGE -->
-## 🚀 Usage Guidelines
+## Usage Guidelines
 
 ### 📥 Execution Steps
 
@@ -652,7 +652,7 @@ The documentation and organization may provide insights into academic resource c
 ---
 
 <!-- LICENSE -->
-## 📜 License
+## License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
@@ -663,7 +663,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ---
 
 <!-- ABOUT -->
-## ℹ️ About This Repository
+## About This Repository
 
 **Created & Maintained by**: [Amey Thakur](https://github.com/Amey-Thakur)  
 **Academic Journey**: Bachelor of Engineering in Computer Engineering (2018-2022)  
@@ -674,7 +674,7 @@ This repository represents a comprehensive collection of 8086 assembly programs 
 
 **Connect**: [GitHub](https://github.com/Amey-Thakur) · [LinkedIn](https://www.linkedin.com/in/amey-thakur)
 
-### 🙏 Acknowledgments
+### Acknowledgments
 
 Special thanks to the faculty members of the **Department of Computer Engineering** at Terna Engineering College for their guidance and instruction in Microprocessors. Their clear teaching and continued support helped develop a strong understanding of low-level system architecture.
 
@@ -685,7 +685,7 @@ Special thanks to the peers whose discussions and support contributed meaningful
 <!-- FOOTER -->
 <div align="center">
 
-  **[⬆ Back to Top](#8086-assembly-language-programs)** &nbsp;·&nbsp; [👥 Authors](#authors) &nbsp;·&nbsp; [📖 Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Programs](#program-details) &nbsp;·&nbsp; [⚙️ Prerequisites](#prerequisites) &nbsp;·&nbsp; [🗺️ Roadmap](#learning-roadmap) &nbsp;·&nbsp; [🌟 Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [📌 Quick Reference](#quick-8086-reference) &nbsp;·&nbsp; [🔧 Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [🔗 Resources](#useful-resources) &nbsp;·&nbsp; [🤝 Contributing](#contributing) &nbsp;·&nbsp; [🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [📜 License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository)
+  **[⬆ Back to Top](#8086-assembly-language-programs)** &nbsp;·&nbsp; [👥 Authors](#authors) &nbsp;·&nbsp; [📖 Overview](#overview) &nbsp;·&nbsp; [✨ Features](#features) &nbsp;·&nbsp; [📁 Structure](#project-structure) &nbsp;·&nbsp; [💾 Programs](#program-details) &nbsp;·&nbsp; [⚙️ Prerequisites](#prerequisites) &nbsp;·&nbsp; [🗺️ Roadmap](#learning-roadmap) &nbsp;·&nbsp; [🌟 Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [📌 Quick Reference](#quick-8086-reference) &nbsp;·&nbsp; [🔧 Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [🔗 Resources](#useful-resources) &nbsp;·&nbsp; [🤝 Contributing](#contributing) &nbsp;·&nbsp; [🚀 Usage](#usage-guidelines) &nbsp;·&nbsp; [📜 License](#license) &nbsp;·&nbsp; [ℹ️ About](#about-this-repository) &nbsp;·&nbsp; [🙏 Acknowledgments](#acknowledgments)
 
   <br>
 
