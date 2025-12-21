@@ -86,12 +86,10 @@ As a computer engineer, understanding the underlying hardware-software interface
 
 ### 🛠️ Tech Stack
 
-```
-📦 Architecture  → Intel 8086 (16-bit)
-🔧 Assembler     → MASM / TASM Syntax Compatibility
-💻 Emulator      → Emu8086
-⚙️ Language      → Assembly (ASM)
-```
+- 📦 **Architecture** → Intel 8086 (16-bit)
+- 🔧 **Assembler** → MASM / TASM Syntax Compatibility
+- 💻 **Emulator** → Emu8086
+- ⚙️ **Language** → Assembly (ASM)
 
 ---
 
