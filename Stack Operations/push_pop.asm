@@ -1,25 +1,24 @@
-;=============================================================================
-; Program:     PUSH and POP Mechanics
-; Description: Demonstrate the fundamental Last-In-First-Out (LIFO) behavior 
+; =============================================================================
+; TITLE: PUSH and POP Mechanics
+; DESCRIPTION: Demonstrate the fundamental Last-In-First-Out (LIFO) behavior 
 ;              of the 8086 hardware stack through register manipulation.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
-.STACK 100H                         ; Allocate 256 bytes for system stack
+.STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     MSG DB 'Stack Operations Trace - Observe Registers in Debugger$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize context
@@ -49,10 +48,12 @@ MAIN PROC
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; STACK MECHANICS NOTES:
-; - The stack grows "downwards" in memory (from higher towards lower addresses).
-; - PUSH: Decrements SP by 2, then copies word to [SS:SP].
-; - POP: Copies word from [SS:SP], then increments SP by 2.
-; - PUSH/POP must operate on 16-bit (Word) operands in 8086.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. STACK MECHANICS:
+;    - The stack grows "downwards" in memory (from higher towards lower addresses).
+;    - PUSH: Decrements SP by 2, then copies word to [SS:SP].
+;    - POP: Copies word from [SS:SP], then increments SP by 2.
+;    - PUSH/POP must operate on 16-bit (Word) operands in 8086.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

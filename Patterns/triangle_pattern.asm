@@ -1,26 +1,25 @@
-;=============================================================================
-; Program:     Right-Angled Triangle Pattern
-; Description: Generate an increasing star pattern (*) using nested loops 
+; =============================================================================
+; TITLE: Right-Angled Triangle Pattern
+; DESCRIPTION: Generate an increasing star pattern (*) using nested loops 
 ;              to iterate through rows and columns.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     ROWS DB 5                           ; Total height of the triangle
     MSG  DB 'Right-Angled Star Triangle:', 0DH, 0AH, '$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Segment registers initialization
@@ -35,15 +34,15 @@ MAIN PROC
     MOV BL, 1                           ; Number of stars for first row
     MOV BH, ROWS                        ; Counter for total rows
     
-;-------------------------------------------------------------------------
-; OUTER ROW LOOP: Managed by BH
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; OUTER ROW LOOP: Managed by BH
+    ; -------------------------------------------------------------------------
 ROW_START:
     PUSH BX                             ; Preserve state for inner processing
     
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     ; INNER COLUMN LOOP: Managed by CL
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     MOV CL, BL                          ; Load current star count
 STAR_PRINT:
     MOV DL, '*'
@@ -69,14 +68,16 @@ STAR_PRINT:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; TRIANGLE PATTERN NOTES:
-; - Standard nested loop architecture (O(N^2)).
-; - Uses CX register with the 'LOOP' opcode for efficient inner iteration.
-; - Expected Output:
-;   *
-;   **
-;   ***
-;   ****
-;   *****
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. LOOP ARCHITECTURE:
+;    - Standard nested loop architecture (O(N^2)).
+;    - Uses CX register with the 'LOOP' opcode for efficient inner iteration.
+;    - Expected Output:
+;      *
+;      **
+;      ***
+;      ****
+;      *****
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

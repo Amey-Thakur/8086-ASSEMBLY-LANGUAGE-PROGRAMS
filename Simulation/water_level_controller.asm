@@ -1,29 +1,28 @@
-;=============================================================================
-; Program:     Water Level Controller (Simulation)
-; Description: Emulate an automated pump system for an overhead tank. 
+; =============================================================================
+; TITLE: Water Level Controller (Simulation)
+; DESCRIPTION: Emulate an automated pump system for an overhead tank. 
 ;              Simulates motor switching, water level monitoring (8 levels), 
 ;              and overflow protection logic.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    MSG_LEVEL    DB 10,13,"Monitoring: Tank water level is: $"
-    MSG_MOTOR_ON DB 10,13,"[AUTO] Level Critical. Switching ON Motor... $"
+    MSG_LEVEL     DB 10,13,"Monitoring: Tank water level is: $"
+    MSG_MOTOR_ON  DB 10,13,"[AUTO] Level Critical. Switching ON Motor... $"
     MSG_MOTOR_OFF DB 10,13,"[AUTO] Level High. Switching OFF Motor... $"
     MSG_OVERFLOW  DB 10,13,07,"!!! WARNING: WATER OVERFLOW DETECTED !!! $"
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize System
@@ -43,9 +42,9 @@ MONITOR_CYCLE:
     MOV AH, 02H
     INT 21H
     
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     ; CONTROL LOGIC (State machine)
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     
     CMP CL, 8                           ; Check for Max Level
     JE STOP_PUMP
@@ -62,9 +61,9 @@ RESUME_SENSING:
     
     JMP SYSTEM_EXIT
 
-;-------------------------------------------------------------------------
-; SYSTEM ACTIONS
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; SYSTEM ACTIONS
+    ; -------------------------------------------------------------------------
 
 START_PUMP:
     LEA DX, MSG_MOTOR_ON
@@ -88,10 +87,12 @@ SYSTEM_EXIT:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; CONTROLLER NOTES:
-; - This models a simple logic gate controller (PLC-like behavior).
-; - Level 1 is the 'Low-Water' trigger (Switch ON).
-; - Level 8 is the 'Full' trigger (Switch OFF + Alarm).
-; - 07h is sent to standard output to simulate the physical buzzer.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. SYSTEM MODEL:
+;    - This models a simple logic gate controller (PLC-like behavior).
+;    - Level 1 is the 'Low-Water' trigger (Switch ON).
+;    - Level 8 is the 'Full' trigger (Switch OFF + Alarm).
+;    - 07h is sent to standard output to simulate the physical buzzer.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

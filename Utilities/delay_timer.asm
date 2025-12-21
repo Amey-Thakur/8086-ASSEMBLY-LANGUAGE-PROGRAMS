@@ -1,16 +1,25 @@
+; =============================================================================
 ; TITLE: Time Delay Utilities
-; DESCRIPTION: A collection of methods to create pauses in program execution using software loops and BIOS clock ticks.
+; DESCRIPTION: A collection of methods to create pauses in program execution 
+;              using software loops and BIOS clock ticks.
 ; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
 ; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
 ; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+; -----------------------------------------------------------------------------
+; DATA SEGMENT
+; -----------------------------------------------------------------------------
 .DATA
     MSG1 DB 'Starting approximately 1-second delay...', 0DH, 0AH, '$'
     MSG2 DB 'Delay complete!', 0DH, 0AH, '$'
 
+; -----------------------------------------------------------------------------
+; CODE SEGMENT
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize the Data Segment
@@ -90,17 +99,19 @@ WAIT_TICK:
     RET
 DELAY_BIOS ENDP
 
-; =============================================================================
-; NOTES:
-; 1. CLOCK TICKS: The IBM PC BIOS increments a tick counter (located at memory 
-;    address 0040:006Ch) every 55 milliseconds based on the PIT (18.2 Hz).
-; 2. BUSY-WAITING: Method 1 (Nested Loops) is highly unreliable on modern 
-;    emulators (like DOSBox) or faster CPUs as it will execute too quickly.
-; 3. PRECISION: INT 1AH (Method 2) is the standard DOS-era way to handle 
-;    time-based events without using high-resolution hardware timers as it 
-;    relies on a hardware interrupt rather than instruction speed.
-; 4. OVERFLOW: Note that Method 2 has a subtle bug if BX overflows 65535 near 
-;    the 16-bit boundary. A production implementation would check for CX change.
-; =============================================================================
-
 END MAIN
+
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. CLOCK TICKS:
+;    - IBM PC BIOS increments a tick counter (at 0040:006Ch) every 55ms.
+;    - Based on PIT frequency (18.2 Hz).
+; 2. BUSY-WAITING: 
+;    - Method 1 (Nested Loops) is unreliable on modern CPUs/Emulators.
+; 3. PRECISION: 
+;    - INT 1AH (Method 2) is the standard DOS way for non-critical timing.
+;    - Relies on hardware interrupt, not CPU speed.
+; 4. OVERFLOW:
+;    - Method 2 has a subtle bug if BX overflows 65535 near 16-bit boundary.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

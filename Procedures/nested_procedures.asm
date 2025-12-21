@@ -1,27 +1,26 @@
-;=============================================================================
-; Program:     Nested Procedure Calls
-; Description: Demonstrate procedural hierarchy where one subroutine calls 
+; =============================================================================
+; TITLE: Nested Procedure Calls
+; DESCRIPTION: Demonstrate procedural hierarchy where one subroutine calls 
 ;              another, showcasing the stack's LIFO nature for return addresses.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    NUM    DW 10
-    RESULT DW ?
-    MSG    DB 'Success: Nested procedure hierarchy executed.$'
+    NUM     DW 10
+    RESULT  DW ?
+    MSG     DB 'Success: Nested procedure hierarchy executed.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 
 ; Level 2: Inner Procedure
@@ -62,10 +61,12 @@ MAIN ENDP
 
 END MAIN
 
-;=============================================================================
-; NESTING NOTES:
-; - Each 'CALL' adds an entry to the hardware stack.
-; - Inner procedures must always return (RET) before the outer procedures
-;   can resume their work.
-; - There is no limit to nesting depth other than the available stack memory.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. NESTING:
+;    - Each 'CALL' adds an entry to the hardware stack.
+;    - Inner procedures must always return (RET) before the outer procedures
+;      can resume their work.
+;    - There is no limit to nesting depth other than the available stack memory.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

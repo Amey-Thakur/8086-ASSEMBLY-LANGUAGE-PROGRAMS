@@ -1,29 +1,28 @@
-;=============================================================================
-; Program:     Reverse String (Stack Implementation)
-; Description: Utilize the stack's LIFO property to reverse a string's
+; =============================================================================
+; TITLE: Reverse String (Stack Implementation)
+; DESCRIPTION: Utilize the stack's LIFO property to reverse a string's
 ;              character order.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    STR1    DB 'HELLO', '$'
-    STR_LEN EQU 5
-    NEWLINE DB 0DH, 0AH, '$'
-    MSG_ORIG DB 'Original: $'
-    MSG_REV  DB 'Reversed: $'
+    STR1        DB 'HELLO', '$'
+    STR_LEN     EQU 5
+    NEWLINE     DB 0DH, 0AH, '$'
+    MSG_ORIG    DB 'Original: $'
+    MSG_REV     DB 'Reversed: $'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Setup Segment
@@ -73,9 +72,11 @@ POPPING:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; REVERSAL LOGIC NOTES:
-; - Stack is the ideal data structure for any "Reverse" operation.
-; - Pushing 'H', 'E', 'L', 'L', 'O' results in 'O' being at the top.
-; - Popping 'O', 'L', 'L', 'E', 'H' effectively reverses the sequence.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. REVERSAL LOGIC:
+;    - Stack is the ideal data structure for any "Reverse" operation.
+;    - Pushing 'H', 'E', 'L', 'L', 'O' results in 'O' being at the top.
+;    - Popping 'O', 'L', 'L', 'E', 'H' effectively reverses the sequence.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

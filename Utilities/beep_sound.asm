@@ -1,15 +1,24 @@
+; =============================================================================
 ; TITLE: Beep Sound Generation
-; DESCRIPTION: A utility program to generate a beep sound using two methods: DOS Bell character and direct speaker control concepts.
+; DESCRIPTION: A utility program to generate a beep sound using two methods: 
+;              DOS Bell character and direct speaker control concepts.
 ; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
 ; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
 ; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+; -----------------------------------------------------------------------------
+; DATA SEGMENT
+; -----------------------------------------------------------------------------
 .DATA
     MSG DB 'Generating system beep sound...', 0DH, 0AH, '$'
 
+; -----------------------------------------------------------------------------
+; CODE SEGMENT
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize the Data Segment
@@ -48,20 +57,19 @@ MAIN PROC
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
+END MAIN
 
 ; =============================================================================
-; NOTES:
-; 1. BELL CHARACTER: ASCII 07H (known as BEL) is a standard control character.
-;    When sent to a terminal or DOS console, it instructs the OS to produce 
-;    the default system beep.
-; 2. SPEAKER INTERFACE: The PC speaker is controlled by the Intel 8253/8254 
-;    Timer and Port 61H. Bit 0 of Port 61H connects the output of Timer 2 to 
-;    the speaker, and bit 1 controls the data signal.
-; 3. PROGRAMMABLE INTERVAL TIMER (PIT): To generate specific frequencies, one
-;    would program Timer 2 (Port 42H) with a divisor for the 1.19318 MHz clock.
-; 4. REGISTER USAGE:
+; TECHNICAL NOTES
+; =============================================================================
+; 1. BELL CHARACTER:
+;    - ASCII 07H (known as BEL) is a standard control character.
+;    - Sent to terminal/DOS console -> Default system beep.
+; 2. SPEAKER INTERFACE:
+;    - PC speaker is controlled by Intel 8253/8254 Timer and Port 61H.
+;    - Bit 0 of Port 61H connects Timer 2 output to speaker.
+;    - Bit 1 controls data signal.
+; 3. REGISTER USAGE:
 ;    - DL: Holds the character to be printed.
 ;    - AH: DOS function selector.
-; =============================================================================
-
-END MAIN
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

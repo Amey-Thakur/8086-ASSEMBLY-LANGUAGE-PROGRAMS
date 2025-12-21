@@ -1,30 +1,29 @@
-;=============================================================================
-; Program:     Linear Search Implementation
-; Description: Search for an 8-bit element in an array using sequential 
+; =============================================================================
+; TITLE: Linear Search Implementation
+; DESCRIPTION: Search for an 8-bit element in an array using sequential 
 ;              comparison and loop-based traversal.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    ARRAY   DB 01h, 02h, 03h, 04h, 05h, 06h, 07h, 08h, 09h, 10h
-    A_LEN   EQU 10
-    TARGET  DB 05h                       ; Element to find
+    ARRAY       DB 01h, 02h, 03h, 04h, 05h, 06h, 07h, 08h, 09h, 10h
+    A_LEN       EQU 10
+    TARGET      DB 05h                   ; Element to find
     
-    MSG_FOUND DB 'Element located in array! (True/FFh in DL)$'
-    MSG_FAIL  DB 'Element not present in array. (False/00h in DL)$'
+    MSG_FOUND   DB 'Element located in array! (True/FFh in DL)$'
+    MSG_FAIL    DB 'Element not present in array. (False/00h in DL)$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize data access
@@ -35,9 +34,9 @@ MAIN PROC
     LEA BX, ARRAY                       ; Base address of array
     MOV SI, 0                           ; Index offset
     
-;-------------------------------------------------------------------------
-; SEQUENTIAL SCAN LOOP
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; SEQUENTIAL SCAN LOOP
+    ; -------------------------------------------------------------------------
 SCAN_ARRAY:
     MOV AL, [BX+SI]                     ; Access current element
     CMP AL, TARGET                      ; Check against our key
@@ -46,7 +45,7 @@ SCAN_ARRAY:
     INC SI                              ; Move to next byte
     LOOP SCAN_ARRAY                     ; Repeat until CX becomes 0
     
-; If we reach here, no match was found
+    ; If we reach here, no match was found
 NO_MATCH:
     MOV DL, 00H                         ; Set failure flag
     LEA DX, MSG_FAIL
@@ -67,10 +66,12 @@ DISPLAY_AND_EXIT:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; LINEAR SEARCH NOTES:
-; - Best Case: O(1) - element is at the very start.
-; - Worst Case: O(N) - element is at the end or missing.
-; - Does not require the array to be sorted.
-; - The 'LOOP' instruction in 8086 is a convenient way to perform this scan.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. LINEAR SEARCH:
+;    - Best Case: O(1) - element is at the very start.
+;    - Worst Case: O(N) - element is at the end or missing.
+;    - Does not require the array to be sorted.
+;    - The 'LOOP' instruction in 8086 is a convenient way to perform this scan.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

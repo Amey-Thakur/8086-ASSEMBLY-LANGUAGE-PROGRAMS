@@ -1,18 +1,17 @@
-;=============================================================================
-; Program:     Basic Procedure Execution
-; Description: Demonstrate the use of subroutines to avoid code duplication
+; =============================================================================
+; TITLE: Basic Procedure Execution
+; DESCRIPTION: Demonstrate the use of subroutines to avoid code duplication
 ;              for repetitive tasks like numeric scaling.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 ORG 100H                            ; Standard COM entry point
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; MAIN EXECUTION FLOW
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 START:
     MOV AL, 01H                         ; Initial value
     MOV BL, 02H                         ; Scaling factor
@@ -26,10 +25,10 @@ START:
     ; Return back to the shell
     RET
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; SUBROUTINE: M2
 ; Description: Multiplies AL by BL. Result returns in AX.
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 M2 PROC
     MUL BL                              ; Multiply accumulator by BL
     RET                                 ; Jump back to the caller (POP IP)
@@ -37,10 +36,12 @@ M2 ENDP
 
 END
 
-;=============================================================================
-; SUBROUTINE NOTES:
-; - Procedures (Procs) encapsulate reusable logic.
-; - The 'CALL' instruction pushes the IP (Instruction Pointer) onto the stack.
-; - The 'RET' instruction pops that address back into the IP to resume flow.
-; - This reduces the binary size compared to inline macro expansion.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. PROCEDURES:
+;    - Procedures (Procs) encapsulate reusable logic.
+;    - The 'CALL' instruction pushes the IP (Instruction Pointer) onto the stack.
+;    - The 'RET' instruction pops that address back into the IP to resume flow.
+;    - This reduces the binary size compared to inline macro expansion.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

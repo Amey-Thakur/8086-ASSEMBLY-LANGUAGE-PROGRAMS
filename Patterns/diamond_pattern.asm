@@ -1,26 +1,25 @@
-;=============================================================================
-; Program:     Diamond Star Pattern
-; Description: Generate and display a symmetric diamond pattern using 
+; =============================================================================
+; TITLE: Diamond Star Pattern
+; DESCRIPTION: Generate and display a symmetric diamond pattern using 
 ;              asterisks (*) and spaces through nested loop logic.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     HALF_HEIGHT DB 5                    ; Number of rows for the upper half
-    MSG DB 'Symmetric Diamond Pattern:', 0DH, 0AH, '$'
+    MSG         DB 'Symmetric Diamond Pattern:', 0DH, 0AH, '$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     MOV AX, @DATA
@@ -31,9 +30,9 @@ MAIN PROC
     MOV AH, 09H
     INT 21H
     
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     ; PART 1: UPPER HALF (Including Middle Row)
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     MOV BL, 1                           ; Current row star count
     MOV BH, HALF_HEIGHT                 ; Remaining rows to print
     
@@ -71,9 +70,9 @@ STAR_UPPER:
     DEC BH                              ; Decrease row counter
     JNZ UPPER_HALF_LOOP
     
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     ; PART 2: LOWER HALF (Remaining HALF_HEIGHT - 1 rows)
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     MOV BL, HALF_HEIGHT
     DEC BL                              ; Start with one less than max stars
     MOV BH, BL                          ; Row counter
@@ -126,10 +125,12 @@ PRINT_NEWLINE ENDP
 
 END MAIN
 
-;=============================================================================
-; PATTERN LOGIC NOTES:
-; - The diamond consists of an increasing triangle followed by a decreasing one.
-; - Space indentation is calculated as: MaxRows - CurrentRow.
-; - Pushing CX/BX to the stack is essential when using nested LOOP instructions
-;   to prevent register corruption.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. PATTERN LOGIC:
+;    - The diamond consists of an increasing triangle followed by a decreasing one.
+;    - Space indentation is calculated as: MaxRows - CurrentRow.
+;    - Pushing CX/BX to the stack is essential when using nested LOOP instructions
+;      to prevent register corruption.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

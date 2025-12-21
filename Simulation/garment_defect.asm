@@ -1,30 +1,29 @@
-;=============================================================================
-; Program:     Garment Defect Detection (Simulation)
-; Description: Simulate a quality control station in a textile factory. 
+; =============================================================================
+; TITLE: Garment Defect Detection (Simulation)
+; DESCRIPTION: Simulate a quality control station in a textile factory. 
 ;              The program scans "pieces" (array elements) against grade
 ;              thresholds and logs inventory statistics.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    THRESHOLD1 DB ?                      ; Quality cut-off 1
-    THRESHOLD2 DB ?                      ; Quality cut-off 2
+    THRESHOLD1  DB ?                     ; Quality cut-off 1
+    THRESHOLD2  DB ?                     ; Quality cut-off 2
     
     ; Array of garment grades (1-9)
-    BATCH      DB 1, 2, 3, 4, 5, 6, 7, 8, 9, 0
+    BATCH       DB 1, 2, 3, 4, 5, 6, 7, 8, 9, 0
     BATCH_COUNT EQU 10
     
-    GOOD_COUNT DB 10                     ; Initial assumption
-    BAD_COUNT  DB 0                      ; Counter for defects
+    GOOD_COUNT  DB 10                    ; Initial assumption
+    BAD_COUNT   DB 0                     ; Counter for defects
     
     MSG_T1      DB 10,13,"Enter Minimum Grade (T1): $"
     MSG_T2      DB 10,13,"Enter Maximum Tolerance (T2): $"
@@ -33,9 +32,9 @@
     MSG_REPORT_G DB 10,13,"Inventory Report: Good pieces = $"
     MSG_REPORT_B DB 10,13,"Inventory Report: Defective pieces = $"
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; State init
@@ -91,9 +90,9 @@ NEXT_PIECE:
     INC SI
     LOOP PROCESS_LOOP
     
-;-------------------------------------------------------------------------
-; FINAL INVENTORY REPORT
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; FINAL INVENTORY REPORT
+    ; -------------------------------------------------------------------------
     ; Display Good
     LEA DX, MSG_REPORT_G
     MOV AH, 09H
@@ -118,9 +117,11 @@ NEXT_PIECE:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; SMART AUTOMATION NOTES:
-; - Array 'BATCH' represents a physical conveyor belt.
-; - Thresholding simulates sensor input.
-; - Inventory reporting is a key feature of Industrial IoT (IIoT) logic.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. ANALOGY:
+;    - Array 'BATCH' represents a physical conveyor belt.
+;    - Thresholding simulates sensor input.
+;    - Inventory reporting is a key feature of Industrial IoT (IIoT) logic.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

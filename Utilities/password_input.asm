@@ -1,23 +1,32 @@
+; =============================================================================
 ; TITLE: Secure Password Input with Masking
-; DESCRIPTION: A program that reads a password from the keyboard without echoing it, displaying asterisks instead for privacy.
+; DESCRIPTION: A program that reads a password from the keyboard without 
+;              echoing it, displaying asterisks instead for privacy.
 ; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
 ; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
 ; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
+; -----------------------------------------------------------------------------
+; DATA SEGMENT
+; -----------------------------------------------------------------------------
 .DATA
-    PROMPT DB 'Enter password: $'
-    CORRECT_PASS DB 'secret', 0 ; The predefined correct password
-    PASS_LEN EQU 6
+    PROMPT          DB 'Enter password: $'
+    CORRECT_PASS    DB 'secret', 0 ; The predefined correct password
+    PASS_LEN        EQU 6
     
     ; Buffer to store user input
-    INPUT_PASS DB 20 DUP(0)
+    INPUT_PASS      DB 20 DUP(0)
     
-    MSG_CORRECT DB 0DH, 0AH, 'Access Granted!$', 0DH, 0AH, '$'
-    MSG_WRONG DB 0DH, 0AH, 'Access Denied!$', 0DH, 0AH, '$'
+    MSG_CORRECT     DB 0DH, 0AH, 'Access Granted!$', 0DH, 0AH, '$'
+    MSG_WRONG       DB 0DH, 0AH, 'Access Denied!$', 0DH, 0AH, '$'
 
+; -----------------------------------------------------------------------------
+; CODE SEGMENT
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize the Data Segment
@@ -118,16 +127,16 @@ DISPLAY_RESULT:
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
-
-; =============================================================================
-; NOTES:
-; 1. SECURITY (NO-ECHO): Using AH=07H or AH=08H is standard for reading secrets 
-;    as AH=01H automatically prints the key to the screen.
-; 2. VISUAL MASKING: Printing '*' provides user feedback without exposing data.
-; 3. BACKSPACE HANDLING: Correct backspace implementation requires both 
-;    pointer manipulation and a "back-space-back" terminal sequence.
-; 4. COMPARISON: We use a simple loop-based comparison here. Alternatively, 
-;    REP CMPSB could be used if DS and ES are set correctly.
-; =============================================================================
-
 END MAIN
+
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. SECURITY (NO-ECHO): 
+;    - AH=07H or AH=08H is standard for reading secrets.
+;    - AH=01H automatically prints the key to the screen.
+; 2. VISUAL MASKING: 
+;    - Printing '*' provides user feedback without exposing data.
+; 3. BACKSPACE HANDLING: 
+;    - Requires pointer manipulation + "back-space-back" terminal sequence.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

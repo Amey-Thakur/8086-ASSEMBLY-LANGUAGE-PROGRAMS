@@ -1,27 +1,26 @@
-;=============================================================================
-; Program:     Procedure with Local Variables
-; Description: Demonstrate the standard way to allocate and use local 
+; =============================================================================
+; TITLE: Procedure with Local Variables
+; DESCRIPTION: Demonstrate the standard way to allocate and use local 
 ;              variables on the stack using the Base Pointer (BP) register.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     NUM1   DW 100
     NUM2   DW 50
     RESULT DW ?
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 
 ; Procedure: CALCULATE
@@ -77,11 +76,13 @@ MAIN ENDP
 
 END MAIN
 
-;=============================================================================
-; STACK FRAME NOTES:
-; - BP (Base Pointer) is the anchor for accessing both local variables 
-;   (negative offset) and parameters (positive offset).
-; - 'SUB SP, N' creates space for local variables on the stack.
-; - 'RET N' is used for the "Pascal Calling Convention" to clean up the 
-;   stack by the callee.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. STACK FRAME:
+;    - BP (Base Pointer) is the anchor for accessing both local variables 
+;      (negative offset) and parameters (positive offset).
+;    - 'SUB SP, N' creates space for local variables on the stack.
+;    - 'RET N' is used for the "Pascal Calling Convention" to clean up the 
+;      stack by the callee.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
