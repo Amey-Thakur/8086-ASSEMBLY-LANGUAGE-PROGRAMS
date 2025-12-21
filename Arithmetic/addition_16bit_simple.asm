@@ -9,10 +9,13 @@
 ; LICENSE: MIT License
 ; =============================================================================
 
+.MODEL SMALL
+.STACK 100H
+
 ; -----------------------------------------------------------------------------
 ; DATA SEGMENT
 ; -----------------------------------------------------------------------------
-DATA SEGMENT
+.DATA
     ; 8-bit variables (DB = Define Byte, 8 bits)
     VAL8_1 DB 05H                       ; Example 8-bit value 1
     VAL8_2 DB 06H                       ; Example 8-bit value 2
@@ -22,19 +25,16 @@ DATA SEGMENT
     VAL16_1 DW 1234H                    ; Example 16-bit value 1
     VAL16_2 DW 0055H                    ; Example 16-bit value 2
     SUM16   DW ?                        ; 16-bit result buffer
-DATA ENDS   
 
 ; -----------------------------------------------------------------------------
 ; CODE SEGMENT
 ; -----------------------------------------------------------------------------
-CODE SEGMENT
-    ASSUME CS:CODE, DS:DATA
-    
-START: 
+.CODE
+MAIN PROC
     ; --- Step 1: Initialize the Data Segment ---
     ; In the 8086 architecture, the DS register cannot be loaded directly with 
     ; an immediate value. We use AX as an intermediary.
-    MOV AX, DATA
+    MOV AX, @DATA
     MOV DS, AX                   
     
     ; --- Step 2: 8-bit Addition (Byte-level) ---
@@ -50,11 +50,11 @@ START:
     MOV SUM16, CX                  ; Store the 16-bit result back to memory
     
     ; --- Step 4: DOS Termination ---
-    ; AH = 4CH is the standard DOS interrupt for terminating a process.
     MOV AH, 4CH
     INT 21H
-    
-CODE ENDS
+MAIN ENDP
+
+END MAIN
 
 ; =============================================================================
 ; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
@@ -85,4 +85,3 @@ CODE ENDS
 ;      crashes.
 ; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-END START

@@ -1,118 +1,131 @@
-;=============================================================================
-; Program:     Count Vowels in String
-; Description: Count the number of vowels (A, E, I, O, U) in a sentence.
-;              Checks both uppercase and lowercase vowels.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Vowel Counter (String Analysis)
+; DESCRIPTION: Scans a string and counts the total number of vowels 
+;              (A, E, I, O, U), case-insensitive. Demonstrates string traversal 
+;              and conditional logic chains.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
-.STACK 100H 
-          
-;-----------------------------------------------------------------------------
+.STACK 100H
+
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    STRING DB 10, 13, "The quick brown fox jumped over lazy sleeping dog$"
-    VOWEL_COUNT DB ?                    ; Vowel count result
-    MSG1 DB 10, 13, "Number of vowels are: $"
- 
-;-----------------------------------------------------------------------------
+    TARGET_STR DB 0DH, 0AH, "The Quick Brown Fox Jumped Over The Lazy Dog$"
+    MSG_RES    DB 0DH, 0AH, "Total Vowels Found: $"
+    COUNT      DB 0
+
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize Data Segment ---
     MOV AX, @DATA
     MOV DS, AX
     
-    ;-------------------------------------------------------------------------
-    ; Initialize Counter and Pointer
-    ;-------------------------------------------------------------------------
-    MOV SI, OFFSET STRING               ; Point to string
-    MOV BL, 00                          ; Vowel counter
- 
-    ;-------------------------------------------------------------------------
-    ; Main Loop: Check Each Character
-    ;-------------------------------------------------------------------------
-BACK: 
-    MOV AL, [SI]                        ; Get character
-    CMP AL, '$'                         ; End of string?
-    JZ FINAL
-    
-    ; Check uppercase vowels
-    CMP AL, 'A'
-    JZ COUNT   
-    CMP AL, 'E'
-    JZ COUNT   
-    CMP AL, 'I'
-    JZ COUNT   
-    CMP AL, 'O'
-    JZ COUNT   
-    CMP AL, 'U'
-    JZ COUNT
-    
-    ; Check lowercase vowels
-    CMP AL, 'a'
-    JZ COUNT   
-    CMP AL, 'e'
-    JZ COUNT   
-    CMP AL, 'i'
-    JZ COUNT   
-    CMP AL, 'o'
-    JZ COUNT   
-    CMP AL, 'u'
-    JZ COUNT   
-    
-    INC SI                              ; Not a vowel, next character
-    JMP BACK
-
-    ;-------------------------------------------------------------------------
-    ; Found Vowel: Increment Counter
-    ;-------------------------------------------------------------------------
-COUNT: 
-    INC BL                              ; Increment vowel count
-    INC SI                              ; Next character
-    JMP BACK
-
-    ;-------------------------------------------------------------------------
-    ; Display Result
-    ;-------------------------------------------------------------------------
-FINAL: 
-    LEA DX, MSG1
+    ; --- Step 2: Show Input String ---
+    LEA DX, TARGET_STR
     MOV AH, 09H
     INT 21H
     
-    ; Display count (2-digit)
-    MOV AL, BL
-    MOV AH, 0
-    MOV DL, 10
-    DIV DL                              ; AL = tens, AH = units
+    ; --- Step 3: Analysis Loop ---
+    LEA SI, TARGET_STR
+    MOV BL, 0                           ; Counter
     
-    ADD AL, 30H
-    MOV DL, AL
-    MOV CH, AH                          ; Save units
-    MOV AH, 2H
-    INT 21H
+SCAN_LOOP:
+    MOV AL, [SI]
+    CMP AL, '$'                         ; Check for Terminator
+    JE SCAN_DONE
     
-    MOV DL, CH
-    ADD DL, 30H
-    MOV AH, 2H
-    INT 21H
+    ; Check Vowels (Case Insensitive)
+    ; A/a
+    CMP AL, 'A'
+    JE INC_COUNT
+    CMP AL, 'a'
+    JE INC_COUNT
+    
+    ; E/e
+    CMP AL, 'E'
+    JE INC_COUNT
+    CMP AL, 'e'
+    JE INC_COUNT
+    
+    ; I/i
+    CMP AL, 'I'
+    JE INC_COUNT
+    CMP AL, 'i'
+    JE INC_COUNT
+    
+    ; O/o
+    CMP AL, 'O'
+    JE INC_COUNT
+    CMP AL, 'o'
+    JE INC_COUNT
+    
+    ; U/u
+    CMP AL, 'U'
+    JE INC_COUNT
+    CMP AL, 'u'
+    JE INC_COUNT
+    
+    JMP NEXT_CHAR
 
-    ;-------------------------------------------------------------------------
-    ; Program Termination
-    ;-------------------------------------------------------------------------
+INC_COUNT:
+    INC BL
+
+NEXT_CHAR:
+    INC SI
+    JMP SCAN_LOOP
+    
+SCAN_DONE:
+    MOV COUNT, BL
+    
+    ; --- Step 4: Display Result ---
+    LEA DX, MSG_RES
+    MOV AH, 09H
+    INT 21H
+    
+    ; Print 2-digit number (Count < 100 assumed)
+    MOV AL, COUNT
+    AAM                                 ; ASCII Adjust for Multiply (Splits AL into AH:AL)
+                                        ; Actually, splits AL/10 -> AH=Tens, AL=Units
+    
+    ADD AX, 3030H                       ; Convert both to ASCII
+    MOV CX, AX                          ; Save
+    
+    MOV DL, CH                          ; Print Tens
+    MOV AH, 02H
+    INT 21H
+    
+    MOV DL, CL                          ; Print Units
+    MOV AH, 02H
+    INT 21H
+    
+    ; --- Step 5: Exit ---
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
+
 END MAIN
 
-;=============================================================================
-; VOWEL COUNTING NOTES:
-; - English vowels: A, E, I, O, U (uppercase and lowercase)
-; - Must check both cases
-; - The sentence has: e(4) + u(1) + i(2) + o(4) + a(1) = 12+ vowels
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. STRING TERMINATION:
+;    The loop relies on the '$' terminator used by DOS INT 21H/09H. 
+;    Scanning continues until this sentinel value is found.
+;
+; 2. CASE SENSITIVITY:
+;    Assembly characters are just byte values. 'A' (65) is not 'a' (97). 
+;    We must check both unless we convert the entire string to one case first.
+;
+; 3. AAM INSTRUCTION:
+;    AAM is typically used after multiplication, but it effectively divides 
+;    AL by 10 and stores Quotient in AH, Remainder in AL.
+;    It is a neat trick for splitting a 2-digit decimal number for printing.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

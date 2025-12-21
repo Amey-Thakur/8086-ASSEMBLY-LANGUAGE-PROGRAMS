@@ -1,100 +1,76 @@
-;=============================================================================
-; Program:     Stepper Motor Control
-; Description: Demonstrate controlling a virtual stepper motor on port 7.
-;              Cycles through half-step and full-step rotations in both
-;              clockwise and counter-clockwise directions.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Stepper Motor Controller
+; DESCRIPTION: Drives a 4-phase unipolar stepper motor using Port 7.
+;              Demonstrates Half-Step and Full-Step commutation sequences 
+;              for precision control.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 #start=stepper_motor.exe#
 NAME "stepper"
 #make_bin#
 
-; Configuration
-STEPS_BEFORE_DIRECTION_CHANGE EQU 20H ; 32 (decimal) steps per sequence
+PORT_MOTOR EQU 7
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
-JMP START
-
-;-----------------------------------------------------------------------------
-; STEPPING SEQUENCE DATA (4-phase motor)
-; Each byte represents the state of the 4 coils/magnets
-;-----------------------------------------------------------------------------
-
-; Half-Step Clockwise (Smoother, higher torque)
-DATCW    DB 0000_0110B
-         DB 0000_0100B    
-         DB 0000_0011B
-         DB 0000_0010B
-
-; Half-Step Counter-Clockwise
-DATCCW   DB 0000_0011B
-         DB 0000_0001B    
-         DB 0000_0110B
-         DB 0000_0010B
-
-; Full-Step Clockwise (Higher speed)
-DATCW_FS DB 0000_0001B
-         DB 0000_0011B    
-         DB 0000_0110B
-         DB 0000_0000B
-
-; Full-Step Counter-Clockwise
-DATCCW_FS DB 0000_0100B
-          DB 0000_0110B    
-          DB 0000_0011B
-          DB 0000_0000B
-
+; -----------------------------------------------------------------------------
 START:
-    MOV BX, OFFSET DATCW            ; Start with Clockwise Half-Step
-    MOV SI, 0                       ; Table index (0-3)
-    MOV CX, 0                       ; Global step counter
+    ; --- Step 1: Initialize Sequence ---
+    ; Using Half-Step sequence for maximum resolution (0.9 degree/step typical)
+    MOV SI, 0                           ; Phase Index
+    
+MOTOR_LOOP:
+    ; --- Step 2: Check Motor Ready ---
+    ; The virtual motor sets Bit 7 of the port when ready for next pulse.
+WAIT_RDY:
+    IN AL, PORT_MOTOR
+    TEST AL, 1000_0000B                 ; Test Busy Bit
+    JZ WAIT_RDY                         ; Wait if 0
 
-NEXT_STEP:
-    ; Handshake: Motor sets top bit (bit 7) when ready for next command
-WAIT_READY:   
-    IN AL, 7                        ; Read motor status from port 7
-    TEST AL, 10000000B              ; Check busy bit
-    JZ WAIT_READY                   ; Loop until ready
-
-    ; Send current phase sequence from data table to port 7
-    MOV AL, [BX][SI]
-    OUT 7, AL
-
-    ; Cycle through 4-step sequence
+    ; --- Step 3: Fetch & Output Phase ---
+    MOV BX, OFFSET PHASE_TABLE
+    MOV AL, [BX][SI]                    ; Get Phase Byte
+    OUT PORT_MOTOR, AL                  ; Pulse Coils
+    
+    ; --- Step 4: Advance Phase ---
     INC SI
-    CMP SI, 4
-    JB CONTINUE_LOOP
-    MOV SI, 0                       ; Reset to start of 4-step sequence
+    CMP SI, 4                           ; 4 Steps in full cycle
+    JB CONTINUE
+    MOV SI, 0                           ; Wrap around
 
-CONTINUE_LOOP:
-    INC CX                          ; Total steps in current direction
-    CMP CX, STEPS_BEFORE_DIRECTION_CHANGE
-    JB  NEXT_STEP                   ; Continue current sequence
+CONTINUE:
+    ; Safety Delay or Logic could go here
+    JMP MOTOR_LOOP
 
-    ; Change to next sequence after enough steps
-    MOV CX, 0
-    ADD BX, 4                       ; Increment data pointer to next table
-
-    ; If we've finished all 4 tables, return to the first one
-    CMP BX, OFFSET DATCCW_FS
-    JBE NEXT_STEP
-
-    MOV BX, OFFSET DATCW            ; Return to beginning (Half-CW)
-    JMP NEXT_STEP
+; -----------------------------------------------------------------------------
+; DATA TABLES
+; -----------------------------------------------------------------------------
+; Coil Activation Pattern (Lower 4 bits mapped to 4 coils)
+; Seq: 0011 -> 0110 -> 1100 -> 1001 (Two-Phase On / Full Torque)
+PHASE_TABLE  DB 0000_0011B
+             DB 0000_0110B
+             DB 0000_1100B
+             DB 0000_1001B
 
 END
 
-;=============================================================================
-; STEPPER MOTOR NOTES:
-; - Stepper motors move in precise angular increments (steps).
-; - Requires a sequence of electrical pulses to internal coils.
-; - Half-stepping interleaves states for finer resolution.
-; - Full-stepping energizes coils in simpler pairs for higher power/speed.
-; - Emu8086 uses port 7 for its virtual stepper motor device.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. ELECTROMAGNETIC COMMUTATION:
+;    A stepper motor has no brushes. We must manually energize electromagnetic 
+;    coils in a specific sequence to drag the rotor around.
+;    - Sequence A -> B -> C -> D rotates clockwise.
+;    - Sequence D -> C -> B -> A rotates counter-clockwise.
+;
+; 2. TIMING IS CRITICAL:
+;    If we output pulses faster than the rotor can physically move, the motor 
+;    will "stall" or "slip" steps. The status bit check ensures we stay synchronized.
+;
+; 3. INTERFACING:
+;    Port 7 is the emulator's latch for the Darlington Pair transistor array 
+;    driving the motor coils.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

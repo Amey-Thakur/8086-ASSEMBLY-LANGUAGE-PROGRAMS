@@ -10,90 +10,80 @@
 ; LICENSE: MIT License
 ; =============================================================================
 
+.MODEL SMALL
+.STACK 100H
+
 ; -----------------------------------------------------------------------------
 ; DATA SEGMENT
 ; -----------------------------------------------------------------------------
-DATA SEGMENT
-    ; Storage for numeric values
-    VAL_MINUEND    DB ?                 ; Number to be subtracted from
-    VAL_SUBTRAHEND DB ?                 ; Number to subtract
-    VAL_DIFFERENCE DB ?                 ; Resulting difference
+.DATA
+    VAL_MINUEND    DB ?                 
+    VAL_SUBTRAHEND DB ?                 
+    VAL_DIFFERENCE DB ?                 
     
     ; User Prompts
-    PROMPT1  DB 10,13, "Enter the first digit (Minuend): $"
-    PROMPT2  DB 10,13, "Enter the second digit (Subtrahend): $"
-    MSG_RES  DB 10,13, "The result of (A - B) is: $"
-DATA ENDS   
+    MSG_PROMPT1  DB 0DH, 0AH, "Enter minuend: $"
+    MSG_PROMPT2  DB 0DH, 0AH, "Enter subtrahend: $"
+    MSG_RESULT   DB 0DH, 0AH, "Result (A - B): $"
 
 ; -----------------------------------------------------------------------------
 ; CODE SEGMENT
 ; -----------------------------------------------------------------------------
-CODE SEGMENT
-    ASSUME CS:CODE, DS:DATA
-
-START: 
+.CODE
+MAIN PROC
     ; --- Step 1: Initialize Data Segment ---
-    MOV AX, DATA
+    MOV AX, @DATA
     MOV DS, AX                   
     
     ; --- Step 2: Read Minuend ---
-    LEA DX, PROMPT1             
-    MOV AH, 09H                  ; DOS: Display String
-    INT 21H          
-    
-    MOV AH, 01H                  ; DOS: Read Character (echoed to screen)
-    INT 21H
-    SUB AL, 30H                  ; Convert ASCII '0'-'9' to raw numeric 0-9
-    MOV VAL_MINUEND, AL          
-    
-    ; --- Step 3: Read Subtrahend ---
-    LEA DX, PROMPT2             
+    LEA DX, MSG_PROMPT1             
     MOV AH, 09H                  
     INT 21H          
     
     MOV AH, 01H                  
     INT 21H
-    SUB AL, 30H                  ; Convert ASCII to raw numeric
+    SUB AL, 30H                  
+    MOV VAL_MINUEND, AL          
+    
+    ; --- Step 3: Read Subtrahend ---
+    LEA DX, MSG_PROMPT2             
+    MOV AH, 09H                  
+    INT 21H          
+    
+    MOV AH, 01H                  
+    INT 21H
+    SUB AL, 30H                  
     MOV VAL_SUBTRAHEND, AL       
     
-    ; --- Step 4: Perform Subtraction and Adjustment ---
-    ; Logic: 5 (AL) - 7 (VAL_SUBTRAHEND) = -2 (in 8-bit binary: FEH)
+    ; --- Step 4: Subtraction and Adjustment ---
     MOV AL, VAL_MINUEND          
     SUB AL, VAL_SUBTRAHEND       
-    MOV VAL_DIFFERENCE, AL       
+    MOV AH, 00H                  
+    AAS                          ; ASCII Adjust for Subtraction
     
-    ; AAS (ASCII Adjust for Subtraction) corrects the result.
-    ; If a borrow was required (AL < 0 or Low Nibble > 9), AAS sets 
-    ; AH to FFH (-1) and clears the Carry Flag.
-    MOV AH, 00H                  ; Clear AH for clean adjustment
-    AAS                          
-    
-    ; Prepare for display: Convert digits back to ASCII
+    ; Prepare for display
     ADD AH, 30H                  ; Borrow indicator / Tens digit
-    ADD AL, 30H                  ; Ones digit result
+    ADD AL, 30H                  ; Ones digit
+    MOV BX, AX                   
     
-    ; --- Step 5: Display the Final Difference ---
-    MOV BX, AX                   ; Save result (AH=Tens, AL=Ones)
-    
-    LEA DX, MSG_RES              
+    ; --- Step 5: Display Result ---
+    LEA DX, MSG_RESULT              
     MOV AH, 09H
     INT 21H
     
-    ; Print High Digit (Borrow indicator)
-    MOV AH, 02H                  ; DOS: Print Character in DL
+    MOV AH, 02H                  
     MOV DL, BH                                
     INT 21H
     
-    ; Print Low Digit
-    MOV AH, 02H                  
     MOV DL, BL
     INT 21H
     
     ; --- Step 6: Shutdown ---
     MOV AH, 4CH
     INT 21H
-      
-CODE ENDS
+MAIN ENDP
+
+END MAIN
 
 ; =============================================================================
 ; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
@@ -101,32 +91,21 @@ CODE ENDS
 ; 1. SUBTRACTION LOGIC:
 ;    The CPU performs subtraction by adding the Two's Complement of the 
 ;    subtrahend.
-;    A - B  => A + (NOT B + 1).
 ;
 ; 2. AAS (ASCII ADJUST FOR SUBTRACTION):
-;    AAS is designed for Unpacked BCD. It checks the lower 4 bits of AL.
-;    - If (Low Nibble of AL > 9) OR (AF = 1):
-;        AL = AL - 6
-;        AH = AH - 1
-;        AF = 1, CF = 1
-;    - Otherwise:
-;        AF = 0, CF = 0
-;    - The upper 4 bits of AL are cleared to 0.
+;    Checks the lower 4 bits of AL. If bit 4 borrow occurred (AF=1) or 
+;    digit > 9, it subtracts 6 from AL and 1 from AH.
 ;
 ; 3. BORROW DETECTION:
-;    If the first digit is smaller than the second (e.g., 5-7), AAS will 
-;    adjust AH to FFH. When converted to ASCII (+30H), this results in 
-;    character 2FH (the '/' character), which visually indicates a borrow 
-;    in this basic implementation.
+;    If the first digit is smaller than the second (e.g., 5-7), AAS adjusts 
+;    AH to FFH. When converted to ASCII (+30H), this results in character 
+;    2FH ('/'), signaling a negative wrap.
 ;
-; 4. UNPACKED BCD BOUNDARIES:
-;    Unpacked BCD allows digits to occupy a full byte, but only uses the 
-;    bottom nibble. This makes I/O conversion extremely fast compared to 
-;    Packed BCD.
+; 4. UNPACKED BCD:
+;    A format where one digit occupies a full byte. Highly efficient 
+;    for character-based I/O.
 ;
 ; 5. INTERRUPT OVERHEAD:
-;    INT 21H/AH=01H is a "blocking" call; the CPU sits in an idle loop waiting 
-;     for user hardware keyboard events before proceeding.
+;    INT 21H/AH=01H is a blocking call; the CPU sits in an idle loop waiting 
+;    for keyboard input.
 ; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-END START

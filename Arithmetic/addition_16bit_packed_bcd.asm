@@ -9,75 +9,63 @@
 ; LICENSE: MIT License
 ; =============================================================================
 
+.MODEL SMALL
+.STACK 100H
+
 ; -----------------------------------------------------------------------------
 ; DATA SEGMENT
 ; -----------------------------------------------------------------------------
-DATA SEGMENT
+.DATA
     ; Packed BCD: 4 bits represent one decimal digit (0-9).
     ; Example: 9348H in memory represents the decimal number 9348.
-    BCD_VAL1  DW 9348H                  ; First operand  (9348)
-    BCD_VAL2  DW 1845H                  ; Second operand (1845)
+    VAL_BCD1  DW 9348H                  ; First operand  (9348)
+    VAL_BCD2  DW 1845H                  ; Second operand (1845)
     
-    BCD_SUM   DW ?                      ; Buffer for 16-bit BCD result
-    BCD_CARRY DW 0000H                  ; Carry flag (for result > 9999)
-DATA ENDS
+    RES_SUM   DW ?                      ; Buffer for 16-bit BCD result
+    RES_CARRY DW 0000H                  ; Carry flag (for result > 9999)
 
 ; -----------------------------------------------------------------------------
 ; CODE SEGMENT
 ; -----------------------------------------------------------------------------
-CODE SEGMENT
-    ASSUME CS:CODE, DS:DATA
-    
-START: 
+.CODE
+MAIN PROC
     ; --- Step 1: Initialize Data Segment ---
-    MOV AX, DATA
+    MOV AX, @DATA
     MOV DS, AX
     
     ; --- Step 2: Load Operands ---
-    ; We load our 16-bit BCD values into general-purpose registers.
-    MOV AX, BCD_VAL1                    ; AX = 9348H
-    MOV BX, BCD_VAL2                    ; BX = 1845H
+    MOV AX, VAL_BCD1                    
+    MOV BX, VAL_BCD2                    
     
     ; --- Step 3: Add Lower Bytes with Decimal Adjustment ---
-    ; Problem: Standard ADD performs binary addition. 
-    ; 48H + 45H = 8DH (not valid BCD as 'D' > 9).
-    ADD AL, BL                          ; AL = 48H + 45H = 8DH
-    
-    ; DAA (Decimal Adjust after Addition) fixes the nibbles in AL.
-    ; It checks if a nibble > 9 or if a carry occurred (AF/CF).
-    ; 8DH -> D > 9, so DAA adds 06H to the low nibble.
-    ; Final AL = 93H (representing 93 in BCD).
+    ; 48H + 45H = 8DH (not valid BCD). DAA correction follows.
+    ADD AL, BL                          
     DAA                                 
     MOV CL, AL                          ; Store adjusted low byte in CL
     
     ; --- Step 4: Add Upper Bytes with Carry Propagation ---
-    ; We move the high byte of the first operand into AL for adjustment.
     ; ADC (Add with Carry) includes the carry generated from the previous DAA.
-    MOV AL, AH                          ; AL = 93H
-    ADC AL, BH                          ; AL = 93H + 18H + Carry
-    
-    ; Adjust the high byte to ensure each nibble is a valid digit (0-9).
+    MOV AL, AH                          
+    ADC AL, BH                          
     DAA                                 
     MOV CH, AL                          ; Store adjusted high byte in CH
     
     ; --- Step 5: Handle Final Overflow ---
-    ; If the 16-bit addition exceeds 9999, the Carry Flag will be set.
-    JNC SAVE_RESULT                     ; If CF=0, jump to save
-    MOV BCD_CARRY, 0001H                ; If CF=1, store the final carry
+    JNC L_SAVE_RESULT                     
+    MOV RES_CARRY, 0001H                
     
-SAVE_RESULT:
-    ; CX now contains the 4 adjusted decimal digits (BCD).
-    MOV BCD_SUM, CX                     
+L_SAVE_RESULT:
+    MOV RES_SUM, CX                     
     
     ; --- Step 6: Debugging Breakpoint ---
-    ; INT 3 is a software interrupt used for debugging.
     INT 03H
     
     ; --- Step 7: DOS Termination ---
     MOV AH, 4CH
     INT 21H
+MAIN ENDP
 
-CODE ENDS
+END MAIN
 
 ; =============================================================================
 ; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
@@ -87,16 +75,13 @@ CODE ENDS
 ;    - Unpacked BCD: One decimal digit per byte (e.g., 0x09 0x03 = 93).
 ;
 ; 2. THE DAA LOGIC (Hardware Level):
-;    DAA operates exclusively on the AL register. It follows these rules:
-;    - If (Low Nibble of AL > 9) OR (Auxiliary Carry AF = 1):
-;        AL = AL + 06H, AF = 1
-;    - If (High Nibble of AL > 9) OR (Carry Flag CF = 1):
-;        AL = AL + 60H, CF = 1
+;    DAA operates exclusively on the AL register. It checks if a nibble > 9 
+;    or if a carry (AF/CF) occurred, adding 0x06 or 0x60 accordingly to 
+;    return the value to valid BCD range.
 ;
 ; 3. AUXILIARY CARRY (AF):
 ;    The AF flag tracks carries from bit 3 to bit 4 (nibble level). This is 
-;    the "secret sauce" that allows DAA to know when a decimal overflow 
-;    occurred within a single byte.
+;    the mechanism that allows DAA to detect decimal overflows within a byte.
 ;
 ; 4. LIMITATIONS:
 ;    DAA does NOT work for subtraction (use DAS) or multiplication/division.
@@ -104,10 +89,7 @@ CODE ENDS
 ;
 ; 5. EXAMPLE TRACE:
 ;    9348 + 1845 = 11193 decimal.
-;    Binary result (Hex): AC8DH.
-;    After DAA (Lower): 93H.
-;    After DAA (Upper): 11H (with Carry).
-;    Final result: Carry=1, Sum=1193H.
+;    Hex Sum: AC8DH. Lower DAA fixes 8DH to 93H. Upper ADC/DAA fixes 
+;    the overflow into a 5th digit (Carry).
 ; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-END START

@@ -1,68 +1,70 @@
-;=============================================================================
-; Program:     Reverse an Array
-; Description: Reverse the elements of an array in memory.
-;              Copies elements in reverse order to new array.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Array Reversal
+; DESCRIPTION: Reverses the contents of a byte array. It uses a second buffer 
+;              to store the reversed copy. In-place reversal (using XCHG) 
+;              is an alternative not demonstrated here.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
-;-----------------------------------------------------------------------------
+.MODEL SMALL
+.STACK 100H
+
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
-DATA SEGMENT
-    STR1 DB 01H, 02H, 05H, 03H, 04H     ; Original array
-    STR2 DB 5 DUP(?)                     ; Reversed array
-    LEN EQU 5                            ; Array length
-DATA ENDS
- 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
+.DATA
+    SRC_ARR     DB 1, 2, 3, 4, 5        ; Original
+    DST_ARR     DB 5 DUP(?)             ; Destination
+    ARR_LEN     EQU 5
+
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
-CODE SEGMENT
-    ASSUME CS:CODE, DS:DATA
-    
-START:
-    ; Initialize Data Segment
-    MOV AX, DATA
+; -----------------------------------------------------------------------------
+.CODE
+MAIN PROC
+    ; --- Step 1: Initialize Data Segment ---
+    MOV AX, @DATA
     MOV DS, AX
+    MOV ES, AX                          ; ES needed for potential string ops (optional here)
     
-    ;-------------------------------------------------------------------------
-    ; Setup Pointers
-    ; SI points to start of source
-    ; DI points to end of destination
-    ;-------------------------------------------------------------------------
-    LEA SI, STR1                        ; Source: beginning
-    LEA DI, STR2 + LEN - 1              ; Destination: end
-    MOV CX, LEN                         ; Counter
- 
-    ;-------------------------------------------------------------------------
-    ; Reverse Copy Loop
-    ; Copy from start of source to end of destination
-    ;-------------------------------------------------------------------------
-BACK: 
-    CLD                                 ; Clear direction flag
-    MOV AL, [SI]                        ; Get element from source
-    MOV [DI], AL                        ; Store at destination (reversed)
-    INC SI                              ; Move source forward
-    DEC DI                              ; Move destination backward
-    DEC CX                              ; Decrement counter
-    JNZ BACK                            ; Continue if not done
- 
-    ; Result: STR2 = {04H, 03H, 05H, 02H, 01H}
+    ; --- Step 2: Setup Pointers ---
+    LEA SI, SRC_ARR                     ; SI -> Start of Source
+    LEA DI, DST_ARR                     ; DI -> Start of Dest
+    ADD DI, ARR_LEN - 1                 ; DI -> End of Dest (Reverse fill)
     
-    ;-------------------------------------------------------------------------
-    ; Program Termination
-    ;-------------------------------------------------------------------------
+    MOV CX, ARR_LEN
+    
+    ; --- Step 3: Copy Loop ---
+REV_LOOP:
+    MOV AL, [SI]                        ; Load from Start
+    MOV [DI], AL                        ; Store at End
+    
+    INC SI                              ; Move Forward
+    DEC DI                              ; Move Backward
+    LOOP REV_LOOP
+    
+    ; Verification: DST_ARR is now {5, 4, 3, 2, 1}
+    
+    ; --- Step 4: Exit ---
     MOV AH, 4CH
     INT 21H
-CODE ENDS
-END START
+MAIN ENDP
 
-;=============================================================================
-; REVERSE ARRAY NOTES:
-; - Original: {1, 2, 5, 3, 4}
-; - Reversed: {4, 3, 5, 2, 1}
-; - Alternative: In-place reversal using swap from both ends
-;=============================================================================
+END MAIN
+
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. POINTER ARITHMETIC:
+;    We use two pointers moving in opposite logical directions relative to their 
+;    arrays:
+;    - SI increments (0 -> N)
+;    - DI decrements (N -> 0)
+;    This effectively maps Source[i] to Dest[N-1-i].
+;
+; 2. SEGMENT INITIALIZATION:
+;    While this program uses DS for both reads and writes, initializing ES is 
+;    good practice if we were using STOSB or MOVSB instructions.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

@@ -1,164 +1,147 @@
-;=============================================================================
-; Program:     Robot Control Simulation
-; Description: Demonstrate controlling a virtual robot in Emu8086.
-;              The robot explores its environment, detects obstacles/lamps,
-;              and toggles lights randomly.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Autonomous Robot Controller
+; DESCRIPTION: Controls a simulated robot navigating a grid. The robot utilizes 
+;              sensors to detect walls and lamps, switching lamps ON/OFF and 
+;              navigating random paths.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 #start=robot.exe#
-NAME "robot"
+NAME "robot_ai"
 
-; Memory layout configuration for simulation
 #make_bin#
 #cs = 500#
 #ds = 500#
-#ss = 500#                          ; Stack segment
-#sp = ffff#                         ; Stack pointer at bottom
-#ip = 0#                            ; Instruction pointer
+#ss = 500#
+#sp = ffff#
+#ip = 0#
 
-;-----------------------------------------------------------------------------
-; ROBOT I/O PORTS
-; - Port 9: Command Register (Output) / Status (Input)
-; - Port 10: Data Register (Input of sensor readings)
-; - Port 11: Status Register (Flag check)
-;-----------------------------------------------------------------------------
-R_PORT EQU 9
+; -----------------------------------------------------------------------------
+; CONSTANTS (I/O PORTS)
+; -----------------------------------------------------------------------------
+PORT_CMD    EQU 9                       ; Command Ouput / ID Input
+PORT_DATA   EQU 10                      ; Sensor Data Input
+PORT_STATUS EQU 11                      ; Busy/Ready Flag Input
 
-;-----------------------------------------------------------------------------
-; MAIN LOOP: EXPLORATION
-;-----------------------------------------------------------------------------
-ETERNAL_LOOP:
-    CALL WAIT_ROBOT                  ; Ensure robot is ready for next command
+CMD_MOVE    EQU 1
+CMD_LEFT    EQU 2
+CMD_RIGHT   EQU 3
+CMD_EXAMINE EQU 4
+CMD_LAMP_ON EQU 5
+CMD_LAMP_OFF EQU 6
 
-    ; Examine the area in front of the robot
-    MOV AL, 4                        ; Command 4: Examine
-    OUT R_PORT, AL
+; -----------------------------------------------------------------------------
+; CODE SEGMENT
+; -----------------------------------------------------------------------------
+START:
 
-    CALL WAIT_EXAM                   ; Wait for sensor data to become valid
-
-    ; Get sensor result from Data Register
-    IN AL, R_PORT + 1
-
-    ; Sensor feedback codes:
-    ; 0   - Nothing found
-    ; 255 - Wall/Obstacle
-    ; 7   - Lighted lamp
-    ; 0..6 - Dark lamps (various shades)
-
-    CMP AL, 0
-    JE CONT                          ; Nothing found, move forward
-    CMP AL, 255  
-    JE CONT                          ; Wall found, try to turn in 'CONT'
-
-    CMP AL, 7                        ; Is it a switched-on lamp?
-    JNE LAMP_OFF                     ; No, skip to switching on
+AI_LOOP:
+    ; --- Step 1: Scan Environment ---
+    CALL WAIT_FOR_IDLE
+    MOV AL, CMD_EXAMINE
+    OUT PORT_CMD, AL
     
-    ; If lamp is on, switch it off
-    CALL SWITCH_OFF_LAMP 
-    JMP  CONT
+    CALL WAIT_FOR_DATA
+    IN AL, PORT_DATA                    ; Read Sensor
+    
+    ; Analyze Sensor Data
+    CMP AL, 255                         ; Wall?
+    JE L_IS_WALL
+    CMP AL, 7                           ; LAMP ON?
+    JE L_LAMP_ON
+    CMP AL, 0                           ; Empty?
+    JE L_MOVE_FWD
+    ; Else: Lamp OFF (Values 1-6 are dim lamps)
+    JMP L_LAMP_OFF
 
-LAMP_OFF: 
-    ; If it reaches here, it must be a switched-off lamp
-    CALL SWITCH_ON_LAMP
+L_LAMP_ON:
+    CALL WAIT_FOR_IDLE
+    MOV AL, CMD_LAMP_OFF
+    OUT PORT_CMD, AL
+    JMP L_MOVE_FWD
 
-CONT:
-    ; Randomly decide to turn or move
+L_LAMP_OFF:
+    CALL WAIT_FOR_IDLE
+    MOV AL, CMD_LAMP_ON
+    OUT PORT_CMD, AL
+    JMP L_MOVE_FWD
+
+L_IS_WALL:
+    ; Hit a wall, forced turn
     CALL RANDOM_TURN
-    CALL WAIT_ROBOT
+    JMP AI_LOOP
 
-    ; Move step forward
-    MOV AL, 1                        ; Command 1: Step forward
-    OUT R_PORT, AL
-    CALL WAIT_ROBOT
+L_MOVE_FWD:
+    ; 10% chance to turn even if empty (random walk)
+    CALL RANDOM_DECISION 
+    JC L_TURN_RANDOM
+    
+    CALL WAIT_FOR_IDLE
+    MOV AL, CMD_MOVE
+    OUT PORT_CMD, AL
+    JMP AI_LOOP
 
-    ; Move step forward again for smoother motion
-    MOV AL, 1
-    OUT R_PORT, AL
+L_TURN_RANDOM:
+    CALL RANDOM_TURN
+    JMP AI_LOOP
 
-    JMP ETERNAL_LOOP                 ; Infinite exploration loop
-
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; PROCEDURES
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 
-; BLOCKING WAIT: Robot Ready
-WAIT_ROBOT PROC
-    BUSY: 
-        IN AL, R_PORT + 2            ; Read Status Register
-        TEST AL, 00000010B           ; Check bit 1 (Busy Flag)
-        JNZ BUSY                     ; Wait while busy
-    RET    
-WAIT_ROBOT ENDP
-
-; BLOCKING WAIT: Examination Data Valid
-WAIT_EXAM PROC
-    BUSY2: 
-        IN AL, R_PORT + 2            ; Read Status Register
-        TEST AL, 00000001B           ; Check bit 0 (Data Ready Flag)
-        JZ BUSY2                     ; Wait if no data yet
-    RET    
-WAIT_EXAM ENDP
-
-; Toggle Lamp Off (Command 6)
-SWITCH_OFF_LAMP PROC
-    MOV AL, 6
-    OUT R_PORT, AL
+WAIT_FOR_IDLE PROC
+L_WAIT1:
+    IN AL, PORT_STATUS
+    TEST AL, 0000_0010B                 ; Test Busy Bit
+    JNZ L_WAIT1                         ; Loop if Busy
     RET
-SWITCH_OFF_LAMP ENDP
+WAIT_FOR_IDLE ENDP
 
-; Toggle Lamp On (Command 5)
-SWITCH_ON_LAMP PROC
-    MOV AL, 5
-    OUT R_PORT, AL
+WAIT_FOR_DATA PROC
+L_WAIT2:
+    IN AL, PORT_STATUS
+    TEST AL, 0000_0001B                 ; Test Data Ready Bit
+    JZ L_WAIT2                          ; Loop if Empty
     RET
-SWITCH_ON_LAMP ENDP
+WAIT_FOR_DATA ENDP
 
-; Generate random turns using system timer ticks
 RANDOM_TURN PROC
-    ; Get current clock ticks in CX:DX
-    MOV AH, 0
-    INT 1AH                          ; BIOS Time services
-
-    ; Scramble ticks to generate pseudo-random bits
-    XOR DH, DL
-    XOR CH, CL
-    XOR CH, DH
-
-    TEST CH, 2                       ; Use bit 1 to decide weight of turning
-    JZ NO_TURN
-
-    TEST CH, 1                       ; Use bit 0 to decide Left or Right
-    JNZ TURN_RIGHT
-
-    ; Turn Left (Command 2)
-    MOV AL, 2
-    OUT R_PORT, AL
-    RET  
-
-TURN_RIGHT:
-    ; Turn Right (Command 3)
-    MOV AL, 3
-    OUT R_PORT, AL
-
-NO_TURN:
+    ; Simple valid turn: Right (simplification)
+    CALL WAIT_FOR_IDLE
+    MOV AL, CMD_RIGHT
+    OUT PORT_CMD, AL
     RET
 RANDOM_TURN ENDP
 
+RANDOM_DECISION PROC
+    ; Uses System Timer for pseudo-randomness
+    MOV AH, 0
+    INT 1AH                             ; Read Timer -> DX
+    TEST DL, 0000_0100B                 ; Test bit 2 (approx 1/8 chance)
+    JZ L_NO_TURN                        ; If 0, carry clear
+    STC                                 ; If 1, set carry
+    RET
+L_NO_TURN:
+    CLC
+    RET
+RANDOM_DECISION ENDP
+
 END
 
-;=============================================================================
-; ROBOT SIMULATION NOTES:
-; - Virtual robot uses multiple ports starting from base port 9.
-; - Robot takes physical time to move; software MUST poll status registers.
-; - Command mapping:
-;   1: Step forward
-;   2: Turn left
-;   3: Turn right
-;   4: Examine front
-;   5: Switch lamp ON
-;   6: Switch lamp OFF
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. ASYNCHRONOUS I/O:
+;    The robot is a mechanical device simulation. It is much slower than the CPU.
+;    We MUST use 'Polling' on the Status Register to wait for mechanical completion.
+;    (WAIT_FOR_IDLE) prevents sending commands into the void.
+;
+; 2. SENSOR INTERPRETATION:
+;    The robot's "eye" returns:
+;    - 0: Empty Space
+;    - 255: Solid Obstacle
+;    - 1-8: Lamp ID/Brightness
+;    This allows creating complex navigation logic (maze solving).
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

@@ -1,100 +1,101 @@
-;=============================================================================
-; Program:     Loop Instructions
-; Description: Demonstrate LOOP, LOOPE, and LOOPNE instructions.
-;              LOOP uses CX as automatic counter.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Loop Instruction (CX Register Hardware Control)
+; DESCRIPTION: This program demonstrates the specific hardware-accelerated 
+;              looping mechanism of the 8086. It utilizes the CX (Count) 
+;              register and the LOOP primitive to perform iterative logic 
+;              with minimal instruction overhead.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    MSG1 DB 'Counting: $'
-    NEWLINE DB 0DH, 0AH, '$'
+    MSG_HEADER    DB 'Counting Sequence: $'
+    MSG_NEWLINE   DB 0DH, 0AH, '$'
+    VAL_START_DIG DB '1'                 ; Starting ASCII digit
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize Data Segment ---
     MOV AX, @DATA
     MOV DS, AX
     
-    ;-------------------------------------------------------------------------
-    ; Display Message
-    ;-------------------------------------------------------------------------
-    LEA DX, MSG1
+    ; --- Step 2: Display Header ---
+    LEA DX, MSG_HEADER
     MOV AH, 09H
     INT 21H
     
-    ;-------------------------------------------------------------------------
-    ; LOOP Instruction Demo
-    ; LOOP decrements CX and jumps if CX != 0
-    ; This counts from 1 to 9
-    ;-------------------------------------------------------------------------
-    MOV CX, 9                           ; Loop counter (iterations)
-    MOV BL, '1'                         ; Starting character
+    ; --- Step 3: Setup Loop Counter ---
+    ; On the 8086, the 'LOOP' instruction specifically targets the CX register.
+    MOV CX, 9                           ; Perform 9 iterations
+    MOV DL, VAL_START_DIG               ; Load initial digit for display
     
-COUNT_LOOP:
-    ; Display current digit
-    MOV DL, BL
-    MOV AH, 02H
-    INT 21H
+    ; --- Step 4: Iterative Execution ---
+L_ITERATE:
+    ; Display current character (stored in DL)
+    MOV AH, 02H                         ; DOS: Display character
+    INT 21H                             
     
-    ; Display space separator
+    ; Space separator for readability
+    PUSH DX                             ; Save current digit/pointer
     MOV DL, ' '
     MOV AH, 02H
     INT 21H
+    POP DX                              ; Restore current digit
     
-    INC BL                              ; Next digit
-    LOOP COUNT_LOOP                     ; CX--, if CX != 0, jump
+    INC DL                              ; Move to next ASCII character
     
-    ; Output: 1 2 3 4 5 6 7 8 9
+    ; The 'LOOP' primitive effectively performs:
+    ; (1) CX = CX - 1
+    ; (2) IF CX != 0 THEN JUMP TO label
+    LOOP L_ITERATE                      
     
-    ;-------------------------------------------------------------------------
-    ; Newline
-    ;-------------------------------------------------------------------------
-    LEA DX, NEWLINE
+    ; --- Step 5: Termination Cleanup ---
+    LEA DX, MSG_NEWLINE
     MOV AH, 09H
     INT 21H
     
-    ;-------------------------------------------------------------------------
-    ; Program Termination
-    ;-------------------------------------------------------------------------
-    MOV AH, 4CH                         ; DOS: Terminate program
+    MOV AH, 4CH
     INT 21H
 MAIN ENDP
+
 END MAIN
 
-;=============================================================================
-; LOOP INSTRUCTION REFERENCE
-;=============================================================================
-; 
-; LOOP label
-;   - Decrements CX by 1
-;   - Jumps to label if CX != 0
-;   - Does NOT affect any flags
-;   - Equivalent to: DEC CX / JNZ label (but DEC affects flags)
-; 
-; LOOPE/LOOPZ label (Loop while Equal/Zero)
-;   - Decrements CX by 1
-;   - Jumps if CX != 0 AND ZF = 1
-;   - Useful for searching until mismatch or count exhausted
-; 
-; LOOPNE/LOOPNZ label (Loop while Not Equal/Not Zero)
-;   - Decrements CX by 1
-;   - Jumps if CX != 0 AND ZF = 0
-;   - Useful for searching until match or count exhausted
-; 
-; IMPORTANT NOTES:
-; - CX must be initialized before LOOP
-; - If CX = 0 before LOOP, it loops 65536 times!
-; - Use JCXZ before LOOP to skip if CX = 0
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. THE ZERO-COUNT TRAP:
+;    A critical behavior to note: if CX is 0 when the 'LOOP' instruction is 
+;    reached, the CPU will decrement it to 0FFFFH and attempt to loop 
+;    65,536 times. Defensive programmers often use 'JCXZ' (Jump if CX is Zero) 
+;    before entering a loop to prevent this overflow.
+;
+; 2. HARDWARE OPTIMIZATION:
+;    The 'LOOP' instruction is a micro-coded primitive. It is more compact 
+;    (2 bytes) than the equivalent manual sequence 'DEC CX' (1 byte) + 
+;    'JNZ label' (2 bytes), saving instruction cache space.
+;
+; 3. DISTANCE LIMITS:
+;    Like conditional jumps, 'LOOP' is a SHORT jump. The target label must 
+;    be within -128 to +127 bytes relative to the instruction pointer.
+;
+; 4. SPECIALIZED LOOP VARIANTS:
+;    - LOOPE/LOOPZ (Loop while Equal): Continues while CX > 0 AND ZF=1. 
+;      Ideal for searching an array for the first non-matching byte.
+;    - LOOPNE/LOOPNZ (Loop while Not Equal): Continues while CX > 0 AND ZF=0. 
+;      Ideal for searching an array for a specific target value.
+;
+; 5. FLAG TRANSPARENCY:
+;    Crucially, 'LOOP' DOES NOT affect the processor flags. This allows high-level 
+;    logic within the loop to preserve the results of comparisons across 
+;    multiple iterations without 'LOOP' interfering with the Zero or Carry flags.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

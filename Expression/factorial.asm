@@ -1,85 +1,91 @@
-;=============================================================================
-; Program:     Factorial using Recursion
-; Description: Compute factorial of a positive integer using recursive
-;              procedure. Demonstrates stack-based recursion.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Factorial Calculation (Recursion)
+; DESCRIPTION: Computes the factorial of a number (N!) using value-passing 
+;              recursion. Demonstrates stack frame management relative to 
+;              procedures in 8086 assembly.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
-;-----------------------------------------------------------------------------
+.MODEL SMALL
+.STACK 100H
+
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
-DATA SEGMENT
-    NUM DW 0006H                        ; Calculate 6! = 720
-    FACT DW ?                           ; Low word of result
-DATA ENDS
+; -----------------------------------------------------------------------------
+.DATA
+    INPUT_N    DW 5                     ; Calculate 5! = 120
+    RESULT_LO  DW ?                     ; Lower 16-bits
+    RESULT_HI  DW ?                     ; Upper 16-bits (for > 65535)
 
-ASSUME CS:CODE, DS:DATA
-
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
-CODE SEGMENT
-
-START: 
-       ; Initialize Data Segment
-       MOV AX, DATA
-       MOV DS, AX
-       
-       ; Initialize result to 1
-       MOV AX, 01H
-       MOV BX, NUM                      ; BX = 6
-       
-       ; Check for 0! = 1
-       CMP BX, 0000H
-       JZ X1
-       
-       ; Call recursive factorial procedure
-       CALL FACT1
-
-X1:    
-       ; Store result
-       MOV FACT, AX                     ; Store low word
-       MOV FACT+2, DX                   ; Store high word (for large results)
-       
-       ; Exit to DOS
-       MOV AH, 4CH
-       INT 21H
-       
-;-----------------------------------------------------------------------------
-; FACT1: Recursive Factorial Procedure
-; Input: BX = current number, AX = accumulated result
-; Output: DX:AX = factorial result
-; Algorithm: n! = n * (n-1)!
-;-----------------------------------------------------------------------------
-FACT1 PROC
-    ; Base case: 1! = 1
-    CMP BX, 01H
-    JZ BASE_CASE
+; -----------------------------------------------------------------------------
+.CODE
+MAIN PROC
+    ; --- Step 1: Initialize Data Segment ---
+    MOV AX, @DATA
+    MOV DS, AX
     
-    ; Recursive case: n! = n * (n-1)!
-    PUSH BX                             ; Save current n
-    DEC BX                              ; n = n - 1
-    CALL FACT1                          ; Recursive call
-    POP BX                              ; Restore n
-    MUL BX                              ; DX:AX = AX * BX
+    ; --- Step 2: Prepare Recursion ---
+    MOV AX, 1                           ; Initialize Accumulator
+    MOV BX, INPUT_N                     ; Load N
+    
+    ; Check Base Case 0! = 1
+    CMP BX, 0
+    JE L_STORE_RESULT
+    
+    CALL CALC_FACTORIAL
+    
+L_STORE_RESULT:
+    MOV RESULT_LO, AX
+    MOV RESULT_HI, DX
+    
+    ; --- Step 3: Termination ---
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+
+; -----------------------------------------------------------------------------
+; PROCEDURE: CALC_FACTORIAL
+; INPUT:  BX = N
+; OUTPUT: DX:AX = Result
+; LOGIC:  Recursive Call until BX=1. Then Unwind multiplying AX * BX.
+; -----------------------------------------------------------------------------
+CALC_FACTORIAL PROC
+    ; Base Case: If BX == 1, Return
+    CMP BX, 1
+    JE L_BASE_RET
+    
+    PUSH BX                             ; Save current N
+    DEC BX                              ; N = N - 1
+    CALL CALC_FACTORIAL                 ; Recursive Call
+    
+    POP BX                              ; Restore N (Unwinding)
+    MUL BX                              ; AX = AX * BX (Result * N)
     RET
     
-BASE_CASE:
-    MOV AX, 01H                         ; Return 1
+L_BASE_RET:
+    MOV AX, 1                           ; 1! = 1
+    MOV DX, 0
     RET
-FACT1 ENDP
+CALC_FACTORIAL ENDP
 
-CODE ENDS
-END START
+END MAIN
 
-;=============================================================================
-; FACTORIAL NOTES:
-; - n! = n × (n-1) × (n-2) × ... × 2 × 1
-; - 0! = 1 (by definition)
-; - Recursion uses stack to save intermediate values
-; - Example: 6! = 720 (2D0H)
-; - Maximum for 16-bit: 7! = 5040, 8! = 40320 (needs 32-bit)
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. RECURSION ON THE STACK:
+;    Each CALL pushes the Return Address (IP).
+;    Each PUSH BX saves the state of 'N' for that depth.
+;    Stack Depth = N * 2 bytes (BX) + N * 2 bytes (IP) = 4N bytes overhead.
+;
+; 2. MULTIPLICATION LIMITS:
+;    - MUL BX multiplies AX by BX. Result is in DX:AX (32-bit).
+;    - 8! = 40,320 (Fits in AX).
+;    - 9! = 362,880 (Requires DX:AX).
+;    This implementation supports results up to DX:AX limits, though we assume 
+;    input <= 8 for simple 16-bit logic in MAIN display if we added one.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

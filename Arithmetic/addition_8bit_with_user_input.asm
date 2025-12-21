@@ -9,129 +9,105 @@
 ; LICENSE: MIT License
 ; =============================================================================
 
+.MODEL SMALL
+.STACK 100H
+
 ; -----------------------------------------------------------------------------
 ; DATA SEGMENT
 ; -----------------------------------------------------------------------------
-DATA SEGMENT
+.DATA
     ; Variables for storing numeric values
-    VAL1 DB ?                           ; First number storage
-    VAL2 DB ?                           ; Second number storage
-    RES  DB ?                           ; Sum storage
+    VAL1 DB ?                           
+    VAL2 DB ?                           
+    RES  DB ?                           
     
-    ; Display Strings (ASCII 10,13 = New Line and Carriage Return)
-    PROMPT1 DB 10,13, "Enter the first single-digit number: $"
-    PROMPT2 DB 10,13, "Enter the second single-digit number: $"
-    RESULT_MSG DB 10,13, "The sum of the digits is: $"
-DATA ENDS   
+    ; Display Strings
+    MSG_PROMPT1 DB 0DH, 0AH, "Enter first digit: $"
+    MSG_PROMPT2 DB 0DH, 0AH, "Enter second digit: $"
+    MSG_RESULT  DB 0DH, 0AH, "Arithmetic Sum: $"
 
 ; -----------------------------------------------------------------------------
 ; CODE SEGMENT
 ; -----------------------------------------------------------------------------
-CODE SEGMENT
-    ASSUME CS:CODE, DS:DATA
-
-START: 
+.CODE
+MAIN PROC
     ; --- Step 1: Initialize Data Segment ---
-    MOV AX, DATA
+    MOV AX, @DATA
     MOV DS, AX                   
     
     ; --- Step 2: Read First Digit ---
-    ; Display Prompt 1
-    LEA DX, PROMPT1             
-    MOV AH, 09H                  ; DOS Function: Print String
+    LEA DX, MSG_PROMPT1             
+    MOV AH, 09H                  
     INT 21H                      
     
-    ; Get Input 1
-    MOV AH, 01H                  ; DOS Function: Read Char with Echo
-    INT 21H                      ; Character returned in AL
-    
-    ; ASCII Conversion: '0' is 30H, '9' is 39H.
-    ; Subtracting 30H converts the ASCII character to its raw numeric value.
-    SUB AL, 30H                  
+    MOV AH, 01H                  ; Read Char with Echo
+    INT 21H                      
+    SUB AL, 30H                  ; ASCII to Numeric
     MOV VAL1, AL                 
     
     ; --- Step 3: Read Second Digit ---
-    ; Display Prompt 2
-    LEA DX, PROMPT2             
+    LEA DX, MSG_PROMPT2             
     MOV AH, 09H                  
     INT 21H                      
     
-    ; Get Input 2
     MOV AH, 01H                  
     INT 21H                      
-    
-    ; Convert Second Input to Numeric
-    SUB AL, 30H                  
+    SUB AL, 30H                  ; ASCII to Numeric
     MOV VAL2, AL                 
     
-    ; --- Step 4: Perform Addition and ASCII Adjustment ---
-    ; Add the two numbers in binary.
-    ; If Input1=5 and Input2=7, AL becomes 12 (0CH).
+    ; --- Step 4: Addition and ASCII Adjustment ---
     ADD AL, VAL1                 
-    MOV RES, AL                  
+    MOV AH, 00H                  ; AAA requires AH to be clear
+    AAA                          ; ASCII Adjust for Addition
     
-    ; AAA (ASCII Adjust for Addition) works on AL.
-    ; It checks if the lower nibble of AL > 9.
-    ; If it is, it adds 6 to AL and 1 to AH.
-    ; Effectively: 0CH -> AH=01 (Tens), AL=02 (Ones).
-    MOV AH, 00H                  ; AAA requires AH to be clear or consistent
-    AAA                          
+    ; Convert BCD digits to ASCII
+    ADD AH, 30H                  
+    ADD AL, 30H                  
+    MOV BX, AX                   ; Save AH=Tens, AL=Ones
     
-    ; Convert the adjusted BCD digits back to ASCII by adding 30H.
-    ADD AH, 30H                  ; Tens digit to ASCII
-    ADD AL, 30H                  ; Ones digit to ASCII
-    
-    ; --- Step 5: Display the Final Result ---
-    MOV BX, AX                   ; Save result (AH=Tens, AL=Ones) in BX
-    
-    ; Display result header message
-    LEA DX, RESULT_MSG           
+    ; --- Step 5: Display Result ---
+    LEA DX, MSG_RESULT           
     MOV AH, 09H                  
     INT 21H                      
     
-    ; Print Tens Digit (e.g., '1')
-    MOV AH, 02H                  ; DOS Function: Print Character
-    MOV DL, BH                   
-    INT 21H                      
-    
-    ; Print Ones Digit (e.g., '2')
     MOV AH, 02H                  
-    MOV DL, BL                   
+    MOV DL, BH                   ; Print Tens
     INT 21H                      
     
-    ; --- Step 6: Finalize Program ---
+    MOV DL, BL                   ; Print Ones
+    INT 21H                      
+    
+    ; --- Step 6: Shutdown ---
     MOV AH, 4CH                  
     INT 21H                      
-      
-CODE ENDS
+MAIN ENDP
+
+END MAIN
 
 ; =============================================================================
 ; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
 ; =============================================================================
 ; 1. ASCII vs NUMERIC:
-;    Humans use ASCII (American Standard Code for Information Interchange).
-;    - Digit '5' = 35H (53 decimal).
-;    - To do math, we must "strip" the 30H offset to get the raw value 5.
+;    Digit '5' = 35H. To perform mathematical addition, we must subtract 30H 
+;    to isolate the binary value 5.
 ;
 ; 2. AAA (ASCII ADJUST FOR ADDITION):
-;    AAA is a specialized instruction for Unpacked BCD arithmetic.
-;    - It looks at the lower 4 bits of AL.
-;    - If it reflects a value > 9, AL = AL + 6, AH = AH + 1, and AF/CF are set.
-;    - This turns a binary sum like 0CH (12) into 0102H (Unpacked BCD for 12).
+;    This instruction is key for Unpacked BCD arithmetic. It checks if the 
+;    lower nibble of AL > 9. If so, it adjusts AL and increments AH, 
+;    turning a binary result like 0CH (12) into 0102H (12 decimal).
 ;
 ; 3. DOS INTERRUPT 21H FUNCTIONS:
-;    - AH=01H: Wait for keypress, echo to screen, return char in AL.
-;    - AH=02H: Output the single character in DL to the screen.
-;    - AH=09H: Output the string pointed to by DS:DX until '$' is reached.
-;    - AH=4CH: Return control to the operating system (terminate).
+;    - AH=01H: Input char from keyboard (returns in AL).
+;    - AH=09H: Display string ending in '$'.
+;    - AH=02H: Display single char in DL.
 ;
-; 4. STRING TERMINATION:
-;    Note the '$' at the end of all data messages. This is the mandatory 
-;    terminator for the AH=09H display function.
+; 4. UNPACKED BCD:
+;    A format where a single byte represents exactly one decimal digit (0-9). 
+;    Standard BCD arithmetic instructions (AAA, AAS, AAM, AAD) operate on 
+;    this format.
 ;
-; 5. UNPACKED BCD:
-;    The format where each byte contains exactly one decimal digit in the 
-;    lower 4 bits, while the upper 4 bits are typically zero (but ignored).
+; 5. TERMINATION SIGNALS:
+;    The '$' character is the mandatory EOL sign for DOS string-printing 
+;    functions. Missing it causes the CPU to dump garbage memory to screen.
 ; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-END START

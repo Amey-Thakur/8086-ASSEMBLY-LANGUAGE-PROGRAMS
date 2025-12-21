@@ -9,10 +9,13 @@
 ; LICENSE: MIT License
 ; =============================================================================
 
+.MODEL SMALL
+.STACK 100H
+
 ; -----------------------------------------------------------------------------
 ; DATA SEGMENT
 ; -----------------------------------------------------------------------------
-DATA SEGMENT
+.DATA
     ; Inputs (DW = Define Word, 16-bit)
     VAL16_1 DW 1234H                    ; First 16-bit operand
     VAL16_2 DW 5140H                    ; Second 16-bit operand
@@ -20,17 +23,14 @@ DATA SEGMENT
     ; Output Buffers
     RESULT  DW ?                        ; Storage for 16-bit sum
     C_SET   DB 00H                      ; Boolean indicator for carry (01H = TRUE)
-DATA ENDS
 
 ; -----------------------------------------------------------------------------
 ; CODE SEGMENT
 ; -----------------------------------------------------------------------------
-CODE SEGMENT
-    ASSUME CS:CODE, DS:DATA
-    
-START: 
+.CODE
+MAIN PROC
     ; --- Step 1: Initialization ---
-    MOV AX, DATA
+    MOV AX, @DATA
     MOV DS, AX
    
     ; --- Step 2: 16-bit Unsigned Addition ---
@@ -42,12 +42,12 @@ START:
     ; --- Step 3: Status Check (Carry Detection) ---
     ; JNC (Jump if No Carry) checks the state of the CF bit in the FLAGS register.
     ; If CF = 0, the sum fit within 16 bits, and we skip the carry logic.
-    JNC NO_CARRY_OCCURRED               
+    JNC L_NO_CARRY               
     
     ; If execution reaches here, CF = 1. We mark our carry indicator variable.
     MOV C_SET, 01H                   
     
-NO_CARRY_OCCURRED:  
+L_NO_CARRY:  
     ; Store the 16-bit portion of the result.
     MOV RESULT, AX                   
 
@@ -58,8 +58,9 @@ NO_CARRY_OCCURRED:
     ; --- Step 5: Clean Exit ---
     MOV AH, 4CH
     INT 21H
+MAIN ENDP
 
-CODE ENDS
+END MAIN
 
 ; =============================================================================
 ; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
@@ -88,12 +89,3 @@ CODE ENDS
 ;    (Least Significant Byte first).
 ; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-END START
-
-;=============================================================================
-; NOTES:
-; - JNC: Jump if No Carry (CF = 0)
-; - JC:  Jump if Carry (CF = 1)
-; - Carry occurs when sum exceeds FFFFH (65535) for 16-bit numbers
-; - Example: FFFFH + 0001H = 0000H with CF = 1
-;=============================================================================

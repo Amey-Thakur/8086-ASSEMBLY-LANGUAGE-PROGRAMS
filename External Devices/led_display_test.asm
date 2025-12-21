@@ -1,48 +1,56 @@
-;=============================================================================
-; Program:     LED Display Test
-; Description: Demonstrate how to access virtual I/O ports in Emu8086.
-;              This program sends numeric values to a virtual LED display
-;              emulated on port 199.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Virtual LED Display Control
+; DESCRIPTION: Demonstrates I/O Port communication using the Emu8086 Virtual 
+;              LED Display. It formats values for Port 199 to visualize numeric 
+;              output.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
+; Emu8086 specific directives
 #start=led_display.exe#
+
+NAME "led_test"
 #make_bin#
 
-NAME "led"
-
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
-; This program demonstrates the 'OUT' instruction which outputs data to a port.
-; Port 199 is used by the Emu8086 virtual LED display device.
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
+START:
+    ; --- Step 1: Static Tests ---
+    ; The LED display reads 16-bit signed integers from Port 199
+    
+    ; Test Positive
+    MOV AX, 1234
+    OUT 199, AX                         ; Display: "1234"
+    
+    ; Test Negative
+    MOV AX, -5678
+    OUT 199, AX                         ; Display: "-5678"
+    
+    ; --- Step 2: Dynamic Counter ---
+    ; Rapidly incrementing counter to show update speed
+    MOV AX, 0
+    
+PERPETUAL_LOOP:
+    OUT 199, AX
+    INC AX
+    JMP PERPETUAL_LOOP                  ; Infinite Loop
+    
+    HLT                                 ; Never reached
 
-; Send static values to the display
-MOV AX, 1234
-OUT 199, AX                         ; Display '1234'
+END START
 
-MOV AX, -5678
-OUT 199, AX                         ; Display '-5678' (signed representation)
-
-;-----------------------------------------------------------------------------
-; Counter Loop: Continuously increment and display a value
-;-----------------------------------------------------------------------------
-MOV AX, 0                           ; Starting value
-X1:
-    OUT 199, AX                     ; Send value to LED display port
-    INC AX                          ; Increment value
-    JMP X1                          ; Loop infinitely
-
-HLT                                 ; Halt processor (reachable if loop ends)
-
-;=============================================================================
-; LED DISPLAY NOTES:
-; - Emu8086 supports virtual hardware components via I/O ports.
-; - The LED display responds to 16-bit values sent to port 199.
-; - 'OUT port, ax' is the standard instruction for hardware communication.
-; - Visual devices are found in the 'Virtual Devices' menu of Emu8086.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. I/O PORT ADDRESSING:
+;    The 8086 has a separate 64KB I/O address space, distinct from Memory.
+;    - IN AL, Port  / OUT Port, AL (8-bit)
+;    - IN AX, Port  / OUT Port, AX (16-bit)
+;    
+; 2. EMU8086 VIRTUAL DEVICES:
+;    Port 199 is hardcoded in the emulator to map to the LED Display tool.
+;    Real hardware would use specific chipset addresses (e.g., 80h for POST).
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

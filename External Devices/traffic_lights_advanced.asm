@@ -1,118 +1,90 @@
-;=============================================================================
-; Program:     Advanced Traffic Lights Control
-; Description: Demonstrate complex bit-shifting techniques to control
-;              multiple traffic lights on port 4.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Advanced Traffic Control (Bitwise Ops)
+; DESCRIPTION: Demonstrates controlling traffic lights using Bitwise Shifting 
+;              operators to construct complex port signals dynamically.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 #start=Traffic_Lights.exe#
-NAME "traffic2"
+NAME "traffic_adv"
 
-;-----------------------------------------------------------------------------
-; CONSTANTS: Light States (base 3 bits)
-;-----------------------------------------------------------------------------
-RED              EQU 0000_0001B      ; Red bit set
-YELLOW_AND_RED   EQU 0000_0011B      ; Prepare to go
-GREEN            EQU 0000_0100B      ; Green bit set
-YELLOW_AND_GREEN EQU 0000_0110B      ; Prepare to stop
+; -----------------------------------------------------------------------------
+; CONSTANTS (Primitive States)
+; -----------------------------------------------------------------------------
+; Base Pattern (Road 1 Position)
+SIG_RED     EQU 001B
+SIG_YELLOW  EQU 010B
+SIG_GREEN   EQU 100B
+SIG_RED_YEL EQU 011B
 
-ALL_RED_BASE     EQU 0010_0100_1001B ; Red on all 4 directions
-
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 START:
-    NOP
-
-    ;-------------------------------------------------------------------------
-    ; Road Group 1 (Bits 0,1,2)
-    ;-------------------------------------------------------------------------
-    MOV AX, GREEN
-    OUT 4, AX
-
-    MOV AX, YELLOW_AND_GREEN 
-    OUT 4, AX
-
-    MOV AX, RED
-    OUT 4, AX
-
-    MOV AX, YELLOW_AND_RED
-    OUT 4, AX
-
-    ;-------------------------------------------------------------------------
-    ; Road Group 2 (Bits 3,4,5) - Shifted by 3
-    ;-------------------------------------------------------------------------
-    MOV AX, GREEN << 3
-    OUT 4, AX
-
-    MOV AX, YELLOW_AND_GREEN << 3
-    OUT 4, AX
-
-    MOV AX, RED << 3
-    OUT 4, AX
-
-    MOV AX, YELLOW_AND_RED << 3
-    OUT 4, AX
-
-    ;-------------------------------------------------------------------------
-    ; Road Group 3 (Bits 6,7,8) - Shifted by 6
-    ;-------------------------------------------------------------------------
-    MOV AX, GREEN << 6
-    OUT 4, AX
-
-    MOV AX, YELLOW_AND_GREEN << 6
-    OUT 4, AX
-
-    MOV AX, RED << 6
-    OUT 4, AX
-
-    MOV AX, YELLOW_AND_RED << 6
-    OUT 4, AX
-
-    ;-------------------------------------------------------------------------
-    ; Road Group 4 (Bits 9,A,B) - Shifted by 9
-    ;-------------------------------------------------------------------------
-    MOV AX, GREEN << 9
-    OUT 4, AX
-
-    MOV AX, YELLOW_AND_GREEN << 9
-    OUT 4, AX
-
-    MOV AX, RED << 9
-    OUT 4, AX
-
-    MOV AX, YELLOW_AND_RED << 9
-    OUT 4, AX
-
-    ;-------------------------------------------------------------------------
-    ; Global States
-    ;-------------------------------------------------------------------------
+    ; --- DEMONSTRATION 1: Road 1 Cycle ---
     
-    ; All Red
-    MOV AX, ALL_RED_BASE
+    ; Red
+    MOV AX, SIG_RED
     OUT 4, AX
-
-    ; All Yellow (By shifting Red bits once left)
-    MOV AX, ALL_RED_BASE << 1
+    
+    ; Yellow + Red (Ready)
+    MOV AX, SIG_RED_YEL
     OUT 4, AX
-
-    ; All Green (By shifting Red bits twice left)
-    MOV AX, ALL_RED_BASE << 2
+    
+    ; Green
+    MOV AX, SIG_GREEN
     OUT 4, AX
-
-    ; Loop back or Step through: 
-    ; Better to use Step-by-Step mode in emulator for this program.
+    
+    ; --- DEMONSTRATION 2: Road 2 Cycle (Shifted) ---
+    ; Road 2 is bits 3-5. We shift primitive states left by 3.
+    
+    ; Red
+    MOV AX, SIG_RED
+    SHL AX, 3
+    OUT 4, AX
+    
+    ; Green
+    MOV AX, SIG_GREEN
+    SHL AX, 3
+    OUT 4, AX
+    
+    ; --- DEMONSTRATION 3: All Roads Red (Composition) ---
+    ; R4(Red) | R3(Red) | R2(Red) | R1(Red)
+    ; Shift Red into positions 9, 6, 3, 0
+    
+    MOV AX, 0
+    OR  AX, SIG_RED             ; Road 1
+    
+    MOV BX, SIG_RED
+    SHL BX, 3
+    OR  AX, BX                  ; Road 2
+    
+    MOV BX, SIG_RED
+    SHL BX, 6
+    OR  AX, BX                  ; Road 3
+    
+    MOV BX, SIG_RED
+    SHL BX, 9
+    OR  AX, BX                  ; Road 4
+    
+    OUT 4, AX
+    
     JMP START
 
 END
 
-;=============================================================================
-; BIT-SHIFTING CONTROL NOTES:
-; - Instead of defining 16-bit patterns, we define 3-bit primitives.
-; - Use assembly-time shifts (<<) to align primitives with junction bits.
-; - Junction 1: Index 0 | Junction 2: Index 3 | Junction 3: Index 6 | Junction 4: Index 9
-; - This makes the code modular and easier to understand than raw constants.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. BITWISE COMPOSITION:
+;    Hardcoding 16-bit values (e.g., 001001001001b) is error-prone and hard to 
+;    read. Using Shifts (SHL) and Logic (OR) allows us to build the signal 
+;    semantically: "Road 1 Red AND Road 2 Green".
+;
+; 2. ASSEMBLY TIME CONSTANTS:
+;    We can also do (SIG_RED << 3) in the assembler if supported, but doing it 
+;    via instructions (SHL AX, 3) demonstrates the CPU's capability to manipulate 
+;    fields dynamically at runtime.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

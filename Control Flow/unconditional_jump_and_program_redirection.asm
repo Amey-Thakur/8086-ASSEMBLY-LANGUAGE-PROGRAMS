@@ -1,84 +1,88 @@
-;=============================================================================
-; Program:     Unconditional Jump (JMP)
-; Description: Demonstrate the unconditional jump instruction.
-;              JMP transfers control without any condition check.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Unconditional Jump (JMP) and Program Redirection
+; DESCRIPTION: This program demonstrates the 8086 'JMP' instruction, which 
+;              causes an immediate, unconditional transfer of control to a 
+;              target label by directly modifying the Instruction Pointer (IP).
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    MSG1 DB 'Step 1: Before jump$'
-    MSG2 DB 0DH, 0AH, 'Step 2: Skipped by jump$'
-    MSG3 DB 0DH, 0AH, 'Step 3: After jump target$'
+    MSG_1         DB 'Step A: Initiating jump sequence...$'
+    MSG_SKIP      DB 'Step B: This message is skipped (Dead Code)$'
+    MSG_TARGET    DB 0DH, 0AH, 'Step C: Jump success! Reached destination.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize Data Segment ---
     MOV AX, @DATA
     MOV DS, AX
     
-    ;-------------------------------------------------------------------------
-    ; Display Step 1
-    ;-------------------------------------------------------------------------
-    LEA DX, MSG1
+    ; --- Step 2: Display Initial Message ---
+    LEA DX, MSG_1
     MOV AH, 09H
     INT 21H
     
-    ;-------------------------------------------------------------------------
-    ; Unconditional Jump - Always jumps to target
-    ; This skips Step 2 entirely
-    ;-------------------------------------------------------------------------
-    JMP SKIP_STEP2                      ; Jump unconditionally
+    ; --- Step 3: The Unconditional Jump ---
+    ; This instruction forces the CPU to skip the subsequent lines of code.
+    JMP L_DESTINATION                   
     
-    ;-------------------------------------------------------------------------
-    ; This code is NEVER executed (dead code)
-    ;-------------------------------------------------------------------------
-    LEA DX, MSG2
+    ; --- Step 4: Dead Code Section ---
+    ; This block will never be reached during normal execution flow.
+    LEA DX, MSG_SKIP
     MOV AH, 09H
     INT 21H
     
-SKIP_STEP2:
-    ;-------------------------------------------------------------------------
-    ; Display Step 3 (jump target)
-    ;-------------------------------------------------------------------------
-    LEA DX, MSG3
+L_DESTINATION:
+    ; --- Step 5: Jump Target ---
+    LEA DX, MSG_TARGET
     MOV AH, 09H
     INT 21H
     
-    ;-------------------------------------------------------------------------
-    ; Program Termination
-    ;-------------------------------------------------------------------------
-    MOV AH, 4CH                         ; DOS: Terminate program
+    ; --- Step 6: Shutdown ---
+    MOV AH, 4CH
     INT 21H
 MAIN ENDP
+
 END MAIN
 
-;=============================================================================
-; JMP INSTRUCTION TYPES:
-; 
-; 1. Short Jump (JMP SHORT label)
-;    - Range: -128 to +127 bytes from current IP
-;    - 2 bytes: EB + 8-bit displacement
-; 
-; 2. Near Jump (JMP label)
-;    - Range: Within same segment (±32KB)
-;    - 3 bytes: E9 + 16-bit displacement
-; 
-; 3. Far Jump (JMP FAR PTR label)
-;    - Range: Any segment
-;    - 5 bytes: EA + offset + segment
-; 
-; 4. Indirect Jump (JMP [BX] or JMP WORD PTR [address])
-;    - Target address stored in memory or register
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. JMP INSTRUCTION VARIANTS:
+;    - SHORT JMP (2 bytes): EB + 8-bit signed displacement. Range: -128 to +127 
+;      bytes. The CPU simply adds the displacement to the IP.
+;    - NEAR JMP (3 bytes): E9 + 16-bit signed displacement. Range: Within the 
+;      same code segment (+/- 32KB).
+;    - FAR JMP (5 bytes): EA + 16-bit offset + 16-bit segment. Allows jumping 
+;      to a completely different segment by modifying both CS and IP.
+;
+; 2. INDIRECT JUMPING:
+;    JMP can also target registers or memory locations (e.g., JMP AX or 
+;    JMP WORD PTR [BX]). The CPU loads the content of the register/memory 
+;    into the IP, allowing for dynamic branching.
+;
+; 3. PIPELINE DISRUPTION:
+;    Modern CPUs use Branch Target Buffers (BTB) to predict JMPs. On the 
+;    original 8086, a 'JMP' immediately flushes the prefetch queue because 
+;    the "next" instruction is no longer sequentially following the current one.
+;
+; 4. DEAD CODE ELIMINATION:
+;    Compilers identify code following an unconditional JMP (that isn't 
+;    labeled as a destination) as "Dead Code" and often remove it during 
+;    optimization to save memory space.
+;
+; 5. THE 'SHORT' ATTRIBUTE:
+;    If you know a jump is very close, you can hint the assembler: 'JMP SHORT label'. 
+;    This forces a 2-byte instruction instead of a 3-byte NEAR jump.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
