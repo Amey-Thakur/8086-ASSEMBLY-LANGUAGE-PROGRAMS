@@ -51,11 +51,14 @@
 ---
 
 <!-- OVERVIEW -->
-## Overview
+## 📖 Overview
 
 The **8086 Assembly Language Programs** repository is a curated collection of low-level assembly code designed to verify and strengthen the understanding of the 8086 microprocessor architecture. It demonstrates the practical implementation of instruction sets, memory management, and hardware simulation using the **Emu8086** emulator.
 
-### Repository Purpose
+> [!NOTE]
+> This repository contains **161 professionally documented programs** covering every aspect of 8086 assembly programming.
+
+### 🎯 Repository Purpose
 
 This repository represents a comprehensive archive of hands-on coding experiments. The primary motivation for creating and maintaining this archive is simple yet profound: **to preserve knowledge for continuous learning and future reference**.
 
@@ -63,17 +66,18 @@ As a computer engineer, understanding the underlying hardware-software interface
 
 **Why this repository exists:**
 
-- **Knowledge Preservation**: To maintain organized access to tested assembly programs beyond the classroom.
-- **Continuous Learning**: To support lifelong learning by enabling easy revisitation of fundamental 8086 concepts.
-- **Academic Documentation**: To authentically document my learning journey through 8086 assembly programming.
-- **Community Contribution**: To provide a structured and verified code reference for fellow engineering students.
+- 💾 **Knowledge Preservation**: To maintain organized access to tested assembly programs beyond the classroom.
+- 🔄 **Continuous Learning**: To support lifelong learning by enabling easy revisitation of fundamental 8086 concepts.
+- 📝 **Academic Documentation**: To authentically document my learning journey through 8086 assembly programming.
+- 🤝 **Community Contribution**: To provide a structured and verified code reference for fellow engineering students.
 
-All programs in this repository were developed, verified, and documented by me during my undergraduate studies (2018-2022) to master the 8086 architecture.
+> [!TIP]
+> All programs in this repository were developed, verified, and documented during my undergraduate studies (2018-2022) to master the 8086 architecture.
 
 ---
 
 <!-- FEATURES -->
-## Features
+## ✨ Features
 
 | Feature | Description |
 |---------|-------------|
@@ -85,15 +89,18 @@ All programs in this repository were developed, verified, and documented by me d
 | **Interrupt Handling** | Utilization of DOS (`INT 21h`) and BIOS (`INT 10h`) interrupts for System I/O |
 
 ### 🛠️ Tech Stack
-- **Architecture**: Intel 8086 (16-bit)
-- **Assembler**: MASM / TASM Syntax Compatibility
-- **Emulator**: Emu8086
-- **Language**: Assembly (ASM)
+
+```
+📦 Architecture  → Intel 8086 (16-bit)
+🔧 Assembler     → MASM / TASM Syntax Compatibility
+💻 Emulator      → Emu8086
+⚙️  Language      → Assembly (ASM)
+```
 
 ---
 
 <!-- STRUCTURE -->
-## Project Structure
+## 📁 Project Structure
 
 ```
 8086-ASSEMBLY-LANGUAGE-PROGRAMS/
@@ -133,7 +140,10 @@ All programs in this repository were developed, verified, and documented by me d
 ---
 
 <!-- PROGRAM DETAILS -->
-## Program Details
+## 💾 Program Details
+
+> [!IMPORTANT]
+> Click on each section below to expand and view all programs with direct links to source code.
 
 <details>
 <summary><strong>📁 Addressing Modes (1 Program)</strong></summary>
@@ -517,12 +527,15 @@ All programs in this repository were developed, verified, and documented by me d
 <!-- PREREQUISITES -->
 ## ⚙️ Prerequisites
 
-To successfully run these programs, you need the following environment:
+> [!WARNING]
+> **System Requirements**: Ensure your environment meets these requirements before running the programs.
 
--   **Operating System**: Windows 7, 8, 10, or 11 (Emu8086 is native to Windows).
--   **Mac/Linux Users**: Use **[DOSBox](https://www.dosbox.com/)** with TASM/MASM or run Emu8086 via **[Wine](https://www.winehq.org/)** / Virtual Machine.
--   **Emulator**: **[Emu8086](https://github.com/Acurr/Emu8086)** (Recommended for Windows).
--   **Text Editor**: [VS Code](https://code.visualstudio.com/) (Optional, for better syntax highlighting using Assembly extensions).
+| Component | Requirement |
+|-----------|-------------|
+| 🖥️ **Windows** | Windows 7, 8, 10, or 11 (Emu8086 native support) |
+| 🍎 **Mac/Linux** | [DOSBox](https://www.dosbox.com/) with TASM/MASM **or** Emu8086 via [Wine](https://www.winehq.org/) / VM |
+| 💻 **Emulator** | [Emu8086](https://github.com/Acurr/Emu8086) (Recommended for Windows) |
+| ✏️ **Text Editor** | [VS Code](https://code.visualstudio.com/) (Optional, for syntax highlighting) |
 
 ---
 
@@ -611,38 +624,41 @@ Contributions are what make the open-source community such an amazing place to l
 ---
 
 <!-- USAGE -->
-## Usage Guidelines
+## 🚀 Usage Guidelines
 
-### Execution Steps
+### 📥 Execution Steps
+
 1.  **Clone the Repository**:
     ```bash
     git clone https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS.git
     ```
 
 2.  **Open in Emulator**:
-    - Launch **Emu8086**.
-    - Click `Open` and navigate to the desired `.asm` file (e.g., `Arithmetic/addition_16bit_simple.asm`).
+    - Launch **Emu8086**
+    - Click `Open` and navigate to the desired `.asm` file (e.g., `Arithmetic/addition_16bit_simple.asm`)
 
 3.  **Assemble and Run**:
-    - Click the `emulate` button to compile.
-    - Use the `Run` or `Single Step` controls to execute the code and observe register changes.
+    - Click the `emulate` button to compile
+    - Use the `Run` or `Single Step` controls to execute the code and observe register changes
 
-### Academic Use
-This repository is openly shared to support learning and knowledge exchange across the academic community.
+### 🎓 Academic Use
 
-**For Students**  
+> [!NOTE]
+> This repository is openly shared to support learning and knowledge exchange across the academic community.
+
+**👨‍🎓 For Students**  
 Use these programs as reference materials for understanding assembly logic, instruction syntax, and modular programming. Code is heavily commented to facilitate self-paced learning.
 
-**For Educators**  
+**👨‍🏫 For Educators**  
 The programs may serve as practical lab examples or supplementary teaching resources for Microprocessor courses (`CSC501`/`CSL501`). Attribution is appreciated when utilizing content.
 
-**For Researchers**  
+**🔬 For Researchers**  
 The documentation and organization may provide insights into academic resource curation and educational content structuring.
 
 ---
 
 <!-- LICENSE -->
-## License
+## 📜 License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
@@ -653,7 +669,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ---
 
 <!-- ABOUT -->
-## About This Repository
+## ℹ️ About This Repository
 
 **Created & Maintained by**: [Amey Thakur](https://github.com/Amey-Thakur)  
 **Academic Journey**: Bachelor of Engineering in Computer Engineering (2018-2022)  
@@ -664,7 +680,7 @@ This repository represents a comprehensive collection of 8086 assembly programs 
 
 **Connect**: [GitHub](https://github.com/Amey-Thakur) · [LinkedIn](https://www.linkedin.com/in/amey-thakur)
 
-### Acknowledgments
+### 🙏 Acknowledgments
 
 Special thanks to the faculty members of the **Department of Computer Engineering** at Terna Engineering College for their guidance and instruction in Microprocessors. Their clear teaching and continued support helped develop a strong understanding of low-level system architecture.
 
