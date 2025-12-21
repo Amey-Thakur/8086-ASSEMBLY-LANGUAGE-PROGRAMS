@@ -158,6 +158,9 @@ Use these programs as reference materials for understanding assembly logic, inst
 **For Educators**  
 The programs may serve as practical lab examples or supplementary teaching resources for Microprocessor courses (`CSC501`/`CSL501`). Attribution is appreciated when utilizing content.
 
+**For Researchers**  
+The documentation and organization may provide insights into academic resource curation and educational content structuring.
+
 ---
 
 <!-- LICENSE -->
