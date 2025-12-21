@@ -66,7 +66,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 - **Knowledge Preservation**: To maintain organized access to tested assembly programs beyond the classroom.
 - **Continuous Learning**: To support lifelong learning by enabling easy revisitation of fundamental 8086 concepts.
 - **Academic Documentation**: To authentically document my learning journey through 8086 assembly programming.
-- **Community Contribution**: To share these "Gold Standard" resources with students and learners who may benefit from them.
+- **Community Contribution**: To provide a structured and verified code reference for fellow engineering students.
 
 All programs in this repository were developed, verified, and documented by me during my undergraduate studies (2018-2022) to master the 8086 architecture.
 
