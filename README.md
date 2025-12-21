@@ -42,7 +42,7 @@
   </tr>
   </table>
 
-  *Special thanks to the Open Source Tech Lab mentors for their guidance in standardizing code documentation.*
+
 
 </div>
 
