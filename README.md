@@ -571,36 +571,7 @@ A handy cheat sheet of the most frequently used interrupts in this repository:
 
 ---
 
-<!-- USAGE -->
-## Usage Guidelines
 
-### Execution Steps
-1.  **Clone the Repository**:
-    ```bash
-    git clone https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS.git
-    ```
-
-2.  **Open in Emulator**:
-    - Launch **Emu8086**.
-    - Click `Open` and navigate to the desired `.asm` file (e.g., `Arithmetic/addition_16bit_simple.asm`).
-
-3.  **Assemble and Run**:
-    - Click the `emulate` button to compile.
-    - Use the `Run` or `Single Step` controls to execute the code and observe register changes.
-
-### Academic Use
-This repository is openly shared to support learning and knowledge exchange across the academic community.
-
-**For Students**  
-Use these programs as reference materials for understanding assembly logic, instruction syntax, and modular programming. Code is heavily commented to facilitate self-paced learning.
-
-**For Educators**  
-The programs may serve as practical lab examples or supplementary teaching resources for Microprocessor courses (`CSC501`/`CSL501`). Attribution is appreciated when utilizing content.
-
-**For Researchers**  
-The documentation and organization may provide insights into academic resource curation and educational content structuring.
-
----
 
 <!-- TROUBLESHOOTING -->
 ## 🔧 Common Issues & Troubleshooting
@@ -638,6 +609,37 @@ Contributions are what make the open-source community such an amazing place to l
 3.  Commit your Changes (`git commit -m 'Add some NewAlgorithm'`)
 4.  Push to the Branch (`git push origin feature/NewAlgorithm`)
 5.  Open a Pull Request
+
+---
+
+<!-- USAGE -->
+## Usage Guidelines
+
+### Execution Steps
+1.  **Clone the Repository**:
+    ```bash
+    git clone https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS.git
+    ```
+
+2.  **Open in Emulator**:
+    - Launch **Emu8086**.
+    - Click `Open` and navigate to the desired `.asm` file (e.g., `Arithmetic/addition_16bit_simple.asm`).
+
+3.  **Assemble and Run**:
+    - Click the `emulate` button to compile.
+    - Use the `Run` or `Single Step` controls to execute the code and observe register changes.
+
+### Academic Use
+This repository is openly shared to support learning and knowledge exchange across the academic community.
+
+**For Students**  
+Use these programs as reference materials for understanding assembly logic, instruction syntax, and modular programming. Code is heavily commented to facilitate self-paced learning.
+
+**For Educators**  
+The programs may serve as practical lab examples or supplementary teaching resources for Microprocessor courses (`CSC501`/`CSL501`). Attribution is appreciated when utilizing content.
+
+**For Researchers**  
+The documentation and organization may provide insights into academic resource curation and educational content structuring.
 
 ---
 
