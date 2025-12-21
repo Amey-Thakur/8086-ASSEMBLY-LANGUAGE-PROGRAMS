@@ -51,17 +51,24 @@
 <!-- OVERVIEW -->
 ## Overview
 
-The **8086 Assembly Language Programs** repository represents a comprehensive collection of assembly code compiled during my academic journey to master the Intel 8086 microprocessor.
+## Overview
 
-**Purpose:**
-This repository was created primarily for **self-learning** and serves as a detailed documentation of my understanding of low-level system architecture, instruction sets, and memory management. It acts as an intellectual reference point, preserving the knowledge gained through practical experimentation and coding.
+The **8086 Assembly Language Programs** repository is a curated collection of low-level assembly code designed to verify and strengthen the understanding of the 8086 microprocessor architecture. It demonstrates the practical implementation of instruction sets, memory management, and hardware simulation using the **Emu8086** emulator.
 
-**Key Goals:**
-- **Knowledge Preservation**: To document and organize concepts for future reference.
-- **Authentic Learning**: To demonstrate a clear understanding of 8086 assembly through rigorous coding and "Gold Standard" documentation.
-- **Skill Development**: To master the nuances of direct hardware manipulation using the Emu8086 environment.
+### Repository Purpose
 
-Each program in this archive serves as a testament to the learning process, evolving from basic arithmetic to complex hardware simulations.
+This repository represents a comprehensive archive of hands-on coding experiments. The primary motivation for creating and maintaining this archive is simple yet profound: **to preserve knowledge for continuous learning and future reference**.
+
+As a computer engineer, understanding the underlying hardware-software interface is crucial for low-level system design and performance optimization. This repository serves as my intellectual reference point: a resource I can return to for relearning concepts, reviewing methodologies, and strengthening understanding when needed.
+
+**Why this repository exists:**
+
+- **Knowledge Preservation**: To maintain organized access to tested assembly programs beyond the classroom.
+- **Continuous Learning**: To support lifelong learning by enabling easy revisitation of fundamental 8086 concepts.
+- **Academic Documentation**: To authentically document my learning journey through 8086 assembly programming.
+- **Community Contribution**: To share these "Gold Standard" resources with students and learners who may benefit from them.
+
+All programs in this repository were developed, verified, and documented by me during my undergraduate studies (2018-2022) to master the 8086 architecture.
 
 ---
 
