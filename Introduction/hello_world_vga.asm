@@ -1,18 +1,17 @@
-;=============================================================================
-; Program:     Hello World (Direct VGA Memory)
-; Description: Display "Hello, World!" by writing directly to the video 
+; =============================================================================
+; TITLE: Hello World (Direct VGA Memory)
+; DESCRIPTION: Display "Hello, World!" by writing directly to the video 
 ;              memory segment 0B800h in text mode.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 ORG 100H                            ; COM file entry point
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; INITIALIZATION
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 START:
     ; Set Video Mode: 80x25 16-color text (Mode 03h)
     MOV AX, 0003H                   ; AH=0, AL=3
@@ -27,11 +26,11 @@ START:
     MOV AX, 0B800H
     MOV DS, AX
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; WRITE CHARACTERS TO VIDEO RAM
 ; Memory layout: [Char1][Attr1][Char2][Attr2]...
 ; Offset [00h] is top-left corner.
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
     MOV [02H], 'H'                  ; Write 'H' at 2nd column
     MOV [04H], 'e'
     MOV [06H], 'l'
@@ -45,10 +44,10 @@ START:
     MOV [16H], 'd'
     MOV [18H], '!'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; COLOR THE CHARACTERS
 ; Attributes are stored at odd offsets (1, 3, 5...).
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
     MOV CX, 12                      ; Number of characters to color
     MOV DI, 03H                     ; Start at the attribute byte of 'H'
 
@@ -67,11 +66,13 @@ COLOR_LOOP:
 
 END
 
-;=============================================================================
-; VGA MEMORY NOTES:
-; - Text mode memory starts at 0B8000h (Segment 0B800h).
-; - Each screen position takes 2 bytes:
-;   Byte 1: ASCII Character
-;   Byte 2: Attribute (Colors and effects)
-; - This is the fastest way to update the screen.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. VGA MEMORY:
+;    - Text mode memory starts at 0B8000h (Segment 0B800h).
+;    - Each screen position takes 2 bytes:
+;      Byte 1: ASCII Character
+;      Byte 2: Attribute (Colors and effects)
+;    - This is the fastest way to update the screen.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

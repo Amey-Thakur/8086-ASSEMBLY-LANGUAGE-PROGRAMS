@@ -1,19 +1,18 @@
-;=============================================================================
-; Program:     Conditional Assembly Macros
-; Description: Demonstrate the use of IF/ELSE/ENDIF conditional directives 
+; =============================================================================
+; TITLE: Conditional Assembly Macros
+; DESCRIPTION: Demonstrates the use of IF/ELSE/ENDIF conditional directives 
 ;              within macros to handle different data types (Byte vs Word).
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; MACRO DEFINITIONS
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 
 ; Macro: MOVE_DATA
 ; Logic: Uses TYPE operator to decide whether to generate MOV AL (8-bit)
@@ -30,30 +29,33 @@ ENDM
 
 ; Macro: CHECK_ZERO
 ; Logic: Conditional jumps within a macro to print status messages.
+; Note: 'LOCAL' directive prevents label redefinition errors.
 CHECK_ZERO MACRO VALUE, ZERO_MSG, NONZERO_MSG
+    LOCAL L_NOT_ZERO, L_DONE        ; Unique labels for each expansion
+    
     MOV AX, VALUE
     CMP AX, 0
-    JNE NOT_ZERO
+    JNE L_NOT_ZERO
     LEA DX, ZERO_MSG
-    JMP DISPLAY_RESULT
-NOT_ZERO:
+    JMP L_DONE
+L_NOT_ZERO:
     LEA DX, NONZERO_MSG
-DISPLAY_RESULT:
+L_DONE:
     MOV AH, 09H
     INT 21H
 ENDM
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    TEST_VAL DW 0                        ; Value to check
-    MSG_ZERO DB 'Status: Value is zero!$'
+    TEST_VAL    DW 0                        ; Value to check
+    MSG_ZERO    DB 'Status: Value is zero!$'
     MSG_NONZERO DB 'Status: Value is NOT zero!$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize segment register
@@ -70,10 +72,11 @@ MAIN PROC
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; CONDITIONAL MACRO NOTES:
-; - MACROS are expanded at compile-time, not run-time.
-; - 'IF TYPE' allows for "generic" macros that adapt to operand sizes.
-; - Labels inside conditional macros should be declared as 'LOCAL' to avoid
-;   redefinition errors if the macro is called multiple times.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. CONDITIONAL ASSEMBLY:
+;    - MACROS are expanded at compile-time, not run-time.
+;    - 'IF TYPE' allows for "generic" macros that adapt to operand sizes.
+;    - The 'LOCAL' directive is critical for any macro containing jumps/labels.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

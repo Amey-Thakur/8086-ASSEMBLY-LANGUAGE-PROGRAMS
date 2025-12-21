@@ -1,19 +1,18 @@
-;=============================================================================
-; Program:     Standard String Macro
-; Description: Simplify console output using macros for string display
-;              and newline management.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Standard String Macro
+; DESCRIPTION: Encapsulates DOS string display and newline logic into simplistic
+;              reusable macros to clean up the main code structure.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; MACRO DEFINITIONS
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 
 ; Macro: PRINT_STR
 ; Encapsulates LEA and DOS INT 21H for $-terminated strings.
@@ -34,17 +33,17 @@ NEWLINE MACRO
     INT 21H
 ENDM
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     MSG1 DB 'Message One: Hello from Macro Logic!$'
     MSG2 DB 'Message Two: Macros reduce repetitive code.$'
     MSG3 DB 'Message Three: Assembly programming made easier.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize DS
@@ -66,12 +65,11 @@ MAIN PROC
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; MACRO VS PROCEDURE COMPARISON:
-; Feature    | Macros                   | Procedures
-; -----------|--------------------------|---------------------------
-; Expansion  | At compilation time      | At execution time
-; Code Size  | Increases with each use  | Constant
-; Speed      | Faster (no CALL/RET)     | Slower overhead
-; Arguments  | Generic/Flexible         | Via registers or stack
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. ABSTRACTION:
+;    - Macros provide a way to create a "Language within a Language".
+;    - PRINT_STR makes the ASM code look almost like invalid C or BASIC, 
+;      improving readability for high-level logic.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

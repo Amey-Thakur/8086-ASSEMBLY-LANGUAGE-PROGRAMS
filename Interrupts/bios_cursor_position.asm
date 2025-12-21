@@ -1,59 +1,60 @@
-;=============================================================================
-; Program:     BIOS Set Cursor Position
-; Description: Demonstrate how to position the text cursor on the screen 
+; =============================================================================
+; TITLE: BIOS Set Cursor Position
+; DESCRIPTION: Demonstrates how to position the text cursor on the screen 
 ;              using BIOS Interrupt 10H, Function 02H.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    MSG DB 'Cursor positioned at row 10, column 20!$'
+    MSG_POS     DB "Cursor moved to Row 12, Col 30!$"
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize DS ---
     MOV AX, @DATA
     MOV DS, AX
-    
-    ;-------------------------------------------------------------------------
-    ; SET CURSOR POSITION (INT 10H, AH=02H)
-    ; Input: AH = 02H
-    ;        BH = Page number (usually 0)
-    ;        DH = Row (0 to 24)
-    ;        DL = Column (0 to 79)
-    ;-------------------------------------------------------------------------
-    MOV AH, 02H                         ; BIOS service: set cursor
-    MOV BH, 00H                         ; Page number 0
-    MOV DH, 10                          ; Target Row
-    MOV DL, 20                          ; Target Column
-    INT 10H                             ; Call Video BIOS
-    
-    ; Display message starting at the new cursor position
-    LEA DX, MSG
-    MOV AH, 09H                         ; DOS service: display string
+
+    ; --- Step 2: Set Cursor Position (INT 10h / AH=02h) ---
+    ; BH = Page Number (0 for standard text mode)
+    ; DH = Row (0-24)
+    ; DL = Column (0-79)
+    MOV AH, 02H
+    MOV BH, 00H
+    MOV DH, 12                          ; Row 12 (Middle-ish)
+    MOV DL, 30                          ; Column 30
+    INT 10H
+
+    ; --- Step 3: Print Message at New Position ---
+    LEA DX, MSG_POS
+    MOV AH, 09H
     INT 21H
-    
-    ; Exit to DOS
+
+    ; --- Step 4: Exit ---
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; BIOS VIDEO NOTES:
-; - INT 10H is the primary interface for screen operations.
-; - AH=02H moves the hardware cursor, which also updates the location 
-;   where the next DOS 'display string' (INT 21H/09H) will appear.
-; - Coordinates are zero-indexed: (0,0) is the top-left corner.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. BIOS VIDEO SERVICES (INT 10h):
+;    The BIOS controls the video hardware directly. Function 02h updates the 
+;    cursor position in the video controller's registers.
+;
+; 2. COORDINATE SYSTEM:
+;    - Text mode is typically 80x25.
+;    - Top-Left is (0,0).
+;    - Bottom-Right is (79,24).
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

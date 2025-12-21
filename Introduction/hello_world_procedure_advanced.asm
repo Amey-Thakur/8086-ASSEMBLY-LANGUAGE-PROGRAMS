@@ -1,18 +1,17 @@
-;=============================================================================
-; Program:     Hello World Procedure (Advanced)
-; Description: Refined version of the string-printing procedure demonstration, 
+; =============================================================================
+; TITLE: Hello World Procedure (Advanced)
+; DESCRIPTION: Refined version of the string-printing procedure demonstration, 
 ;              focusing on the use of SI as a source pointer and null-termination.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 ORG 100H                            ; COM file entry point
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; MAIN CODE SECTION
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 START:
     ; Load the memory address of the string into the Source Index register
     LEA SI, MSG                     
@@ -22,11 +21,11 @@ START:
 
     RET                             ; Standard COM exit
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; PROCEDURE: PRINT_STRING
 ; Description: Iteratively prints characters from the address in SI until
 ;               a binary zero (null) is encountered.
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 PRINT_STRING PROC
     
 CHARACTER_LOOP:
@@ -48,16 +47,18 @@ FINISHED:
     RET                             ; Pop return address and jump back
 PRINT_STRING ENDP
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SECTION
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 MSG DB 'Hello World!', 0            ; The string to be printed
 
 END
 
-;=============================================================================
-; ADVANCED NOTES:
-; - 'BYTE PTR' is used to tell the assembler we are comparing a single byte.
-; - This pattern is common in C-style string processing.
-; - SI (Source Index) is the standard register for scanning memory data.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. POINTERS:
+;    - 'BYTE PTR' is used to tell the assembler we are comparing a single byte.
+;    - This pattern is common in C-style string processing.
+;    - SI (Source Index) is the standard register for scanning memory data.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

@@ -1,67 +1,67 @@
-;=============================================================================
-; Program:     DOS Read Character
-; Description: Read a single character from the keyboard with echo
-;              using DOS Interrupt 21H, Function 01H.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: DOS Read Character
+; DESCRIPTION: Reads a single character from Standard Input with ECHO using 
+;              DOS Interrupt 21H, Function 01H.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    MSG1 DB 'Press any key: $'
-    MSG2 DB 0DH, 0AH, 'You pressed: $'
-    CHAR DB ?                           ; Storage for input
+    MSG_PROMPT  DB "Press a key: $"
+    MSG_OUT     DB 0DH, 0AH, "You pressed: $"
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize DS ---
     MOV AX, @DATA
     MOV DS, AX
-    
-    ; Display user prompt
-    LEA DX, MSG1
+
+    ; --- Step 2: Prompt ---
+    LEA DX, MSG_PROMPT
     MOV AH, 09H
     INT 21H
-    
-    ;-------------------------------------------------------------------------
-    ; READ CHARACTER WITH ECHO (INT 21H, AH=01H)
-    ; Wait for key, display it on screen, and return ASCII in AL.
-    ; Returns: AL = ASCII character
-    ;-------------------------------------------------------------------------
-    MOV AH, 01H                         ; DOS service: read with echo
+
+    ; --- Step 3: Read Char (INT 21h / AH=01h) ---
+    ; Waits for keypress. Echoes char to screen. Returns in AL.
+    MOV AH, 01H
     INT 21H
-    MOV CHAR, AL                         ; Save char for later use
     
-    ; Display confirmation message
-    LEA DX, MSG2
+    PUSH AX                             ; Save the char
+
+    ; --- Step 4: Display Output Label ---
+    LEA DX, MSG_OUT
     MOV AH, 09H
     INT 21H
-    
-    ; Display the character again using AH=02h
-    MOV DL, CHAR
+
+    ; --- Step 5: Print Saved Char ---
+    POP AX
+    MOV DL, AL
     MOV AH, 02H
     INT 21H
-    
-    ; Exit program
+
+    ; --- Step 6: Exit ---
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; DOS KEYBOARD INPUT NOTES:
-; - AH=01h is a blocking call (program waits for user).
-; - 'With Echo' means the typed character automatically appears on screen.
-; - AL contains 0 if a special key (like an arrow key) was pressed;
-;   another call to AH=01h or 07h or 08h is then needed to get the scan code.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. DOS FUNCTION 01h:
+;    - Reads from Stdin.
+;    - Echoes to Stdout automatically.
+;    - If CTRL-C is pressed, executes INT 23h (Terminate).
+;    - For "Special Keys" (like F1), it returns 00h. You must call it again 
+;      to get the scan code.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

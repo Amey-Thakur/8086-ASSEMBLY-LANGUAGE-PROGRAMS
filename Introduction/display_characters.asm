@@ -1,12 +1,11 @@
-;=============================================================================
-; Program:     Display Characters
-; Description: Demonstrate character-by-character output using DOS services.
+; =============================================================================
+; TITLE: Display Characters
+; DESCRIPTION: Demonstrate character-by-character output using DOS services.
 ;              Useful for building dynamic text in loops.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 ; Simple segmented structure
 CODE SEGMENT
@@ -30,9 +29,11 @@ CODE ENDS
 
 END START
 
-;=============================================================================
-; OUTPUT NOTES:
-; - INT 21H Function 02H is the standard way to print single characters.
-; - It supports ASCII control characters (e.g., Tab, Backspace).
-; - Character in DL is echoed to standard output.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. OUTPUT:
+;    - INT 21H Function 02H is the standard way to print single characters.
+;    - It supports ASCII control characters (e.g., Tab, Backspace).
+;    - Character in DL is echoed to standard output.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

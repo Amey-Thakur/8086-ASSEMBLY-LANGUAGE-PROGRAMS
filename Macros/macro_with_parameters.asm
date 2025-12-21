@@ -1,19 +1,18 @@
-;=============================================================================
-; Program:     Macro with Parameters
-; Description: Demonstrate how to define and use macros that accept 
+; =============================================================================
+; TITLE: Macro with Parameters
+; DESCRIPTION: Demonstrates how to define and use macros that accept 
 ;              arguments to perform arithmetic and bitwise operations.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; MACRO DEFINITIONS
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 
 ; Macro: ADD_VALUES
 ; Usage: ADD_VALUES <val1>, <val2>, <target_memory>
@@ -31,18 +30,18 @@ MULTIPLY_POW2 MACRO VALUE, POWER
     SHL AX, CL                      ; Arithmetic Shift Left: result in AX
 ENDM
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    NUM1 DW 100
-    NUM2 DW 50
-    SUM DW ?
+    NUM1    DW 100
+    NUM2    DW 50
+    SUM     DW ?
     PRODUCT DW ?
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     MOV AX, @DATA
@@ -61,10 +60,11 @@ MAIN PROC
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; MACRO PARAMETER NOTES:
-; - Parameters are replaced by actual text durante expansion.
-; - Macros can make code look like a high-level language.
-; - Unlike procedures, macros increase code size but eliminate the 
-;   execution overhead of CALL and RET.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. MACROS VS PROCEDURES:
+;    - Parameters are replaced by actual text during expansion (Text Substitution).
+;    - Macros act like inline functions in high-level languages.
+;    - They increase code size (Code Bloat) but eliminate CALL/RET overhead.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
