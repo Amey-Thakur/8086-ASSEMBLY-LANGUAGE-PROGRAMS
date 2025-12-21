@@ -610,6 +610,20 @@ The documentation and organization may provide insights into academic resource c
 
 ---
 
+---
+
+<!-- RESOURCES -->
+## 🔗 Useful Resources
+
+Essential tools and documentation for 8086 programming:
+
+*   **Documentation**: [Intel 8086 Datasheet](https://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/s2009/fjc23_dc324/8086_datasheet.pdf) (PDF)
+*   **Reference**: [x86 Instruction Set Reference](https://www.felixcloutier.com/x86/)
+*   **Tools**: [ASCII Table](https://www.asciitable.com/) | [Online Hex Converter](https://www.rapidtables.com/convert/number/hex-to-decimal.html)
+*   **Emulator**: [Emu8086 Documentation](https://github.com/Acurr/Emu8086)
+
+---
+
 <!-- LICENSE -->
 ## License
 
