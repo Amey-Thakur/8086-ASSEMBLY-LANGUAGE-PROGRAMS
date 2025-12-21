@@ -1,19 +1,18 @@
-;=============================================================================
-; Program:     Matrix Transpose (3x3)
-; Description: Transpose a 3x3 matrix (swap rows with columns) using 
+; =============================================================================
+; TITLE: Matrix Transpose (3x3)
+; DESCRIPTION: Transpose a 3x3 matrix (swap rows with columns) using 
 ;              nested loops and linear index calculation.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     ; Source Matrix (3x3)
     MATRIX DB 1, 2, 3
@@ -26,9 +25,9 @@
     DIM    EQU 3                         ; N x N
     MSG    DB 'Matrix Transpose completed successfully.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize environment
@@ -38,17 +37,17 @@ MAIN PROC
     MOV BL, 0                           ; Source Row index (i)
     MOV CX, DIM                         ; Outer Loop counter (rows)
     
-;-------------------------------------------------------------------------
-; OUTER LOOP: Iterate through Rows (i)
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; OUTER LOOP: Iterate through Rows (i)
+    ; -------------------------------------------------------------------------
 ROW_LOOP:
     PUSH CX                             ; Save outer counter
     MOV BH, 0                           ; Source Column index (j)
     MOV CX, DIM                         ; Inner Loop counter (columns)
     
-;-------------------------------------------------------------------------
-; INNER LOOP: Iterate through Columns (j)
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; INNER LOOP: Iterate through Columns (j)
+    ; -------------------------------------------------------------------------
 COL_LOOP:
     ; 1. Calculate source index: SI = (i * DIM) + j
     MOV AL, BL                          ; Get row index
@@ -81,9 +80,9 @@ COL_LOOP:
     POP CX                              ; Restore row counter
     LOOP ROW_LOOP                       ; Repeat for all rows
     
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     ; Finish
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     LEA DX, MSG
     MOV AH, 09H
     INT 21H
@@ -93,12 +92,14 @@ COL_LOOP:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; TRANSPOSE LOGIC NOTES:
-; - Transpose swaps Element[i][j] with Element[j][i].
-; - Memory Index calculation for Element[row][col] is: (row * Width) + col.
-; - Original:       Transposed:
-;   1 2 3           1 4 7
-;   4 5 6     =>    2 5 8
-;   7 8 9           3 6 9
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. LOGIC:
+;    - Transpose swaps Element[i][j] with Element[j][i].
+;    - Memory Index calculation for Element[row][col] is: (row * Width) + col.
+;    - Original:       Transposed:
+;      1 2 3           1 4 7
+;      4 5 6     =>    2 5 8
+;      7 8 9           3 6 9
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

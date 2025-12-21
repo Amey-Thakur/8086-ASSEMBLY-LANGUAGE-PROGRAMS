@@ -1,29 +1,28 @@
-;=============================================================================
-; Program:     Armstrong Number Check
-; Description: Check if a 16-bit number is an Armstrong number.
+; =============================================================================
+; TITLE: Armstrong Number Check
+; DESCRIPTION: Check if a 16-bit number is an Armstrong number.
 ;              For a 3-digit number, Armstrong property means:
 ;              Number = (Digit1^3) + (Digit2^3) + (Digit3^3)
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    NUM DW 153                           ; 153 = 1^3 + 5^3 + 3^3 = 1 + 125 + 27
-    SUM DW 0                             ; To store the calculated sum of cubes
+    NUM     DW 153                      ; 153 = 1^3 + 5^3 + 3^3 = 1 + 125 + 27
+    SUM     DW 0                        ; To store the calculated sum of cubes
     MSG_YES DB 'Number is an ARMSTRONG number!$'
     MSG_NO  DB 'Number is NOT an Armstrong number.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize Data Segment
@@ -33,9 +32,9 @@ MAIN PROC
     MOV AX, NUM                         ; AX holds the quotient (starting with original)
     MOV BX, 10                          ; Divisor to extract base-10 digits
     
-;-------------------------------------------------------------------------
-; DIGIT EXTRACTION AND CUBE SUMMATION
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; DIGIT EXTRACTION AND CUBE SUMMATION
+    ; -------------------------------------------------------------------------
 EXTRACT_DIGIT:
     CMP AX, 0                           ; Are we out of digits?
     JE VERIFY_RESULT
@@ -55,9 +54,9 @@ EXTRACT_DIGIT:
     POP AX                              ; Restore remaining digits to AX
     JMP EXTRACT_DIGIT
     
-;-------------------------------------------------------------------------
-; FINAL COMPARISON
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; FINAL COMPARISON
+    ; -------------------------------------------------------------------------
 VERIFY_RESULT:
     MOV AX, SUM
     CMP AX, NUM                         ; Does Sum of Cubes equal Original Number?
@@ -79,10 +78,11 @@ DISPLAY_AND_EXIT:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; ARMSTRONG NUMBER REFERENCE:
-; - Definition: An n-digit number that is equal to the sum of the nth powers
-;   of its digits.
-; - Common 3-digit examples: 153, 370, 371, 407.
-; - This implementation specifically targets the cube logic for 3 digits.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. DEFINITION:
+;    - An n-digit number that is equal to the sum of the nth powers of its digits.
+;    - Common 3-digit examples: 153, 370, 371, 407.
+;    - This implementation specifically targets the cube logic for 3 digits.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
