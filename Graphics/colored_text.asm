@@ -1,92 +1,92 @@
-;=============================================================================
-; Program:     Colored Text Demo (Text Mode)
-; Description: Demonstrate how to display colored text by directly writing
-;              to the video memory segment 0B800h.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Direct Video Memory Access (Colored Text)
+; DESCRIPTION: Demonstrates how to write directly to the Video Graphics Array 
+;              (VGA) memory at segment 0B800h to display colored text.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    MSG DB 'Colored Text Demo!'         ; String to display
-    LEN EQU 18                           ; String length
+    MSG_TEXT    DB "Direct Video Memory Write!"
+    MSG_LEN     EQU $ - MSG_TEXT
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize DS ---
     MOV AX, @DATA
     MOV DS, AX
-    
-    ;-------------------------------------------------------------------------
-    ; Set Video Mode: Standard 80x25 Text Mode (Mode 03h)
-    ;-------------------------------------------------------------------------
+
+    ; --- Step 2: Set Video Mode (03h - 80x25 Text) ---
     MOV AH, 00H
     MOV AL, 03H
     INT 10H
-    
-    ;-------------------------------------------------------------------------
-    ; Access Video Memory
-    ; Segment 0B800h is the start of video memory in color text modes.
-    ; Each character on screen takes 2 bytes: [Char][Attribute]
-    ;-------------------------------------------------------------------------
+
+    ; --- Step 3: Setup ES to Video Segment ---
+    ; In Text Mode (CGA/EGA/VGA), memory starts at B800:0000
     MOV AX, 0B800H
     MOV ES, AX
-    
-    ; Calculate starting address: Row 12, Column 30
-    ; Memory Offset = (row * 80 + column) * 2
-    MOV DI, (12 * 80 + 30) * 2
-    
-    ; Setup for loop
-    LEA SI, MSG
-    MOV CX, LEN                         ; Number of characters
-    MOV BL, 0                           ; Starting color counter
-    
-;-------------------------------------------------------------------------
-; DISPLAY LOOP: Write Char and Attribute pair to ES:DI
-;-------------------------------------------------------------------------
-PRINT_LOOP:
-    LODSB                               ; Load character from DS:SI into AL
-    MOV ES:[DI], AL                     ; Store ASCII character in video memory
+
+    ; --- Step 4: Calculate Screen Position ---
+    ; Position: Row 10, Col 20
+    ; Formula: Offset = (Row * 80 + Col) * 2
+    ; Note: *2 because each cell is 2 bytes (Char + Attribute)
+    MOV AX, 10
+    MOV BX, 80
+    MUL BX                              ; AX = 800
+    ADD AX, 20                          ; AX = 820
+    SHL AX, 1                           ; AX = 1640 (Multiply by 2)
+    MOV DI, AX                          ; DI points to target memory
+
+    ; --- Step 5: Write Character Loop ---
+    LEA SI, MSG_TEXT
+    MOV CX, MSG_LEN
+    MOV AH, 01H                         ; Initial Color: Blue (1)
+
+L_PRINT_LOOP:
+    LODSB                               ; AL = [SI], SI++
+    MOV ES:[DI], AL                     ; Write Char to Video RAM
     INC DI
     
-    ; Attribute Byte Structure:
-    ; Bit 0-3: Foreground color
-    ; Bit 4-6: Background color
-    ; Bit 7  : Blink (if enabled)
-    MOV AL, BL
-    AND AL, 0FH                         ; Use foreground colors (0-15)
-    OR AL, 10H                          ; Add Blue background (bit 4=1)
-    
-    MOV ES:[DI], AL                     ; Store attribute in video memory
+    MOV ES:[DI], AH                     ; Write Attribute to Video RAM
     INC DI
     
-    INC BL                              ; Cycle to next color
-    LOOP PRINT_LOOP
-    
-    ; Wait for user keypress before exit
+    INC AH                              ; Cycle Colors
+    AND AH, 0FH                         ; Keep color 0-15
+    LOOP L_PRINT_LOOP
+
+    ; --- Step 6: Wait & Exit ---
     MOV AH, 00H
-    INT 16H
-    
-    ; Exit to DOS
+    INT 16H                             ; Wait for Key
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; TEXT MODE COLOR REFERENCE (Standard 16 Colors):
-; 0: Black      4: Red          8: Dark Grey    12: Light Red
-; 1: Blue       5: Magenta      9: Light Blue   13: Light Magenta
-; 2: Green      6: Brown        10: Light Green  14: Yellow
-; 3: Cyan       7: Light Grey   11: Light Cyan   15: White
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. VIDEO MEMORY LAYOUT (TEXT MODE):
+;    The screen is a grid of 80x25 characters.
+;    Memory is linear: B800:0000 is top-left char, B800:0001 is its color.
+;
+; 2. ATTRIBUTE BYTE FORMAT (8 bits):
+;    [Blink E | BG R G B | I | FG R G B]
+;    - Bit 7: Blink
+;    - Bits 4-6: Background Color
+;    - Bit 3: Intensity (Bright)
+;    - Bits 0-2: Foreground Color
+;
+; 3. PERFORMANCE:
+;    Writing directly to B800h is significantly faster than using INT 10h calls.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

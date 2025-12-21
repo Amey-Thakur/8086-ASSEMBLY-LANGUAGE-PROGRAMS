@@ -1,90 +1,93 @@
-;=============================================================================
-; Program:     Display Decimal
-; Description: Convert a 16-bit unsigned integer into its ASCII decimal
-;              representation using repeated division by 10.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Display Decimal Representation
+; DESCRIPTION: Converts a 16-bit integer into its Decimal (Base 10) ASCII 
+;              string using repeated division logic.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    NUM DW 12345                        ; Example 16-bit number
-    MSG DB 'Decimal Value: $'
+    TEST_VAL    DW 12345                ; Example Value
+    MSG_OUT     DB "Decimal Output: $"
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize DS ---
     MOV AX, @DATA
     MOV DS, AX
-    
-    ; Display header message
-    LEA DX, MSG
+
+    ; --- Step 2: Display Header ---
+    LEA DX, MSG_OUT
     MOV AH, 09H
     INT 21H
-    
-    ; Load number and convert to decimal display
-    MOV AX, NUM
-    CALL PRINT_DECIMAL
-    
-    ; Exit to DOS
+
+    ; --- Step 3: Print Decimal ---
+    MOV AX, TEST_VAL
+    CALL PRINT_DEC_PROC
+
+    ; --- Step 4: Exit ---
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 
-;-----------------------------------------------------------------------------
-; PROCEDURE: PRINT_DECIMAL
+; -----------------------------------------------------------------------------
+; PROCEDURE: PRINT_DEC_PROC
 ; Input: AX (Value to print)
-; Logic: Repeated division by 10. Remainders are pushed to stack to reverse
-;        their order (Least Significant Digit comes out first in division).
-;-----------------------------------------------------------------------------
-PRINT_DECIMAL PROC
+; -----------------------------------------------------------------------------
+PRINT_DEC_PROC PROC
     PUSH AX
     PUSH BX
     PUSH CX
     PUSH DX
+
+    MOV CX, 0                           ; Digit Counter
+    MOV BX, 10                          ; Divisor
+
+L_DIV_LOOP:
+    XOR DX, DX                          ; Clear High Word for Division
+    DIV BX                              ; AX = Quotient, DX = Remainder (0-9)
+    PUSH DX                             ; Push Remainder to Stack
+    INC CX                              ; Count Digits
     
-    XOR CX, CX                          ; Initialize digit counter
-    MOV BX, 10                          ; Divisor for base 10
-    
-DIVIDE_LOOP:
-    XOR DX, DX                          ; Clear DX for 32-bit / 16-bit division
-    DIV BX                              ; AX = Quotient, DX = Remainder (Digit)
-    PUSH DX                             ; Save digit on stack
-    INC CX                              ; Increment digit count
-    CMP AX, 0                           ; Is quotient zero?
-    JNE DIVIDE_LOOP                     ; If not, keep dividing
-    
-; Stack now contains digits in reverse order (e.g., 5, 4, 3, 2, 1)
-PRINT_LOOP:
-    POP DX                              ; Get digit (1, 2, 3, 4, 5)
-    ADD DL, '0'                         ; Convert numeric value to ASCII ('0'-'9')
-    MOV AH, 02H                         ; DOS: Display character function
+    CMP AX, 0                           ; Quotient 0?
+    JNE L_DIV_LOOP                      ; No, continue dividing
+
+L_PRINT_LOOP:
+    POP DX                              ; Pop Last Remainder (Most Significant Digit)
+    ADD DL, '0'                         ; ASCII Conversion
+    MOV AH, 02H
     INT 21H
-    LOOP PRINT_LOOP                     ; Display all CX digits
-    
+    LOOP L_PRINT_LOOP
+
     POP DX
     POP CX
     POP BX
     POP AX
     RET
-PRINT_DECIMAL ENDP
+PRINT_DEC_PROC ENDP
 
 END MAIN
 
-;=============================================================================
-; DECIMAL CONVERSION NOTES:
-; - Division by 10 extracts the rightmost digit as the remainder.
-; - The stack is used here as a LIFO (Last-In, First-Out) buffer to 
-;   correctly order the digits for display from left to right.
-; - Range: 0 to 65535 (16-bit unsigned).
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. DECIMAL CONVERSION ALGORITHM:
+;    - Number modulo 10 gives the last digit.
+;    - Number divided by 10 removes the last digit.
+;    - Repeat until number is 0.
+;
+; 2. STACK USAGE:
+;    Division extracts digits in reverse order (ones, then tens...). Pushing 
+;    them onto the stack and popping them allows printing in the correct 
+;    order (LIFO).
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

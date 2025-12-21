@@ -1,89 +1,78 @@
-;=============================================================================
-; Program:     VGA Line Drawing (Mode 13h)
-; Description: Demonstrate drawing a horizontal line in 256-color VGA mode
-;              by writing directly to video segment 0A000h.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Draw Line (VGA Mode 13h)
+; DESCRIPTION: Demonstrates drawing a horizontal line in 320x200 256-color mode
+;              using direct memory access (Segment A000h).
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    X_START DW 50                       ; Column start
-    X_END DW 270                        ; Column end
-    Y_POS DW 100                        ; Row position
-    COLOR DB 14                         ; Yellow color code
+    LINE_ROW    DW 100                  ; Y Position (0-199)
+    LINE_START  DW 50                   ; X Start (0-319)
+    LINE_LEN    DW 220                  ; X Length
+    LINE_COLOR  DB 14                   ; Yellow (14)
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize DS ---
     MOV AX, @DATA
     MOV DS, AX
-    
-    ;-------------------------------------------------------------------------
-    ; Set VGA Graphics Mode 13h
-    ; Resolution: 320x200 | Colors: 256
-    ; Video Segment: 0A000h
-    ;-------------------------------------------------------------------------
-    MOV AH, 00H
-    MOV AL, 13H
+
+    ; --- Step 2: Enter Mode 13h (Graphics) ---
+    MOV AX, 0013H
     INT 10H
-    
+
+    ; --- Step 3: Setup ES to Video Segment ---
     MOV AX, 0A000H
-    MOV ES, AX                          ; ES points to graphics memory
-    
-    ;-------------------------------------------------------------------------
-    ; Calculate Linear Memory Address
-    ; Address = (Y * 320) + X
-    ;-------------------------------------------------------------------------
-    MOV AX, Y_POS
+    MOV ES, AX
+
+    ; --- Step 4: Calculate Start Offset ---
+    ; Offset = (Y * 320) + X
+    MOV AX, LINE_ROW
     MOV BX, 320
     MUL BX                              ; AX = Y * 320
-    ADD AX, X_START                     ; AX = (Y * 320) + X_START
-    MOV DI, AX                          ; DI = Start pointer in video segment
+    ADD AX, LINE_START
+    MOV DI, AX                          ; DI = Start Pixel Address
+
+    ; --- Step 5: Draw Line ---
+    MOV CX, LINE_LEN                    ; Count
+    MOV AL, LINE_COLOR                  ; Color
     
-    ;-------------------------------------------------------------------------
-    ; Calculate Line length (Pixels to Draw)
-    ;-------------------------------------------------------------------------
-    MOV CX, X_END
-    SUB CX, X_START                     ; CX = Number of pixels
-    
-    ;-------------------------------------------------------------------------
-    ; Draw Horizontal Line
-    ; REP STOSB copies AL to ES:DI, incrementing DI, CX times.
-    ;-------------------------------------------------------------------------
-    MOV AL, COLOR
-    CLD                                 ; Incrementing DI
-    REP STOSB
-    
-    ; Wait for keypress
+    CLD                                 ; Increment DI
+    REP STOSB                           ; Store AL to ES:DI x CX times
+
+    ; --- Step 6: Wait & Restore ---
     MOV AH, 00H
-    INT 16H
-    
-    ; Return to standard 80x25 text mode (Mode 03h)
-    MOV AH, 00H
-    MOV AL, 03H
+    INT 16H                             ; Wait for Key
+
+    MOV AX, 0003H                       ; Return to Text Mode
     INT 10H
-    
-    ; Exit to DOS
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; VGA MODE 13H NOTES:
-; - Memory mapped at 0A000:0000 to 0A000:FA00 approx.
-; - Linear address space: 1 pixel = 1 byte.
-; - Total Pixels: 320 columns * 200 rows = 64,000 pixels.
-; - Color Palette: 256 colors defined by DAC registers.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. VGA MODE 13h:
+;    - Resolution: 320 x 200 pixels.
+;    - Colors: 256 (1 Byte per pixel).
+;    - Memory: Linear mapping at A000:0000.
+;
+; 2. STOSB INSTRUCTION:
+;    - Stores AL into [ES:DI] and updates DI.
+;    - REP prefix repeats it CX times.
+;    - This is the fastest way to fill a horizontal span on 8086.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

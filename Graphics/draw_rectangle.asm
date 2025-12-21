@@ -1,105 +1,90 @@
-;=============================================================================
-; Program:     VGA Rectangle Drawing (Mode 13h)
-; Description: Draw a filled rectangle in VGA mode by iterating through
-;              rows and using REP STOSB for efficient filling.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Draw Filled Rectangle
+; DESCRIPTION: Draws a solid colored rectangle by iteratively drawing 
+;              horizontal lines.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    X1 DW 50                            ; Left column
-    Y1 DW 50                            ; Top row
-    X2 DW 150                           ; Right column
-    Y2 DW 100                           ; Bottom row
-    COLOR DB 12                         ; Light Red color code
+    RECT_X      DW 100
+    RECT_Y      DW 50
+    RECT_W      DW 120
+    RECT_H      DW 100
+    RECT_COL    DB 4                    ; Red (4)
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize DS ---
     MOV AX, @DATA
     MOV DS, AX
-    
-    ;-------------------------------------------------------------------------
-    ; Set VGA Graphics Mode 13h
-    ;-------------------------------------------------------------------------
-    MOV AH, 00H
-    MOV AL, 13H
+
+    ; --- Step 2: Mode 13h ---
+    MOV AX, 0013H
     INT 10H
-    
-    ; Set ES to video segment (0A000h)
+
+    ; --- Step 3: ES -> Video RAM ---
     MOV AX, 0A000H
     MOV ES, AX
+
+    ; --- Step 4: Drawing Loop ---
+    ; Logic: For Row = Y to Y+H, Draw Line(X, Width)
     
-    ;-------------------------------------------------------------------------
-    ; Calculate Dimensions
-    ;-------------------------------------------------------------------------
-    MOV DX, Y2
-    SUB DX, Y1                          ; DX = Height (number of rows)
+    MOV DX, RECT_H                      ; ROW COUNTER (Height)
+    MOV BX, RECT_Y                      ; CURRENT ROW (Y)
+
+L_DRAW_ROW:
+    ; Calculate Row Start: DI = (BX * 320) + RECT_X
+    MOV AX, BX
+    PUSH DX                             ; Save Loop Counter (Height)
     
-    MOV BX, X2
-    SUB BX, X1                          ; BX = Width (pixels per row)
-    
-    ; Start at first row
-    MOV AX, Y1
-    
-;-------------------------------------------------------------------------
-; MAIN DRAWING LOOP: Iterate through rows
-;-------------------------------------------------------------------------
-DRAW_ROW:
-    PUSH AX
-    PUSH DX                             ; Save row counter
-    
-    ; Calculate offset for current row: (Y * 320) + X1
     MOV DX, 320
-    MUL DX                              ; DX:AX = Y * 320
-    ADD AX, X1                          ; AX = start of current row
-    MOV DI, AX                          ; DI points to row start in ES
+    MUL DX                              ; DX:AX = 320 * Y
+    ADD AX, RECT_X
+    MOV DI, AX                          ; DI = Pixel Address
     
-    ; Draw the row scanline
-    MOV CX, BX                          ; Width of rectangle
-    MOV AL, COLOR                       ; Fill color
-    CLD                                 ; Increment DI
-    REP STOSB                           ; Write row pixels
+    ; Draw One Horizontal Line
+    MOV CX, RECT_W                      ; Width (Pixels in row)
+    MOV AL, RECT_COL
+    REP STOSB                           ; Fill Row
     
-    POP DX                              ; Restore row counter
-    POP AX                              ; Restore current Y
-    
-    INC AX                              ; Move to next row
-    DEC DX                              ; Decrement height counter
-    JNZ DRAW_ROW                        ; Continue until height=0
-    
-    ;-------------------------------------------------------------------------
-    ; Cleanup and Exit
-    ;-------------------------------------------------------------------------
-    ; Wait for keypress
+    POP DX                              ; Restore Loop Counter
+    INC BX                              ; Next Row (Y++)
+    DEC DX                              ; Height--
+    JNZ L_DRAW_ROW
+
+    ; --- Step 5: Wait & Exit ---
     MOV AH, 00H
     INT 16H
-    
-    ; Return to text mode
-    MOV AH, 00H
-    MOV AL, 03H
+
+    MOV AX, 0003H
     INT 10H
-    
-    ; Exit to DOS
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; RECTANGLE DRAWING NOTES:
-; - Instead of plotting pixel-by-pixel, we use 'REP STOSB' for each row.
-; - This is significantly faster as it utilizes dedicated string instructions.
-; - To draw an outlined rectangle, one would draw four individual lines.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. RASTERIZATION:
+;    Filling a shape is done by "rasterizing" it—breaking it down into 
+;    horizontal scanlines. This effectively treats a 2D area fill as a set 
+;    of 1D line fills.
+;
+; 2. OPTIMIZATION:
+;    Calculating the address from scratch (MUL 320) each row is slow.
+;    Faster method: Calculate first row address, then just ADD DI, 320 
+;    at the end of each loop iteration.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

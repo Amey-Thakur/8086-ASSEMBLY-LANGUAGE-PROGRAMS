@@ -1,82 +1,74 @@
-;=============================================================================
-; Program:     VGA Pixel Drawing (Mode 13h)
-; Description: Draw a single pixel in the center of the screen in 
-;              320x200 256-color graphics mode.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Plot Single Pixel
+; DESCRIPTION: Basic graphics primitive: plotting a single dot on the screen
+;              at coordinates (X, Y) in Mode 13h.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    X_POS DW 160                        ; Center column (0-319)
-    Y_POS DW 100                        ; Center row (0-199)
-    COLOR DB 15                         ; White color code
+    PIXEL_X     DW 160                  ; Center X
+    PIXEL_Y     DW 100                  ; Center Y
+    PIXEL_COL   DB 15                   ; White (15)
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize DS ---
     MOV AX, @DATA
     MOV DS, AX
-    
-    ;-------------------------------------------------------------------------
-    ; Set VGA Graphics Mode 13h
-    ; Resolution: 320x200 pixels
-    ; Colors: 256 simultaneous colors
-    ;-------------------------------------------------------------------------
-    MOV AH, 00H
-    MOV AL, 13H
+
+    ; --- Step 2: Enter Mode 13h ---
+    MOV AX, 0013H
     INT 10H
-    
-    ;-------------------------------------------------------------------------
-    ; Calculate Video Memory Address
-    ; Address = (Row * 320) + Column
-    ; Segment: 0A000h
-    ;-------------------------------------------------------------------------
-    MOV AX, Y_POS
+
+    ; --- Step 3: Setup ES ---
+    MOV AX, 0A000H
+    MOV ES, AX
+
+    ; --- Step 4: Calculate Offset ---
+    ; Offset = 320 * Y + X
+    MOV AX, PIXEL_Y
     MOV BX, 320
-    MUL BX                              ; AX = Y * 320
-    ADD AX, X_POS                       ; AX = (Y * 320) + X
-    
-    ; Set ES to video segment
-    MOV BX, 0A000H
-    MOV ES, BX
-    
-    ;-------------------------------------------------------------------------
-    ; Plot the Pixel
-    ; Direct memory write to ES:[DI]
-    ;-------------------------------------------------------------------------
-    MOV DI, AX                          ; Offset in video memory
-    MOV AL, COLOR                       ; Get color index
-    MOV ES:[DI], AL                      ; Write to video memory
-    
-    ; Wait for user input to see the result
+    MUL BX
+    ADD AX, PIXEL_X
+    MOV DI, AX
+
+    ; --- Step 5: Plot Pixel ---
+    MOV AL, PIXEL_COL
+    MOV ES:[DI], AL                     ; Write color byte to VRAM
+
+    ; --- Step 6: Wait & Exit ---
     MOV AH, 00H
     INT 16H
-    
-    ; Reset back to standard text mode
-    MOV AH, 00H
-    MOV AL, 03H
+
+    MOV AX, 0003H                       ; Restore Text Mode
     INT 10H
-    
-    ; Exit to DOS
+
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; VGA PIXEL ADDRESSING:
-; - Screen starts at (0,0) (Top-Left) and ends at (319,199) (Bottom-Right).
-; - Each byte in segment 0A000h represents one pixel.
-; - Color index 15 usually defaults to Bright White in the standard palette.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. COORDINATE SYSTEM:
+;    - (0,0) is top-left.
+;    - (319, 199) is bottom-right.
+;    - Any write outside 0-63999 offset will wrap or corrupt other video pages 
+;      (if available), but in Mode 13h it's usually safe within 64KB segment.
+;
+; 2. BIOS PLOT (INT 10h AH=0Ch):
+;    We avoided INT 10h/AH=0Ch here because it is very slow compared to 
+;    direct memory writing shown above.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
