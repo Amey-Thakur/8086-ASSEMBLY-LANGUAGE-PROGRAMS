@@ -1,12 +1,8 @@
-;=============================================================================
-; Program:     8086 Addressing Modes - Complete Reference
-; Description: Demonstrates all 7 addressing modes of the Intel 8086
-;              microprocessor with practical examples
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; TITLE: 8086 Addressing Modes - Complete Reference
+; DESCRIPTION: Demonstrates all 7 addressing modes of the Intel 8086 microprocessor with practical examples.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
 
 .MODEL SMALL
 .STACK 100H
@@ -19,7 +15,7 @@
     VAR1 DB 10H                      ; Byte variable (1 byte)
     VAR2 DW 1234H                    ; Word variable (2 bytes)
     ARRAY DB 10H, 20H, 30H, 40H, 50H ; Array of 5 bytes
-    MSG DB 'Addressing Modes Demo$'  ; String for display
+    MSG DB 'Addressing Modes Demo Completed Successfully!$', 0DH, 0AH, '$'
 
 ;-----------------------------------------------------------------------------
 ; CODE SEGMENT
@@ -122,7 +118,6 @@ MAIN PROC
     MOV AH, 4CH                      ; DOS: Terminate program function
     INT 21H                          ; Return to DOS
 MAIN ENDP
-END MAIN
 
 ;=============================================================================
 ; ADDRESSING MODES QUICK REFERENCE
@@ -131,13 +126,24 @@ END MAIN
 ;-------------------|--------------------------|------------------------------
 ; 1. Immediate      | MOV AX, 1234H            | Operand is constant value
 ; 2. Register       | MOV AX, BX               | Operand is register
-; 3. Direct         | MOV AX, [1234H]          | Direct memory address
-;                   | MOV AX, VAR              | Using variable name
-; 4. Indirect       | MOV AX, [BX]             | Address in register
-; 5. Indexed        | MOV AX, [SI]             | Using index register
-;                   | MOV AX, [DI+4]           | With displacement
+; 3. Direct         | MOV AX, VAR              | Direct memory offset
+; 4. Indirect       | MOV AX, [BX]             | Address in BX, SI, or DI
+; 5. Indexed        | MOV AX, [SI+4]           | Index + displacement
 ; 6. Based          | MOV AX, [BX+4]           | Base + displacement
-;                   | MOV AX, [BP+4]           | Stack-based access
-; 7. Based-Indexed  | MOV AX, [BX+SI]          | Base + index
-;                   | MOV AX, [BX+SI+4]        | Base + index + displacement
+; 7. Based-Indexed  | MOV AX, [BX+SI+4]        | Base + index + displacement
 ;=============================================================================
+
+; =============================================================================
+; NOTES:
+; 1. PHYSICAL ADDRESS CALCULATION: 8086 uses a 20-bit address.
+;    Physical Address = (Segment Register * 10H) + Effective Address (Offset)
+; 2. DEFAULT SEGMENTS:
+;    - BX, SI, DI usually refer to the Data Segment (DS).
+;    - BP (Base Pointer) usually refers to the Stack Segment (SS).
+; 3. EFFECTIVE ADDRESS (EA): The final offset calculated by the CPU using the 
+;    above components (Base + Index + Displacement).
+; 4. PERFORMANCE: Register and Immediate modes are the fastest as they do not 
+;    require external memory bus cycles.
+; =============================================================================
+
+END MAIN
