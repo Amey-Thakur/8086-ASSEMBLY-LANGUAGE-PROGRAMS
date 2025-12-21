@@ -517,8 +517,9 @@ All programs in this repository were developed, verified, and documented by me d
 
 To successfully run these programs, you need the following environment:
 
--   **Operating System**: Windows 7, 8, 10, or 11 (Emu8086 is strictly a Windows application).
--   **Emulator**: **[Emu8086](https://github.com/Acurr/Emu8086)** (Recommended) or DOSBox with TASM/MASM.
+-   **Operating System**: Windows 7, 8, 10, or 11 (Emu8086 is native to Windows).
+-   **Mac/Linux Users**: Use **[DOSBox](https://www.dosbox.com/)** with TASM/MASM or run Emu8086 via **[Wine](https://www.winehq.org/)** / Virtual Machine.
+-   **Emulator**: **[Emu8086](https://github.com/Acurr/Emu8086)** (Recommended for Windows).
 -   **Text Editor**: [VS Code](https://code.visualstudio.com/) (Optional, for better syntax highlighting using Assembly extensions).
 
 ---
