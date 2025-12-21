@@ -1,110 +1,119 @@
-;=============================================================================
-; Program:     BIOS Keyboard Input
-; Description: Read keyboard input using BIOS Interrupt 16H. This provides
+; =============================================================================
+; TITLE: BIOS Keyboard Input (Raw)
+; DESCRIPTION: Reads keyboard input using BIOS Interrupt 16H. This provides
 ;              access to both ASCII characters and hardware scan codes.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    MSG1 DB 'Press any key (no echo): $'
-    MSG2 DB 0DH, 0AH, 'Scan code (hardware): $'
-    MSG3 DB 0DH, 0AH, 'ASCII code (character): $'
+    MSG_WAIT    DB "Press any key (BIOS INT 16h)...", 0DH, 0AH, "$"
+    MSG_SCAN    DB 0DH, 0AH, "Scan Code (Hex): $"
+    MSG_ASCII   DB 0DH, 0AH, "ASCII Code (Hex): $"
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ; Initialize Data Segment
+    ; --- Step 1: Initialize DS ---
     MOV AX, @DATA
     MOV DS, AX
-    
-    ; Display prompt to user
-    LEA DX, MSG1
-    MOV AH, 09H                         ; DOS: display string
+
+    ; --- Step 2: Prompt ---
+    LEA DX, MSG_WAIT
+    MOV AH, 09H
     INT 21H
-    
-    ;-------------------------------------------------------------------------
-    ; WAIT FOR KEYSTOKE (INT 16H, AH=00H)
-    ; This function stops program execution until a key is pressed.
-    ; Returns: AH = BIOS Scan Code (Keyboard position)
-    ;          AL = ASCII Character
-    ;-------------------------------------------------------------------------
-    MOV AH, 00H                         ; BIOS service: keyboard read
+
+    ; --- Step 3: Wait for Key (INT 16h / AH=00h) ---
+    ; Returns: AH = Scan Code, AL = ASCII Code
+    MOV AH, 00H
     INT 16H
     
-    PUSH AX                             ; Save both AH and AL for later
-    
-    ; Print Scan Code label
-    LEA DX, MSG2
+    PUSH AX                             ; Save Result
+
+    ; --- Step 4: Print Scan Code (AH) ---
+    LEA DX, MSG_SCAN
     MOV AH, 09H
     INT 21H
     
-    ; Print Scan Code as Hex
-    POP AX                              ; Retrieve AX
-    PUSH AX                             ; Re-save it
-    MOV AL, AH                          ; Work with AH (scan code)
-    CALL PRINT_HEX_BYTE
-    
-    ; Print ASCII Code label
-    LEA DX, MSG3
+    POP AX                              ; Restore
+    PUSH AX                             ; Save Again
+    MOV AL, AH                          ; Move Scan Code to AL for printing
+    CALL PRINT_HEX_BYTE_PROC
+
+    ; --- Step 5: Print ASCII Code (AL) ---
+    LEA DX, MSG_ASCII
     MOV AH, 09H
     INT 21H
     
-    ; Print ASCII Code as Hex
-    POP AX                              ; Retrieve AX
-    CALL PRINT_HEX_BYTE                 ; AL already contains ASCII code
-    
-    ; Exit safely
+    POP AX                              ; Restore original AL (ASCII)
+    CALL PRINT_HEX_BYTE_PROC
+
+    ; --- Step 6: Exit ---
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 
-;-----------------------------------------------------------------------------
-; UTILITY: PRINT_HEX_BYTE
-; Displays AL as a 2-digit hexadecimal number.
-;-----------------------------------------------------------------------------
-PRINT_HEX_BYTE PROC
+; -----------------------------------------------------------------------------
+; PROCEDURE: PRINT_HEX_BYTE_PROC
+; Input: AL (Byte to print)
+; -----------------------------------------------------------------------------
+PRINT_HEX_BYTE_PROC PROC
     PUSH AX
-    MOV AH, AL                          ; Duplicate AL
-    SHR AL, 4                           ; Shift high nibble to low
-    CALL PRINT_DIGIT                    ; Print first hex digit
-    MOV AL, AH                          ; Restore original AL
-    AND AL, 0FH                         ; Mask out high nibble
-    CALL PRINT_DIGIT                    ; Print second hex digit
+    PUSH BX
+    PUSH CX
+    PUSH DX
+    
+    MOV BL, AL                          ; Save Byte
+    
+    ; High Nibble
+    SHR AL, 4
+    CALL PRINT_NIBBLE
+    
+    ; Low Nibble
+    MOV AL, BL
+    AND AL, 0FH
+    CALL PRINT_NIBBLE
+    
+    POP DX
+    POP CX
+    POP BX
     POP AX
     RET
-PRINT_HEX_BYTE ENDP
+PRINT_HEX_BYTE_PROC ENDP
 
-PRINT_DIGIT PROC
+PRINT_NIBBLE PROC
     CMP AL, 9
-    JA HEX_LETTER
-    ADD AL, '0'                         ; Convert 0-9 to ASCII '0'-'9'
-    JMP PRINT_IT
-HEX_LETTER:
-    ADD AL, 'A' - 10                    ; Convert 10-15 to ASCII 'A'-'F'
-PRINT_IT:
+    JG L_HEX
+    ADD AL, '0'
+    JMP L_OUT
+L_HEX:
+    ADD AL, 'A' - 10
+L_OUT:
     MOV DL, AL
-    MOV AH, 02H                         ; DOS: print character
+    MOV AH, 02H
     INT 21H
     RET
-PRINT_DIGIT ENDP
+PRINT_NIBBLE ENDP
 
 END MAIN
 
-;=============================================================================
-; BIOS KEYBOARD NOTES:
-; - Unlike DOS AH=01h, BIOS AH=00h does NOT automatically show the character
-;   on the screen (no echo).
-; - Scan codes uniquely identify physical keys, allowing detection of
-;   special keys like Arrows, F-keys, and PgUp/PgDn.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. BIOS VS DOS KEYBOARD:
+;    - DOS (INT 21h) is higher level, handles CTRL-C, and often echoes output.
+;    - BIOS (INT 16h) is raw. It returns the Hardware Scan Code (Physical Key) 
+;      and the ASCII translation.
+;
+; 2. SCAN CODES:
+;    Useful for games or detecting non-ASCII keys (Arrows, F1-F12, etc.).
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

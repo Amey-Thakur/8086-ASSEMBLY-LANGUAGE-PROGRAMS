@@ -1,44 +1,44 @@
-;=============================================================================
-; Program:     BIOS Video Mode Setup
-; Description: Demonstrate how to use BIOS Interrupt 10H to switch between
-;              text and graphics video modes.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: BIOS Set Video Mode
+; DESCRIPTION: Demonstrates how to switch video modes via BIOS (INT 10h).
+;              Switches to 80x25 Color Text Mode (Mode 03h).
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
-    ;-------------------------------------------------------------------------
-    ; SET VIDEO MODE (INT 10H, AH=00H)
-    ; Input: AL = Desired video mode
-    ;-------------------------------------------------------------------------
-    MOV AH, 00H                         ; BIOS service: set mode
-    MOV AL, 03H                         ; Standard 80x25 Color Text
-    INT 10H                             ; Call BIOS
-    
-    ; Terminates the program immediately
+    ; --- Step 1: Set Video Mode (INT 10h / AH=00h) ---
+    ; AL = Video Mode
+    ; 03h = 80x25 Text (Color) - Default DOS Mode
+    ; 13h = 320x200 Graphics (256 Colors)
+    MOV AH, 00H
+    MOV AL, 03H
+    INT 10H
+
+    ; --- Step 2: Exit ---
+    ; Note: Switching modes typically clears the screen.
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; COMMON VIDEO MODES REFERENCE:
-; Mode | Type     | Resolution | Colors | Notes
-; -----|----------|------------|--------|-------------------------------------
-; 00h  | Text     | 40x25      | B/W    | Large characters
-; 01h  | Text     | 40x25      | 16     | 
-; 02h  | Text     | 80x25      | B/W    | 
-; 03h  | Text     | 80x25      | 16     | Standard DOS text mode
-; 04h  | Graphics | 320x200    | 4      | CGA four color mode
-; 12h  | Graphics | 640x480    | 16     | VGA standard graphics
-; 13h  | Graphics | 320x200    | 256    | Popular for 8-bit games
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES & ARCHITECTURAL INSIGHTS
+; =============================================================================
+; 1. VIDEO MODES:
+;    - Mode 03h: Standard Text Mode (80 columns, 25 rows).
+;    - Mode 13h: VGA Graphics (320x200).
+;
+; 2. SIDE EFFECTS:
+;    Setting the video mode resets the video controller, clears video memory, 
+;    resets the cursor to (0,0), and loads the default font. It is the standard 
+;    way to "Clear Screen".
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

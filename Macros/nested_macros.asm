@@ -1,19 +1,18 @@
-;=============================================================================
-; Program:     Nested Macros Implementation
-; Description: Demonstrate macro nesting (macros calling other macros) 
+; =============================================================================
+; TITLE: Nested Macros Implementation
+; DESCRIPTION: Demonstrates macro nesting (macros calling other macros) 
 ;              and the 'LOCAL' directive to prevent label collision.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; MACRO DEFINITIONS
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 
 ; Base Macro: PRINT_CHAR
 ; Simply displays the character provided in parameter.
@@ -26,11 +25,11 @@ ENDM
 ; Intermediate Macro: PRINT_LINE (Nested)
 ; Uses PRINT_CHAR inside a loop.
 PRINT_LINE MACRO CHAR, COUNT
-    LOCAL LINE_LOOP                 ; Mandatory for multiple expansions
+    LOCAL L_LOOP                    ; Mandatory for multiple expansions
     MOV CX, COUNT
-LINE_LOOP:
+L_LOOP:
     PRINT_CHAR CHAR                 ; Call basic macro
-    LOOP LINE_LOOP
+    LOOP L_LOOP
 ENDM
 
 ; Top-level Macro: PRINT_BORDER
@@ -41,15 +40,15 @@ PRINT_BORDER MACRO
     PRINT_CHAR 0AH                  ; Line Feed
 ENDM
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     MSG DB 'Nested Macros Demonstration Layout$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     MOV AX, @DATA
@@ -75,10 +74,12 @@ MAIN PROC
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; NESTING AND LOCAL NOTES:
-; - LOCAL Directive: Every time the macro expands, the assembler generates
-;   a unique name (like ??0001) for the label to avoid "Duplicate Label" errors.
-; - Nesting allows for building complex code templates from simple primitives.
-; - Deep nesting can make debugging difficult as the code expands massively.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. NESTING & LOCAL:
+;    - LOCAL Directive: Every time the macro expands, the assembler generates
+;      a unique name (like ??0001) for the label.
+;    - Nesting allows for building complex code templates from primitives.
+;    - Too much nesting makes debugging harder due to massive code expansion.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

@@ -1,23 +1,22 @@
-;=============================================================================
-; Program:     Hello World (Segmented EXE style)
-; Description: Standard multi-segment application structure displaying 
+; =============================================================================
+; TITLE: Hello World (Segmented EXE style)
+; DESCRIPTION: Standard multi-segment application structure displaying 
 ;              a string using DOS services.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 DATA SEGMENT
     MSG DB "Hello, World!$"
 DATA ENDS
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 CODE SEGMENT
     ASSUME CS:CODE, DS:DATA
 
@@ -40,10 +39,12 @@ CODE ENDS
 
 END START
 
-;=============================================================================
-; ARCHITECTURE NOTES:
-; - EXE files can have multiple segments (Code, Data, Stack).
-; - 'ASSUME' tells the assembler which segment register points where.
-; - 'MOV DS, AX' is required because you cannot move immediate values 
-;   directly into segment registers.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. ARCHITECTURE:
+;    - EXE files can have multiple segments (Code, Data, Stack).
+;    - 'ASSUME' tells the assembler which segment register points where.
+;    - 'MOV DS, AX' is required because you cannot move immediate values 
+;      directly into segment registers.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

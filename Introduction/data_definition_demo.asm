@@ -1,19 +1,18 @@
-;=============================================================================
-; Program:     Data Definition Demo (Raw Machine Code)
-; Description: This program demonstrates how the assembler interprets data
-;              as instructions. These raw hex bytes correspond exactly to the 
-;              MOV and RET logic found in mov_instruction_demo.asm.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: data_definition_demo.asm
+; DESCRIPTION: Demonstrates how the assembler interprets data as instructions.
+;              These raw hex bytes correspond exactly to the MOV and RET logic
+;              found in mov_instruction_demo.asm.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 ORG 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; EXECUTABLE BYTES
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 
 ; Opcode A0: MOV AL, [addr]
 DB 0A0H
@@ -29,9 +28,9 @@ DB 01H                              ; High byte of offset
 ; Opcode C3: RET
 DB 0C3H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA BYTES (Starts at offset 0108h)
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 
 DB 7                                ; Equivalent to VAR1 DB 7
 
@@ -41,10 +40,12 @@ DB 12H
 
 END
 
-;=============================================================================
-; MACHINE CODE NOTES:
-; - This file shows that there is no fundamental difference between code
-;   and data in memory except for where the Instruction Pointer (IP) points.
-; - 'DB' allows programmers to write raw opcodes if the assembler doesn't 
-;   support a specific instruction.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. MACHINE CODE:
+;    - This file shows that there is no fundamental difference between code
+;      and data in memory except for where the Instruction Pointer (IP) points.
+;    - 'DB' allows programmers to write raw opcodes if the assembler doesn't 
+;      support a specific instruction.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

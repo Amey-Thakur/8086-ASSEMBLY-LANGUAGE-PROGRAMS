@@ -1,18 +1,17 @@
-;=============================================================================
-; Program:     Hello World (Interrupt-based)
-; Description: Demonstrate character-by-character printing using BIOS TTY
+; =============================================================================
+; TITLE: Hello World (Interrupt-based)
+; DESCRIPTION: Demonstrate character-by-character printing using BIOS TTY
 ;              sub-function (INT 10H / AH=0EH).
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 ORG 100H                            ; COM file entry point
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; MAIN CODE SECTION
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 START:
     ; AH does not change during INT 10H / 0EH, so we set it only once
     MOV AH, 0EH                     ; Select BIOS Teletype (TTY) function
@@ -59,9 +58,11 @@ START:
 
 END
 
-;=============================================================================
-; INTERRUPT NOTES:
-; - INT 10h AH=0Eh is a BIOS level service, making it more low-level than DOS.
-; - It handles cursor advancement and screen wrapping automatically.
-; - Efficient for single character logic without complex buffer overhead.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. INTERRUPT NOTES:
+;    - INT 10h AH=0Eh is a BIOS level service, making it more low-level than DOS.
+;    - It handles cursor advancement and screen wrapping automatically.
+;    - Efficient for single character logic without complex buffer overhead.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
