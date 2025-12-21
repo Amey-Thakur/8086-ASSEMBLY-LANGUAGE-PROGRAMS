@@ -98,15 +98,33 @@ All programs in this repository were developed, verified, and documented by me d
 ```
 8086-ASSEMBLY-LANGUAGE-PROGRAMS/
 │
+├── Addressing Modes/        # Register, Immediate, Direct, etc.
 ├── Arithmetic/              # Basic math (Add, Sub, Mul, Div)
-├── Control Flow/            # Loops, If-Else, Switch-Case
-├── Data Structures/         # Stack, Queue, Array implementations
-├── File Operations/         # DOS Interrupts for File I/O
-├── Hardware/                # External Devices (Traffic Light, Stepper Motor)
-├── Sorting/                 # Bubble Sort, Selection Sort, etc.
-├── String Operations/       # Reversal, Length, Palindrome checks
-├── Procedures/              # Modular subroutines
-├── Simulation/              # Complex system modeling (Fire Alarm, etc.)
+├── Array Operations/        # Sum, Average, Min/Max finding
+├── Bitwise Operations/      # AND, OR, XOR, NOT, Shifts, Rotates
+├── Control Flow/            # Loops (LOOP), Conditional Jumps (JE, JNE)
+├── Conversion/              # Hex-BCD, BCD-Hex, ASCII conversions
+├── Data Structures/         # Stack, Queue implementation
+├── Expression/              # Series evaluation, Factorial, Fibonacci
+├── External Devices/        # Interfacing Logic (Keyboard, Mouse)
+├── File Operations/         # File Creation, Reading, Writing (DOS)
+├── Flags/                   # Carry, Parity, Zero, Sign flag manipulations
+├── Graphics/                # VGA Graphics Mode, Shape Drawing
+├── Input Output/            # Single char, String I/O
+├── Interrupts/              # BIOS & DOS Interrupt vectors
+├── Introduction/            # Basic Hello World & Syntax examples
+├── Macros/                  # Macro definitions & usage
+├── Mathematics/             # Advanced math (GCD, LCM, Power)
+├── Matrix/                  # Matrix addition/manipulation
+├── Memory Operations/       # Block transfer, Overlap handling
+├── Patterns/                # Star patterns, Pyramids
+├── Procedures/              # Modular programming examples
+├── Searching/               # Linear & Binary Search
+├── Simulation/              # Hardware simulations (Fire, Water Level)
+├── Sorting/                 # Bubble, Selection, Insertion sorts
+├── Stack Operations/        # Push, Pop, Reversal applications
+├── String Operations/       # Length, Reverse, Palindrome, Case conversion
+├── Utilities/               # Delays, Screen clear, Sound generation
 │
 ├── LICENSE                  # MIT License
 └── README.md                # Project Documentation
