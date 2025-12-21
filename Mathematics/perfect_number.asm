@@ -1,28 +1,27 @@
-;=============================================================================
-; Program:     Perfect Number Check
-; Description: Determine if a 16-bit number is "Perfect".
+; =============================================================================
+; TITLE: Perfect Number Check
+; DESCRIPTION: Determine if a 16-bit number is "Perfect".
 ;              A Perfect number is equal to the sum of its proper divisors.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    NUM DW 28                           ; 28 = 1 + 2 + 4 + 7 + 14 (Perfect Number)
-    SUM DW 0                            ; Accumulator for divisors
+    NUM     DW 28                       ; 28 = 1 + 2 + 4 + 7 + 14 (Perfect Number)
+    SUM     DW 0                        ; Accumulator for divisors
     MSG_YES DB 'The number is PERFECT.$'
     MSG_NO  DB 'The number is NOT perfect.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Setup Data Segment
@@ -48,9 +47,9 @@ NEXT_ITERATION:
     CMP BX, NUM                         ; Stop before reaching NUM itself
     JL DIVISOR_SEARCH
     
-;-------------------------------------------------------------------------
-; VALIDATION
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; VALIDATION
+    ; -------------------------------------------------------------------------
     MOV AX, SUM
     CMP AX, NUM                         ; Does Sum of Divisors equal original?
     JE SUCCESS
@@ -71,10 +70,14 @@ DISPLAY_RESULT:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; PERFECT NUMBER NOTES:
-; - Example: 6 (1+2+3=6), 28 (1+2+4+7+14=28).
-; - Optimization: A divisor will never be greater than NUM/2. 
-;   Starting with BX=1 and checking till NUM/2 is faster.
-; - This implementation uses the fundamental definition for clarity.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. EXAMPLES:
+;    - 6 (1+2+3=6)
+;    - 28 (1+2+4+7+14=28)
+; 2. OPTIMIZATION:
+;    - A divisor will never be greater than NUM/2. 
+;    - Starting with BX=1 and checking till NUM/2 is faster.
+;    - This implementation uses the fundamental definition for clarity.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

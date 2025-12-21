@@ -1,30 +1,29 @@
-;=============================================================================
-; Program:     Memory Block Comparison
-; Description: Compare two memory buffers for equality using the 8086 
+; =============================================================================
+; TITLE: Memory Block Comparison
+; DESCRIPTION: Compare two memory buffers for equality using the 8086 
 ;              CMPSB (Compare String Byte) instruction.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    STR1 DB 'Assembly'                  ; Primary buffer
-    STR2 DB 'Assembly'                  ; Secondary buffer
-    LEN  EQU 8                           ; Comparison length
+    STR1            DB 'Assembly'        ; Primary buffer
+    STR2            DB 'Assembly'        ; Secondary buffer
+    LEN             EQU 8                ; Comparison length
     
-    MSG_EQUAL     DB 'Status: Memory blocks are identical.$'
-    MSG_NOT_EQUAL DB 'Status: Memory blocks differ.$'
+    MSG_EQUAL       DB 'Status: Memory blocks are identical.$'
+    MSG_NOT_EQUAL   DB 'Status: Memory blocks differ.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize Segments
@@ -32,10 +31,10 @@ MAIN PROC
     MOV DS, AX
     MOV ES, AX                          ; ES used by CMPSB for second operand
     
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     ; STRING COMPARISON SETUP
     ; Operands: DS:SI vs ES:DI
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     LEA SI, STR1
     LEA DI, STR2
     MOV CX, LEN                         ; Number of bytes to check
@@ -66,9 +65,11 @@ DISPLAY_RESULT:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; MEMORY COMPARE NOTES:
-; - 'REPE' (Repeat While Equal) is synonymous with 'REPZ'.
-; - If the loop terminates due to a mismatch, the Zero Flag (ZF) is cleared.
-; - If the loop terminates because CX reached 0, the Zero Flag remains set.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. INSTRUCTION LOGIC:
+;    - 'REPE' (Repeat While Equal) is synonymous with 'REPZ'.
+;    - If the loop terminates due to a mismatch, the Zero Flag (ZF) is cleared.
+;    - If the loop terminates because CX reached 0, the Zero Flag remains set.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

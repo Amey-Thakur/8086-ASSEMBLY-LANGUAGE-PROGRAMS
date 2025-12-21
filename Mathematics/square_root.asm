@@ -1,27 +1,26 @@
-;=============================================================================
-; Program:     Integer Square Root
-; Description: Calculate the integer part of the square root of a 16-bit
+; =============================================================================
+; TITLE: Integer Square Root
+; DESCRIPTION: Calculate the integer part of the square root of a 16-bit
 ;              unsigned number using the iterative 'Square Search' method.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    NUM DW 144                          ; Input: Find sqrt of 144
+    NUM  DW 144                         ; Input: Find sqrt of 144
     ROOT DW ?                           ; Storage for final result (12)
-    MSG DB 'Integer Square Root calculated.$'
+    MSG  DB 'Integer Square Root calculated.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize DS
@@ -31,9 +30,9 @@ MAIN PROC
     MOV BX, NUM                         ; BX stores the target number
     MOV CX, 1                           ; Iterative counter 'n'
     
-;-------------------------------------------------------------------------
-; ITERATIVE SEARCH: Find largest n where (n * n) <= target
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; ITERATIVE SEARCH: Find largest n where (n * n) <= target
+    ; -------------------------------------------------------------------------
 FIND_ROOT:
     MOV AX, CX
     MUL CX                              ; AX = CX^2
@@ -65,10 +64,12 @@ TARGET_EXCEEDED:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; SQUARE ROOT NOTES:
-; - This is an O(sqrt(N)) algorithm.
-; - For a 16-bit input (max 65535), the max possible root is 255.
-; - More efficient algorithms like "Newton-Raphson" or "Binary Search" 
-;   exist for large ranges, but this linear search is simplest for 8086 logic.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. ALGORITHM:
+;    - This is an O(sqrt(N)) algorithm.
+;    - For a 16-bit input (max 65535), the max possible root is 255.
+;    - More efficient algorithms like "Newton-Raphson" or "Binary Search" 
+;      exist for large ranges, but this linear search is simplest for 8086 logic.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

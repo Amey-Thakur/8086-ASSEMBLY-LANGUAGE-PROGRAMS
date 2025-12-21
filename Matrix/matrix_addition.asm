@@ -1,19 +1,18 @@
-;=============================================================================
-; Program:     Matrix Addition (3x3)
-; Description: Demonstrate element-wise addition of two 3x3 matrices 
+; =============================================================================
+; TITLE: Matrix Addition (3x3)
+; DESCRIPTION: Demonstrate element-wise addition of two 3x3 matrices 
 ;              stored in row-major order.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
     ; Matrix A (3x3) - Row Major Storage
     MATRIX_A DB 1, 2, 3
@@ -31,9 +30,9 @@
     DIM      EQU 3                       ; Dimension (N)
     MSG      DB 'Matrix Addition completed. Result stored in memory.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Initialize Data Segment
@@ -48,11 +47,11 @@ MAIN PROC
     ; Total elements in a 3x3 matrix = 9
     MOV CX, DIM * DIM
     
-;-------------------------------------------------------------------------
-; ELEMENT-WISE ADDITION LOOP
-; Logic: C[i] = A[i] + B[i]
-; Since matrices are flat arrays in memory, a single loop handles all indices.
-;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
+    ; ELEMENT-WISE ADDITION LOOP
+    ; Logic: C[i] = A[i] + B[i]
+    ; Since matrices are flat arrays in memory, a single loop handles all indices.
+    ; -------------------------------------------------------------------------
 ADD_LOOP:
     MOV AL, [SI]                        ; Fetch element from A
     ADD AL, [DI]                        ; Add element from B
@@ -74,12 +73,14 @@ ADD_LOOP:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; MATRIX MEMORY NOTES:
-; - Row-Major Order: Matrix is stored row by row (A[0][0], A[0][1]...).
-; - Adding two matrices of the same size is essentially a linear vector addition.
-; - Expected Result (all 10s):
-;   10, 10, 10
-;   10, 10, 10
-;   10, 10, 10
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. MATRIX STORAGE:
+;    - Row-Major Order: Matrix is stored row by row (A[0][0], A[0][1]...).
+;    - Adding two matrices of the same size is essentially a linear vector addition.
+;    - Expected Result (all 10s):
+;      10, 10, 10
+;      10, 10, 10
+;      10, 10, 10
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

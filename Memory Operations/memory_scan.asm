@@ -1,30 +1,29 @@
-;=============================================================================
-; Program:     Memory Search (Scan)
-; Description: Search for the first occurrence of a specific byte within 
+; =============================================================================
+; TITLE: Memory Search (Scan)
+; DESCRIPTION: Search for the first occurrence of a specific byte within 
 ;              a memory block using the SCASB (Scan String Byte) instruction.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    BUFFER DB 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
-    B_LEN  EQU 10
-    TARGET DB 50                         ; Value to look for
+    BUFFER      DB 10, 20, 30, 40, 50, 60, 70, 80, 90, 100
+    B_LEN       EQU 10
+    TARGET      DB 50                    ; Value to look for
     
-    MSG_FOUND DB 'Value located! 1-based index position: $'
-    MSG_FAIL  DB 'Value not found in the provided memory block.$'
+    MSG_FOUND   DB 'Value located! 1-based index position: $'
+    MSG_FAIL    DB 'Value not found in the provided memory block.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Segment registers
@@ -32,11 +31,11 @@ MAIN PROC
     MOV DS, AX
     MOV ES, AX                          ; ES is required for SCASB
     
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     ; STRING SCAN SETUP
     ; Pointer: ES:DI
     ; Search Criteria: AL
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     LEA DI, BUFFER
     MOV AL, TARGET
     MOV CX, B_LEN                       ; Max bytes to scan
@@ -81,10 +80,13 @@ EXIT_SUCCESS:
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; MEMORY SCAN NOTES:
-; - SCASB is the basis for the 'strchr' or 'memchr' functions in high-level
-;   languages.
-; - Since SCASB increments DI *after* a match is found, the CX register
-;   contains (Remaining - 1). The formula (Limit - CX) gives the match position.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. ANALOGY:
+;    - SCASB is the basis for the 'strchr' or 'memchr' functions in high-level
+;      languages.
+; 2. INDEXING:
+;    - Since SCASB increments DI *after* a match is found, the CX register
+;      contains (Remaining - 1). The formula (Limit - CX) gives the match position.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

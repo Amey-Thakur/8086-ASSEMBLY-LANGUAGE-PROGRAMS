@@ -1,28 +1,27 @@
-;=============================================================================
-; Program:     Memory Block Fill
-; Description: Initialize a block of memory with a specific constant byte 
+; =============================================================================
+; TITLE: Memory Block Fill
+; DESCRIPTION: Initialize a block of memory with a specific constant byte 
 ;              using the STOSB (Store String Byte) instruction.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; DATA SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .DATA
-    BUFFER DB 20 DUP(?)                  ; Uninitialized buffer
-    B_LEN  EQU 20
-    CHAR   DB '*'                        ; Fill value
-    MSG    DB 'Memory buffer successfully initialized with fill pattern.$'
+    BUFFER  DB 20 DUP(?)                ; Uninitialized buffer
+    B_LEN   EQU 20
+    CHAR    DB '*'                      ; Fill value
+    MSG     DB 'Memory buffer successfully initialized with fill pattern.$'
 
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 ; CODE SEGMENT
-;-----------------------------------------------------------------------------
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
     ; Segments setup
@@ -30,11 +29,11 @@ MAIN PROC
     MOV DS, AX
     MOV ES, AX                          ; ES is mandatory for STOSB
     
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     ; STRING STORE SETUP
     ; Pointer: ES:DI
     ; Value: AL
-    ;-------------------------------------------------------------------------
+    ; -------------------------------------------------------------------------
     LEA DI, BUFFER                      ; Start address in ES
     MOV AL, CHAR                        ; Load filler value into AL
     MOV CX, B_LEN                       ; Count to fill
@@ -56,9 +55,12 @@ MAIN PROC
 MAIN ENDP
 END MAIN
 
-;=============================================================================
-; MEMORY FILL NOTES:
-; - STOSB is the building block for the 'memset' function found in C.
-; - STOSW (Word) or STOSD (Double Word - 386+) can be used for faster filling
-;   of large areas by processing more bits per cycle.
-;=============================================================================
+; =============================================================================
+; TECHNICAL NOTES
+; =============================================================================
+; 1. ANALOGY:
+;    - STOSB is the building block for the 'memset' function found in C.
+; 2. VARIATIONS:
+;    - STOSW (Word) or STOSD (Double Word - 386+) can be used for faster filling
+;      of large areas by processing more bits per cycle.
+; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
