@@ -35,7 +35,7 @@
   <tr>
   <td align="center">
   <a href="https://github.com/Amey-Thakur">
-  <img src="https://github.com/Amey-Thakur.png" width="150px;" alt="Amey Thakur"/><br />
+  <img src="https://github.com/Amey-Thakur.png" width="150px;" alt="Amey Thakur"/><br /><br />
   <sub><b>Amey Thakur</b></sub>
   </a>
   </td>
