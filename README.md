@@ -148,9 +148,17 @@ All programs in this repository were developed, verified, and documented by me d
 | `add_array_of_bytes_from_memory.asm` | Addition | Summing bytes from memory locations. | [View](Arithmetic/add_array_of_bytes_from_memory.asm) |
 | `addition_16bit_packed_bcd.asm` | BCD Math | Adding packed BCD numbers. | [View](Arithmetic/addition_16bit_packed_bcd.asm) |
 | `addition_16bit_simple.asm` | Addition | Basic 16-bit addition. | [View](Arithmetic/addition_16bit_simple.asm) |
-| `calculate_sum_of_first_n_natural_numbers.asm` | Series Sum | Summing 1 to N. | [View](Arithmetic/calculate_sum_of_first_n_natural_numbers.asm) |
+| `addition_16bit_with_carry_detection.asm` | Addition | 16-bit addition handling carry bit. | [View](Arithmetic/addition_16bit_with_carry_detection.asm) |
+| `addition_8bit_with_user_input.asm` | I/O Addition | 8-bit addition with user interaction. | [View](Arithmetic/addition_8bit_with_user_input.asm) |
+| `calculate_sum_of_first_n_natural_numbers.asm` | Series Sum | Summing 1 to N using loops. | [View](Arithmetic/calculate_sum_of_first_n_natural_numbers.asm) |
+| `count_set_bits_in_16bit_binary.asm` | Bit Count | Kernighan's algorithm/loop for set bits. | [View](Arithmetic/count_set_bits_in_16bit_binary.asm) |
+| `decimal_adjust_after_addition_demo.asm` | DAA | Demonstrating DAA instruction. | [View](Arithmetic/decimal_adjust_after_addition_demo.asm) |
+| `division_16bit_dividend_by_8bit_divisor.asm` | Division | 16-bit by 8-bit division logic. | [View](Arithmetic/division_16bit_dividend_by_8bit_divisor.asm) |
+| `generate_multiplication_table_for_number.asm` | Iteration | Generating multiplication tables. | [View](Arithmetic/generate_multiplication_table_for_number.asm) |
 | `multiplication_8bit_unsigned.asm` | Multiplication | 8-bit unsigned multiplication. | [View](Arithmetic/multiplication_8bit_unsigned.asm) |
-| *...and 9 more programs.* | | | [Browse Folder](Arithmetic/) |
+| `signed_addition_and_subtraction_demo.asm` | Signed Arithmetic | Operations on signed integers. | [View](Arithmetic/signed_addition_and_subtraction_demo.asm) |
+| `subtraction_8bit_with_user_input.asm` | I/O Subtraction | 8-bit subtraction with input. | [View](Arithmetic/subtraction_8bit_with_user_input.asm) |
+| `swap_two_numbers_using_registers.asm` | Swap | Swapping values without temporary storage. | [View](Arithmetic/swap_two_numbers_using_registers.asm) |
 
 </details>
 
@@ -160,9 +168,12 @@ All programs in this repository were developed, verified, and documented by me d
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
 | `calculate_sum_of_array_elements.asm` | Traversal | Summing all elements in an array. | [View](Array%20Operations/calculate_sum_of_array_elements.asm) |
-| `find_maximum_element_in_array.asm` | Search | Finding the largest value. | [View](Array%20Operations/find_maximum_element_in_array.asm) |
-| `copy_block_of_data_between_arrays.asm` | Transfer | Block copy operations. | [View](Array%20Operations/copy_block_of_data_between_arrays.asm) |
-| *...and 4 more programs.* | | | [Browse Folder](Array%20Operations/) |
+| `copy_block_of_data_between_arrays.asm` | Transfer | Block copy operations between arrays. | [View](Array%20Operations/copy_block_of_data_between_arrays.asm) |
+| `count_odd_and_even_numbers_in_array.asm` | Counting | Counting odd/even elements. | [View](Array%20Operations/count_odd_and_even_numbers_in_array.asm) |
+| `delete_element_from_array_by_index.asm` | Deletion | Removing element and shifting. | [View](Array%20Operations/delete_element_from_array_by_index.asm) |
+| `find_maximum_element_in_array.asm` | Linear Search | Finding the largest value in array. | [View](Array%20Operations/find_maximum_element_in_array.asm) |
+| `find_minimum_element_in_array.asm` | Linear Search | Finding the smallest value in array. | [View](Array%20Operations/find_minimum_element_in_array.asm) |
+| `insert_element_into_array_at_index.asm` | Insertion | Inserting value and shifting array. | [View](Array%20Operations/insert_element_into_array_at_index.asm) |
 
 </details>
 
@@ -171,10 +182,14 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
-| `bitwise_and_logic_demonstration.asm` | Logic (AND) | Demonstrating AND operation. | [View](Bitwise%20Operations/bitwise_and_logic_demonstration.asm) |
+| `bitwise_and_logic_demonstration.asm` | Logic (AND) | Demonstrating AND instruction. | [View](Bitwise%20Operations/bitwise_and_logic_demonstration.asm) |
+| `bitwise_logical_shift_left_and_multiplication.asm` | Shift (SHL) | Multiplication by 2 using left shift. | [View](Bitwise%20Operations/bitwise_logical_shift_left_and_multiplication.asm) |
+| `bitwise_logical_shift_right_and_division.asm` | Shift (SHR) | Division by 2 using right shift. | [View](Bitwise%20Operations/bitwise_logical_shift_right_and_division.asm) |
+| `bitwise_not_ones_complement_demonstration.asm` | Logic (NOT) | Demonstrating 1's complement. | [View](Bitwise%20Operations/bitwise_not_ones_complement_demonstration.asm) |
+| `bitwise_or_logic_demonstration.asm` | Logic (OR) | Demonstrating OR instruction. | [View](Bitwise%20Operations/bitwise_or_logic_demonstration.asm) |
 | `bitwise_rotate_left_circular_shift.asm` | Rotate (ROL) | Circular left shift of bits. | [View](Bitwise%20Operations/bitwise_rotate_left_circular_shift.asm) |
+| `bitwise_rotate_right_circular_shift.asm` | Rotate (ROR) | Circular right shift of bits. | [View](Bitwise%20Operations/bitwise_rotate_right_circular_shift.asm) |
 | `bitwise_xor_logic_demonstration.asm` | Logic (XOR) | Exclusive OR logical operation. | [View](Bitwise%20Operations/bitwise_xor_logic_demonstration.asm) |
-| *...and 5 more programs.* | | | [Browse Folder](Bitwise%20Operations/) |
 
 </details>
 
@@ -183,10 +198,13 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
+| `conditional_branching_and_status_flags.asm` | Branching | Demonstrating JZ, JNZ, JC, JNC. | [View](Control%20Flow/conditional_branching_and_status_flags.asm) |
+| `for_loop_counter_iteration_pattern.asm` | Iteration | Counter-controlled for-loop logic. | [View](Control%20Flow/for_loop_counter_iteration_pattern.asm) |
 | `if_then_else_conditional_logic_structure.asm` | Branching | Conditional execution logic. | [View](Control%20Flow/if_then_else_conditional_logic_structure.asm) |
+| `loop_instruction_cx_register_control.asm` | Iteration | Using LOOP instruction with CX. | [View](Control%20Flow/loop_instruction_cx_register_control.asm) |
 | `switch_case_multiway_branching_logic.asm` | Switch-Case | Multi-way branching using jump tables. | [View](Control%20Flow/switch_case_multiway_branching_logic.asm) |
-| `for_loop_counter_iteration_pattern.asm` | Iteration | Counter-controlled loops. | [View](Control%20Flow/for_loop_counter_iteration_pattern.asm) |
-| *...and 4 more programs.* | | | [Browse Folder](Control%20Flow/) |
+| `unconditional_jump_and_program_redirection.asm` | JMP | Unconditional program flow control. | [View](Control%20Flow/unconditional_jump_and_program_redirection.asm) |
+| `while_loop_pre_test_conditional_iteration.asm` | Iteration | While loop (pre-test) implementation. | [View](Control%20Flow/while_loop_pre_test_conditional_iteration.asm) |
 
 </details>
 
@@ -195,10 +213,17 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
-| `convert_packed_bcd_to_hexadecimal.asm` | Base Conv | BCD to Hex conversion. | [View](Conversion/convert_packed_bcd_to_hexadecimal.asm) |
-| `convert_hexadecimal_to_decimal_string.asm` | Base Conv | Hex to Decimal string conversion. | [View](Conversion/convert_hexadecimal_to_decimal_string.asm) |
 | `celsius_fahrenheit_temperature_converter.asm` | Formula | Temperature unit conversion. | [View](Conversion/celsius_fahrenheit_temperature_converter.asm) |
-| *...and 8 more programs.* | | | [Browse Folder](Conversion/) |
+| `convert_decimal_to_binary_representation.asm` | Base Conv | Decimal to Binary conversion. | [View](Conversion/convert_decimal_to_binary_representation.asm) |
+| `convert_decimal_to_octal_representation.asm` | Base Conv | Decimal to Octal conversion. | [View](Conversion/convert_decimal_to_octal_representation.asm) |
+| `convert_hexadecimal_to_decimal_string.asm` | Base Conv | Hex to Decimal string conversion. | [View](Conversion/convert_hexadecimal_to_decimal_string.asm) |
+| `convert_hexadecimal_to_packed_bcd.asm` | Base Conv | Hex to Packed BCD conversion. | [View](Conversion/convert_hexadecimal_to_packed_bcd.asm) |
+| `convert_packed_bcd_to_hexadecimal.asm` | Base Conv | BCD to Hex conversion. | [View](Conversion/convert_packed_bcd_to_hexadecimal.asm) |
+| `hex_to_seven_segment_decoder_lookup.asm` | Decoding | Hex to 7-segment display codes. | [View](Conversion/hex_to_seven_segment_decoder_lookup.asm) |
+| `reverse_digits_of_integer_value.asm` | Reversal | Reversing digits of an integer. | [View](Conversion/reverse_digits_of_integer_value.asm) |
+| `string_comparison_lexicographical_check.asm` | Comparison | Lexicographical string check. | [View](Conversion/string_comparison_lexicographical_check.asm) |
+| `string_copy_using_manual_loop_iteration.asm` | Copy | String copy using manual loop. | [View](Conversion/string_copy_using_manual_loop_iteration.asm) |
+| `string_copy_using_movsb_instruction.asm` | Copy | String copy using MOVSB instruction. | [View](Conversion/string_copy_using_movsb_instruction.asm) |
 
 </details>
 
@@ -217,10 +242,19 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
+| `average_of_array.asm` | Statistics | Calculating mean of array values. | [View](Expression/average_of_array.asm) |
 | `calculator.asm` | Arithmetic | Basic calculator logic. | [View](Expression/calculator.asm) |
+| `check_even_odd.asm` | Logic | Testing LSB for parity. | [View](Expression/check_even_odd.asm) |
+| `count_vowels.asm` | String Proc | Counting vowels in a string. | [View](Expression/count_vowels.asm) |
+| `count_words.asm` | String Proc | word count logic. | [View](Expression/count_words.asm) |
 | `factorial.asm` | Recursion | Calculating factorial of a number. | [View](Expression/factorial.asm) |
 | `fibonacci.asm` | Series | Generating Fibonacci sequence. | [View](Expression/fibonacci.asm) |
-| *...and 10 more programs.* | | | [Browse Folder](Expression/) |
+| `gcd_two_numbers.asm` | Euclidean | GCD of two numbers. | [View](Expression/gcd_two_numbers.asm) |
+| `power.asm` | Exponent | Calculating X to power Y. | [View](Expression/power.asm) |
+| `prime_number_check.asm` | Primality | Checking if number is prime. | [View](Expression/prime_number_check.asm) |
+| `reverse_array.asm` | Reversal | Reversing elements in place. | [View](Expression/reverse_array.asm) |
+| `string_concatenation.asm` | String | Joining two strings. | [View](Expression/string_concatenation.asm) |
+| `substring_search.asm` | Search | Finding substring presence. | [View](Expression/substring_search.asm) |
 
 </details>
 
@@ -229,10 +263,15 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Simulation | Description | Code |
 |:---|:---|:---|:-:|
-| `traffic_lights.asm` | Traffic Light | Traffic signal controller simulation. | [View](External%20Devices/traffic_lights.asm) |
-| `stepper_motor.asm` | Motor Control | Stepper motor sequence generation. | [View](External%20Devices/stepper_motor.asm) |
 | `keyboard.asm` | I/O | Keyboard interfacing. | [View](External%20Devices/keyboard.asm) |
-| *...and 6 more programs.* | | | [Browse Folder](External%20Devices/) |
+| `led_display_test.asm` | Output | Testing LED visual display. | [View](External%20Devices/led_display_test.asm) |
+| `mouse.asm` | I/O | Mouse interrupt usage. | [View](External%20Devices/mouse.asm) |
+| `robot.asm` | Control | Simple robot arm simulation. | [View](External%20Devices/robot.asm) |
+| `stepper_motor.asm` | Motor Control | Stepper motor sequence generation. | [View](External%20Devices/stepper_motor.asm) |
+| `thermometer.asm` | Sensor | Temperature reading simulation. | [View](External%20Devices/thermometer.asm) |
+| `timer.asm` | Clock | Programmable Interval Timer (PIT). | [View](External%20Devices/timer.asm) |
+| `traffic_lights.asm` | Traffic Light | Traffic signal controller simulation. | [View](External%20Devices/traffic_lights.asm) |
+| `traffic_lights_advanced.asm` | Traffic Light | Advanced traffic signal logic. | [View](External%20Devices/traffic_lights_advanced.asm) |
 
 </details>
 
@@ -242,9 +281,9 @@ All programs in this repository were developed, verified, and documented by me d
 | Program | Interrupt | Description | Code |
 |:---|:---|:---|:-:|
 | `create_file.asm` | INT 21h | Creating a new file. | [View](File%20Operations/create_file.asm) |
-| `write_file.asm` | INT 21h | Writing data to a file. | [View](File%20Operations/write_file.asm) |
-| `read_file.asm` | INT 21h | Reading data from a file. | [View](File%20Operations/read_file.asm) |
 | `delete_file.asm` | INT 21h | Deleting an existing file. | [View](File%20Operations/delete_file.asm) |
+| `read_file.asm` | INT 21h | Reading data from a file. | [View](File%20Operations/read_file.asm) |
+| `write_file.asm` | INT 21h | Writing data to a file. | [View](File%20Operations/write_file.asm) |
 
 </details>
 
@@ -254,9 +293,10 @@ All programs in this repository were developed, verified, and documented by me d
 | Program | Flag | Description | Code |
 |:---|:---|:---|:-:|
 | `carry_flag.asm` | CF | Demonstrating Carry Flag behavior. | [View](Flags/carry_flag.asm) |
-| `zero_flag.asm` | ZF | Demonstrating Zero Flag behavior. | [View](Flags/zero_flag.asm) |
+| `overflow_flag.asm` | OF | Demonstrating Overflow Flag. | [View](Flags/overflow_flag.asm) |
 | `parity_flag.asm` | PF | Demonstrating Parity Flag behavior. | [View](Flags/parity_flag.asm) |
-| *...and 2 more programs.* | | | [Browse Folder](Flags/) |
+| `sign_flag.asm` | SF | Demonstrating Sign Flag usage. | [View](Flags/sign_flag.asm) |
+| `zero_flag.asm` | ZF | Demonstrating Zero Flag behavior. | [View](Flags/zero_flag.asm) |
 
 </details>
 
@@ -265,10 +305,10 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Mode | Description | Code |
 |:---|:---|:---|:-:|
-| `draw_rectangle.asm` | VGA | Drawing a rectangle shape. | [View](Graphics/draw_rectangle.asm) |
-| `draw_line.asm` | VGA | Implementing line drawing algorithm. | [View](Graphics/draw_line.asm) |
 | `colored_text.asm` | Text | Displaying colored text. | [View](Graphics/colored_text.asm) |
+| `draw_line.asm` | VGA | Implementing line drawing algorithm. | [View](Graphics/draw_line.asm) |
 | `draw_pixel.asm` | VGA | Plotting individual pixels. | [View](Graphics/draw_pixel.asm) |
+| `draw_rectangle.asm` | VGA | Drawing a rectangle shape. | [View](Graphics/draw_rectangle.asm) |
 
 </details>
 
@@ -277,10 +317,10 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | I/O | Description | Code |
 |:---|:---|:---|:-:|
-| `read_number.asm` | Input | Reading numeric input. | [View](Input%20Output/read_number.asm) |
+| `display_binary.asm` | Output | Displaying binary numbers. | [View](Input%20Output/display_binary.asm) |
 | `display_decimal.asm` | Output | Displaying decimal numbers. | [View](Input%20Output/display_decimal.asm) |
 | `display_hex.asm` | Output | Displaying hexadecimal numbers. | [View](Input%20Output/display_hex.asm) |
-| `display_binary.asm` | Output | Displaying binary numbers. | [View](Input%20Output/display_binary.asm) |
+| `read_number.asm` | Input | Reading numeric input. | [View](Input%20Output/read_number.asm) |
 
 </details>
 
@@ -289,10 +329,14 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Interrupt | Description | Code |
 |:---|:---|:---|:-:|
-| `dos_display_string.asm` | INT 21h/09h | Displaying strings via DOS. | [View](Interrupts/dos_display_string.asm) |
-| `bios_video_mode.asm` | INT 10h | Setting BIOS video modes. | [View](Interrupts/bios_video_mode.asm) |
+| `bios_cursor_position.asm` | INT 10h | Getting/Setting Cursor position. | [View](Interrupts/bios_cursor_position.asm) |
+| `bios_keyboard.asm` | INT 16h | BIOS Keyboard services. | [View](Interrupts/bios_keyboard.asm) |
 | `bios_system_time.asm` | INT 1Ah | Reading system time via BIOS. | [View](Interrupts/bios_system_time.asm) |
-| *...and 5 more programs.* | | | [Browse Folder](Interrupts/) |
+| `bios_video_mode.asm` | INT 10h | Setting BIOS video modes. | [View](Interrupts/bios_video_mode.asm) |
+| `dos_display_char.asm` | INT 21h/02h | Displaying single char via DOS. | [View](Interrupts/dos_display_char.asm) |
+| `dos_display_string.asm` | INT 21h/09h | Displaying strings via DOS. | [View](Interrupts/dos_display_string.asm) |
+| `dos_read_char.asm` | INT 21h/01h | Reading single char via DOS. | [View](Interrupts/dos_read_char.asm) |
+| `dos_read_string.asm` | INT 21h/0Ah | Buffered string input via DOS. | [View](Interrupts/dos_read_string.asm) |
 
 </details>
 
@@ -301,10 +345,21 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Topic | Description | Code |
 |:---|:---|:---|:-:|
-| `hello_world_dos.asm` | Basics | Hello World using DOS interrupts. | [View](Introduction/hello_world_dos.asm) |
-| `mov_instruction_demo.asm` | Syntax | Demonstrating MOV instruction. | [View](Introduction/mov_instruction_demo.asm) |
+| `data_definition_demo.asm` | DB/DW | Specifying data types. | [View](Introduction/data_definition_demo.asm) |
 | `display_characters.asm` | Output | Printing individual characters. | [View](Introduction/display_characters.asm) |
-| *...and 12 more programs.* | | | [Browse Folder](Introduction/) |
+| `display_string_direct.asm` | Output | Direct video memory access. | [View](Introduction/display_string_direct.asm) |
+| `display_system_time.asm` | Time | Displaying time on screen. | [View](Introduction/display_system_time.asm) |
+| `hello_world_dos.asm` | Basics | Hello World using DOS interrupts. | [View](Introduction/hello_world_dos.asm) |
+| `hello_world_interrupt.asm` | INT 21h | Hello World basic interrupt. | [View](Introduction/hello_world_interrupt.asm) |
+| `hello_world_procedure.asm` | PROC | Hello World using PROC. | [View](Introduction/hello_world_procedure.asm) |
+| `hello_world_procedure_advanced.asm` | PROC | Advanced procedure structure. | [View](Introduction/hello_world_procedure_advanced.asm) |
+| `hello_world_string.asm` | String | Defining strings. | [View](Introduction/hello_world_string.asm) |
+| `hello_world_vga.asm` | VGA | Hello World in Graphics Mode. | [View](Introduction/hello_world_vga.asm) |
+| `keyboard_wait_input.asm` | Input | Waiting for keystroke. | [View](Introduction/keyboard_wait_input.asm) |
+| `mov_instruction_demo.asm` | Syntax | Demonstrating MOV instruction. | [View](Introduction/mov_instruction_demo.asm) |
+| `print_alphabets.asm` | Loop | Printing A-Z using loops. | [View](Introduction/print_alphabets.asm) |
+| `procedure_demo.asm` | Structure | Basic subroutine structure. | [View](Introduction/procedure_demo.asm) |
+| `procedure_multiplication.asm` | Math | Multiplication logic in PROC. | [View](Introduction/procedure_multiplication.asm) |
 
 </details>
 
@@ -313,10 +368,10 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Feature | Description | Code |
 |:---|:---|:---|:-:|
-| `print_string_macro.asm` | Macro | Macro for string printing. | [View](Macros/print_string_macro.asm) |
+| `conditional_macros.asm` | Logic | Conditional assembly in macros. | [View](Macros/conditional_macros.asm) |
 | `macro_with_parameters.asm` | Params | Macros accepting parameters. | [View](Macros/macro_with_parameters.asm) |
 | `nested_macros.asm` | Nesting | Nested macro definitions. | [View](Macros/nested_macros.asm) |
-| `conditional_macros.asm` | Logic | Conditional assembly in macros. | [View](Macros/conditional_macros.asm) |
+| `print_string_macro.asm` | Macro | Macro for string printing. | [View](Macros/print_string_macro.asm) |
 
 </details>
 
@@ -325,10 +380,11 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Math | Description | Code |
 |:---|:---|:---|:-:|
-| `lcm.asm` | LCM | Least Common Multiple calculation. | [View](Mathematics/lcm.asm) |
-| `square_root.asm` | Roots | Integer square root calculation. | [View](Mathematics/square_root.asm) |
 | `armstrong_number.asm` | Number Theory | Checking Armstrong numbers. | [View](Mathematics/armstrong_number.asm) |
-| *...and 2 more programs.* | | | [Browse Folder](Mathematics/) |
+| `lcm.asm` | LCM | Least Common Multiple calculation. | [View](Mathematics/lcm.asm) |
+| `perfect_number.asm` | Number Theory | Checking for perfect numbers. | [View](Mathematics/perfect_number.asm) |
+| `square_root.asm` | Roots | Integer square root calculation. | [View](Mathematics/square_root.asm) |
+| `twos_complement.asm` | Binary | Finding 2's complement. | [View](Mathematics/twos_complement.asm) |
 
 </details>
 
@@ -349,8 +405,8 @@ All programs in this repository were developed, verified, and documented by me d
 |:---|:---|:---|:-:|
 | `block_copy.asm` | Transfer | Copying memory blocks. | [View](Memory%20Operations/block_copy.asm) |
 | `memory_compare.asm` | Compare | Comparing memory blocks. | [View](Memory%20Operations/memory_compare.asm) |
-| `memory_scan.asm` | Search | Scanning memory for byte. | [View](Memory%20Operations/memory_scan.asm) |
 | `memory_fill.asm` | Fill | Filling memory with value. | [View](Memory%20Operations/memory_fill.asm) |
+| `memory_scan.asm` | Search | Scanning memory for byte. | [View](Memory%20Operations/memory_scan.asm) |
 
 </details>
 
@@ -359,10 +415,10 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Pattern | Description | Code |
 |:---|:---|:---|:-:|
-| `triangle_pattern.asm` | Shape | Printing a star triangle. | [View](Patterns/triangle_pattern.asm) |
-| `number_pyramid.asm` | Number | Printing a number pyramid. | [View](Patterns/number_pyramid.asm) |
 | `diamond_pattern.asm` | Shape | Printing a diamond shape. | [View](Patterns/diamond_pattern.asm) |
 | `inverted_triangle.asm` | Shape | Printing inverted triangle. | [View](Patterns/inverted_triangle.asm) |
+| `number_pyramid.asm` | Number | Printing a number pyramid. | [View](Patterns/number_pyramid.asm) |
+| `triangle_pattern.asm` | Shape | Printing a star triangle. | [View](Patterns/triangle_pattern.asm) |
 
 </details>
 
@@ -372,9 +428,10 @@ All programs in this repository were developed, verified, and documented by me d
 | Program | Concept | Description | Code |
 |:---|:---|:---|:-:|
 | `basic_procedure.asm` | Call/Ret | Basic procedure implementation. | [View](Procedures/basic_procedure.asm) |
+| `local_variables.asm` | Stack | Using stack for local variables. | [View](Procedures/local_variables.asm) |
+| `nested_procedures.asm` | Nesting | Procedures calling procedures. | [View](Procedures/nested_procedures.asm) |
 | `procedure_parameters.asm` | Params | Passing parameters to procedures. | [View](Procedures/procedure_parameters.asm) |
 | `recursive_factorial.asm` | Recursion | Recursive procedure call. | [View](Procedures/recursive_factorial.asm) |
-| *...and 2 more programs.* | | | [Browse Folder](Procedures/) |
 
 </details>
 
@@ -384,9 +441,9 @@ All programs in this repository were developed, verified, and documented by me d
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
 | `binary_search.asm` | Binary Search | O(log n) search algorithm. | [View](Searching/binary_search.asm) |
+| `character_occurrences_count.asm`| Count | Counting char occurrences. | [View](Searching/character_occurrences_count.asm) |
 | `linear_search.asm` | Linear Search | O(n) search algorithm. | [View](Searching/linear_search.asm) |
 | `search_element_array.asm` | Search | Finding element in array. | [View](Searching/search_element_array.asm) |
-| `character_occurrences_count.asm`| Count | Counting char occurrences. | [View](Searching/character_occurrences_count.asm) |
 
 </details>
 
@@ -396,8 +453,8 @@ All programs in this repository were developed, verified, and documented by me d
 | Program | Simulation | Description | Code |
 |:---|:---|:---|:-:|
 | `fire_monitoring_system.asm` | Sensor | Fire alarm system simulation. | [View](Simulation/fire_monitoring_system.asm) |
-| `water_level_controller.asm` | Controller | Water tank level controller. | [View](Simulation/water_level_controller.asm) |
 | `garment_defect.asm` | System | Garment defect detection system. | [View](Simulation/garment_defect.asm) |
+| `water_level_controller.asm` | Controller | Water tank level controller. | [View](Simulation/water_level_controller.asm) |
 
 </details>
 
@@ -406,11 +463,11 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
-| `bubble_sort.asm` | Bubble Sort | Standard bubble sort. | [View](Sorting/bubble_sort.asm) |
-| `selection_sort.asm` | Selection Sort | Standard selection sort. | [View](Sorting/selection_sort.asm) |
-| `insertion_sort.asm` | Insertion Sort | Standard insertion sort. | [View](Sorting/insertion_sort.asm) |
 | `array_ascending.asm` | Sort | Array ascending sort. | [View](Sorting/array_ascending.asm) |
 | `array_descending.asm` | Sort | Array descending sort. | [View](Sorting/array_descending.asm) |
+| `bubble_sort.asm` | Bubble Sort | Standard bubble sort. | [View](Sorting/bubble_sort.asm) |
+| `insertion_sort.asm` | Insertion Sort | Standard insertion sort. | [View](Sorting/insertion_sort.asm) |
+| `selection_sort.asm` | Selection Sort | Standard selection sort. | [View](Sorting/selection_sort.asm) |
 
 </details>
 
@@ -433,8 +490,8 @@ All programs in this repository were developed, verified, and documented by me d
 | `palindrome_check.asm` | Check | Checking if string is palindrome. | [View](String%20Operations/palindrome_check.asm) |
 | `string_length.asm` | Calc | Calculating string length. | [View](String%20Operations/string_length.asm) |
 | `string_reverse.asm` | Transform | Reversing a string. | [View](String%20Operations/string_reverse.asm) |
-| `to_uppercase.asm` | Case | Converting to uppercase. | [View](String%20Operations/to_uppercase.asm) |
 | `to_lowercase.asm` | Case | Converting to lowercase. | [View](String%20Operations/to_lowercase.asm) |
+| `to_uppercase.asm` | Case | Converting to uppercase. | [View](String%20Operations/to_uppercase.asm) |
 
 </details>
 
@@ -443,11 +500,11 @@ All programs in this repository were developed, verified, and documented by me d
 
 | Program | Utility | Description | Code |
 |:---|:---|:---|:-:|
-| `delay_timer.asm` | Timing | Generating time delay. | [View](Utilities/delay_timer.asm) |
-| `clear_screen.asm` | Screen | Operations to clear screen. | [View](Utilities/clear_screen.asm) |
 | `beep_sound.asm` | Sound | Generating beep sound. | [View](Utilities/beep_sound.asm) |
-| `password_input.asm` | Security | Masked password input. | [View](Utilities/password_input.asm) |
+| `clear_screen.asm` | Screen | Operations to clear screen. | [View](Utilities/clear_screen.asm) |
+| `delay_timer.asm` | Timing | Generating time delay. | [View](Utilities/delay_timer.asm) |
 | `display_date.asm` | System | Displaying system date. | [View](Utilities/display_date.asm) |
+| `password_input.asm` | Security | Masked password input. | [View](Utilities/password_input.asm) |
 
 </details>
 
