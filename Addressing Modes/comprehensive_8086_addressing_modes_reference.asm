@@ -55,7 +55,7 @@ MAIN PROC
     ; 3. DIRECT ADDRESSING MODE
     ; -------------------------------------------------------------------------
     ; The memory offset is specified directly in the instruction.
-    ; The effectively address (EA) is provided by the displacement.
+    ; The effective address (EA) is provided by the displacement.
     MOV AL, VAR1                     ; Load byte from memory label VAR1
     MOV AX, VAR2                     ; Load word from memory label VAR2
     MOV VAR1, 20H                    ; Store immediate value directly into memory
