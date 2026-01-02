@@ -1,0 +1,52 @@
+# 8086 Assembly Language Programs - Academic Repository
+# Specialized .gitignore for Assembly (8086) development and scholarly archiving
+
+# OS-generated files
+[Tt]humbs.db
+[Dd]esktop.ini
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor and IDE configuration
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.iml
+*.code-workspace
+
+# Assembly Build Artifacts (Emu8086, TASM, MASM)
+*.obj
+*.exe
+*.com
+*.bin
+*.lst
+*.map
+*.sym
+*.dbg
+*.cfg
+*.lib
+*.tmp
+
+# Emu8086 Specific
+*.asm.dbg
+*.asm.map
+*.asm.bin
+*.asm.com
+*.asm.exe
+
+# Office Temporary Files
+~$*.doc
+~$*.docx
+~$*.ppt
+~$*.pptx
+~$*.xls
+~$*.xlsx
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+*.7z

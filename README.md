@@ -229,7 +229,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 | `convert_packed_bcd_to_hexadecimal.asm` | Base Conversion | Converts a Packed BCD value back into its Hexadecimal equivalent. | [View](Conversion/convert_packed_bcd_to_hexadecimal.asm) |
 | `hex_to_seven_segment_decoder_lookup.asm` | Decoding | Converts Hex digits to 7-segment display control codes using a lookup table. | [View](Conversion/hex_to_seven_segment_decoder_lookup.asm) |
 | `reverse_digits_of_integer_value.asm` | Reversal | Separates and reverses the individual digits of an integer value. | [View](Conversion/reverse_digits_of_integer_value.asm) |
-| `string_comparison_lexicographical_check.asm` | Comparison | compares two strings lexicographically to check for equality. | [View](Conversion/string_comparison_lexicographical_check.asm) |
+| `string_comparison_lexicographical_check.asm` | Comparison | Compares two strings lexicographically to check for equality. | [View](Conversion/string_comparison_lexicographical_check.asm) |
 | `string_copy_using_manual_loop_iteration.asm` | Copy | Copies a string from source to destination using a manual byte-by-byte loop. | [View](Conversion/string_copy_using_manual_loop_iteration.asm) |
 | `string_copy_using_movsb_instruction.asm` | Copy | Optimizes string copying using the dedicated MOVSB hardware instruction. | [View](Conversion/string_copy_using_movsb_instruction.asm) |
 

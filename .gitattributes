@@ -1,0 +1,25 @@
+# 8086 Assembly Language Programs - Academic Repository
+# Professional .gitattributes for scholarly archiving
+
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# Ensure text and source files use LF on checkout
+*.md text eol=lf
+*.asm text eol=lf
+*.inc text eol=lf
+LICENSE text eol=lf
+
+# Explicitly mark binary files
+*.bin binary
+*.com binary
+*.exe binary
+*.obj binary
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+
+# Improve diff handling
+*.md text diff=markdown
+*.asm text diff=asm
