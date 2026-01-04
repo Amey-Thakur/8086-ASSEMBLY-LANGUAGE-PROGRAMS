@@ -18,7 +18,7 @@
 
 <div align="center">
 
-  [Authors](#authors) &nbsp;·&nbsp; [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Program Details](#program-details) &nbsp;·&nbsp; [Prerequisites](#prerequisites) &nbsp;·&nbsp; [Roadmap](#learning-roadmap) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Quick Reference](#quick-8086-reference) &nbsp;·&nbsp; [Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [Resources](#useful-resources) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [Execution Steps](#execution-steps) &nbsp;·&nbsp; [Usage](#usage-guidelines) &nbsp;·&nbsp; [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
+  [Authors](#authors) &nbsp;·&nbsp; [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Quick Start](#quick-start) &nbsp;·&nbsp; [Program Details](#program-details) &nbsp;·&nbsp; [Roadmap](#learning-roadmap) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Specifications](#interrupt-vector-specifications) &nbsp;·&nbsp; [Debugging](#debugging--error-analysis) &nbsp;·&nbsp; [Resources](#useful-resources) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [Usage](#usage-guidelines) &nbsp;·&nbsp; [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
 
 </div>
 
@@ -67,8 +67,6 @@ As a computer engineer, understanding the underlying hardware-software interface
 - **Academic Documentation**: To authentically document my learning journey through 8086 assembly programming.
 - **Community Contribution**: To provide a structured and verified code reference for fellow engineering students.
 
-
-
 ---
 
 <!-- FEATURES -->
@@ -111,36 +109,74 @@ As a computer engineer, understanding the underlying hardware-software interface
 ```
 8086-ASSEMBLY-LANGUAGE-PROGRAMS/
 │
-├── Addressing Modes/        # Comprehensive Addressing Modes Reference
-├── Arithmetic/              # Basic Math (Add, Sub, Mul, Div, BCD)
-├── Array Operations/        # Sum, Min/Max, Deletion, Insertion
-├── Bitwise Operations/      # AND, OR, XOR, Shifts (SHL/SHR), Rotates
-├── Control Flow/            # Loops, If-Else, Switch-Case, Jumps
-├── Conversion/              # Hex-BCD, Binary, Octal, ASCII, 7-Segment
-├── Data Structures/         # Stack (LIFO) & Queue (FIFO) Implementations
-├── Expression/              # Factorial, Fibonacci, GCD, Power, Series
-├── External Devices/        # Traffic Lights, Stepper Motor, Keyboard, Mouse
-├── File Operations/         # Create, Read, Write, Delete Files (DOS)
-├── Flags/                   # Carry, Parity, Zero, Sign, Overflow Flags
-├── Graphics/                # VGA Mode, Line, Rectangle, Pixel Drawing
-├── Input Output/            # Read/Display Decimal, Hex, Binary Numbers
-├── Interrupts/              # BIOS (INT 10h/16h) & DOS (INT 21h) Interrupts
-├── Introduction/            # Hello World, Syntax Demo, System Time
-├── Macros/                  # Conditional Macros, Nested Macros, Parameters
-├── Mathematics/             # LCM, Square Root, Perfect Number, Armstrong
-├── Matrix/                  # Matrix Addition & Transpose Operations
-├── Memory Operations/       # Block Transfer, Compare, Fill, Scan
-├── Patterns/                # Pyramids, Triangles, Diamond Shapes
-├── Procedures/              # Recursion, Parameters, Local Variables
-├── Searching/               # Binary Search, Linear Search, Char Count
-├── Simulation/              # Fire Alarm, Water Level, Defect Detection
-├── Sorting/                 # Bubble, Selection, Insertion, Asc/Desc Sorts
-├── Stack Operations/        # String Reverse, Swap, Push/Pop Demos
-├── String Operations/       # Length, Reverse, Palindrome, Case Conv.
-├── Utilities/               # Delays, Password Input, Sound, Clear Screen
+├── Source Code/
+│   ├── Addressing Modes/        # Comprehensive Addressing Modes Reference
+│   ├── Arithmetic/              # Basic Math (Add, Sub, Mul, Div, BCD)
+│   ├── Array Operations/        # Sum, Min/Max, Deletion, Insertion
+│   ├── Bitwise Operations/      # AND, OR, XOR, Shifts (SHL/SHR), Rotates
+│   ├── Control Flow/            # Loops, If-Else, Switch-Case, Jumps
+│   ├── Conversion/              # Hex-BCD, Binary, Octal, ASCII, 7-Segment
+│   ├── Data Structures/         # Stack (LIFO) & Queue (FIFO) Implementations
+│   ├── Expression/              # Factorial, Fibonacci, GCD, Power, Series
+│   ├── External Devices/        # Traffic Lights, Stepper Motor, Keyboard, Mouse
+│   ├── File Operations/         # Create, Read, Write, Delete Files (DOS)
+│   ├── Flags/                   # Carry, Parity, Zero, Sign, Overflow Flags
+│   ├── Graphics/                # VGA Mode, Line, Rectangle, Pixel Drawing
+│   ├── Input Output/            # Read/Display Decimal, Hex, Binary Numbers
+│   ├── Interrupts/              # BIOS (INT 10h/16h) & DOS (INT 21h) Interrupts
+│   ├── Introduction/            # Hello World, Syntax Demo, System Time
+│   ├── Macros/                  # Conditional Macros, Nested Macros, Parameters
+│   ├── Mathematics/             # LCM, Square Root, Perfect Number, Armstrong
+│   ├── Matrix/                  # Matrix Addition & Transpose Operations
+│   ├── Memory Operations/       # Block Transfer, Compare, Fill, Scan
+│   ├── Patterns/                # Pyramids, Triangles, Diamond Shapes
+│   ├── Procedures/              # Recursion, Parameters, Local Variables
+│   ├── Searching/               # Binary Search, Linear Search, Char Count
+│   ├── Simulation/              # Fire Alarm, Water Level, Defect Detection
+│   ├── Sorting/                 # Bubble, Selection, Insertion, Asc/Desc Sorts
+│   ├── Stack Operations/        # String Reverse, Swap, Push/Pop Demos
+│   ├── String Operations/       # Length, Reverse, Palindrome, Case Conv.
+│   └── Utilities/               # Delays, Password Input, Sound, Clear Screen
 │
-└── LICENSE                  # MIT License
+├── docs/                        # Project Documentation
+│   └── SPECIFICATION.md         # Formal Technical Specification
+│
+├── LICENSE                      # MIT License
+├── SECURITY.md                  # Security Policy & Posture
+├── codemeta.json                # Project Metadata (JSON-LD)
+└── README.md                    # Project Documentation
 ```
+
+---
+
+<!-- QUICK START -->
+## Quick Start
+
+### Prerequisites
+
+> [!WARNING]
+> **System Requirements**: Ensure your environment meets these requirements before running the programs.
+
+- **Operating System**: Windows 7, 8, 10, or 11 is required for native Emu8086 support.
+- **Emulator Software**: The **Emu8086** microprocessor emulator is required to assemble and execute the code.
+- **Alternative Environments**: For macOS or Linux users, a virtualization layer (e.g., Wine, VM) or DOSBox with an assembler (TASM/MASM) is necessary.
+
+### Installation & Deployment
+
+1. **Clone the Repository**
+   Retrieve the comprehensive collection of programs using the following Git command:
+   ```bash
+   git clone https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS.git
+   ```
+
+2. **Open in Emulator**
+   - Launch the **Emu8086** application.
+   - Select **Open** from the file menu and navigate to the `Source Code/` directory.
+   - Choose any `.asm` file (e.g., `Source Code/Arithmetic/addition_16bit_simple.asm`) to load the source code.
+
+3. **Assemble and Run**
+   - Click the **emulate** button on the toolbar to verify logic and compile the code.
+   - Use the **Run** or **Single Step** controls in the emulator window to execute the instructions and observe register state changes.
 
 ---
 
@@ -151,7 +187,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 > Click on each section below to expand and view all programs with direct links to source code.
 
 <details>
-<summary><strong>📁 Addressing Modes (1 Program)</strong></summary>
+<summary><strong>Addressing Modes (1 Program)</strong></summary>
 
 | Program | Topic | Description | Code |
 |:---|:---|:---|:-:|
@@ -160,7 +196,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🧮 Arithmetic (14 Programs)</strong></summary>
+<summary><strong>Arithmetic (14 Programs)</strong></summary>
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
@@ -182,7 +218,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>📦 Array Operations (7 Programs)</strong></summary>
+<summary><strong>Array Operations (7 Programs)</strong></summary>
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
@@ -197,7 +233,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🔌 Bitwise Operations (8 Programs)</strong></summary>
+<summary><strong>Bitwise Operations (8 Programs)</strong></summary>
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
@@ -213,7 +249,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🔀 Control Flow (7 Programs)</strong></summary>
+<summary><strong>Control Flow (7 Programs)</strong></summary>
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
@@ -228,7 +264,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🔄 Conversion (11 Programs)</strong></summary>
+<summary><strong>Conversion (11 Programs)</strong></summary>
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
@@ -247,7 +283,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>📚 Data Structures (2 Programs)</strong></summary>
+<summary><strong>Data Structures (2 Programs)</strong></summary>
 
 | Program | Data Structure | Description | Code |
 |:---|:---|:---|:-:|
@@ -257,7 +293,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🔢 Expression (13 Programs)</strong></summary>
+<summary><strong>Expression (13 Programs)</strong></summary>
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
@@ -278,7 +314,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🖲️ External Devices (9 Programs)</strong></summary>
+<summary><strong>External Devices (9 Programs)</strong></summary>
 
 | Program | Simulation | Description | Code |
 |:---|:---|:---|:-:|
@@ -295,7 +331,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>📂 File Operations (4 Programs)</strong></summary>
+<summary><strong>File Operations (4 Programs)</strong></summary>
 
 | Program | Interrupt | Description | Code |
 |:---|:---|:---|:-:|
@@ -307,7 +343,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🚩 Flags (5 Programs)</strong></summary>
+<summary><strong>Flags (5 Programs)</strong></summary>
 
 | Program | Flag Name | Description | Code |
 |:---|:---|:---|:-:|
@@ -320,7 +356,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🎨 Graphics (4 Programs)</strong></summary>
+<summary><strong>Graphics (4 Programs)</strong></summary>
 
 | Program | Video Mode | Description | Code |
 |:---|:---|:---|:-:|
@@ -332,7 +368,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>⌨️ Input Output (4 Programs)</strong></summary>
+<summary><strong>Input Output (4 Programs)</strong></summary>
 
 | Program | I/O Type | Description | Code |
 |:---|:---|:---|:-:|
@@ -344,7 +380,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>⚡ Interrupts (8 Programs)</strong></summary>
+<summary><strong>Interrupts (8 Programs)</strong></summary>
 
 | Program | Interrupt | Description | Code |
 |:---|:---|:---|:-:|
@@ -360,7 +396,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>👋 Introduction (15 Programs)</strong></summary>
+<summary><strong>Introduction (15 Programs)</strong></summary>
 
 | Program | Topic | Description | Code |
 |:---|:---|:---|:-:|
@@ -383,7 +419,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>📝 Macros (4 Programs)</strong></summary>
+<summary><strong>Macros (4 Programs)</strong></summary>
 
 | Program | Feature | Description | Code |
 |:---|:---|:---|:-:|
@@ -395,7 +431,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>📐 Mathematics (5 Programs)</strong></summary>
+<summary><strong>Mathematics (5 Programs)</strong></summary>
 
 | Program | Mathematics | Description | Code |
 |:---|:---|:---|:-:|
@@ -408,7 +444,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>▦ Matrix (2 Programs)</strong></summary>
+<summary><strong>Matrix (2 Programs)</strong></summary>
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
@@ -418,7 +454,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>💾 Memory Operations (4 Programs)</strong></summary>
+<summary><strong>Memory Operations (4 Programs)</strong></summary>
 
 | Program | Operation | Description | Code |
 |:---|:---|:---|:-:|
@@ -430,7 +466,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>💠 Patterns (4 Programs)</strong></summary>
+<summary><strong>Patterns (4 Programs)</strong></summary>
 
 | Program | Pattern Type | Description | Code |
 |:---|:---|:---|:-:|
@@ -442,7 +478,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🧩 Procedures (5 Programs)</strong></summary>
+<summary><strong>Procedures (5 Programs)</strong></summary>
 
 | Program | Concept | Description | Code |
 |:---|:---|:---|:-:|
@@ -455,7 +491,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🔍 Searching (4 Programs)</strong></summary>
+<summary><strong>Searching (4 Programs)</strong></summary>
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
@@ -467,7 +503,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🔥 Simulation (3 Programs)</strong></summary>
+<summary><strong>Simulation (3 Programs)</strong></summary>
 
 | Program | Simulation | Description | Code |
 |:---|:---|:---|:-:|
@@ -478,7 +514,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>📊 Sorting (5 Programs)</strong></summary>
+<summary><strong>Sorting (5 Programs)</strong></summary>
 
 | Program | Algorithm | Description | Code |
 |:---|:---|:---|:-:|
@@ -491,7 +527,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>📚 Stack Operations (3 Programs)</strong></summary>
+<summary><strong>Stack Operations (3 Programs)</strong></summary>
 
 | Program | Operation | Description | Code |
 |:---|:---|:---|:-:|
@@ -502,7 +538,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🧵 String Operations (5 Programs)</strong></summary>
+<summary><strong>String Operations (5 Programs)</strong></summary>
 
 | Program | Operation | Description | Code |
 |:---|:---|:---|:-:|
@@ -515,7 +551,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 </details>
 
 <details>
-<summary><strong>🛠️ Utilities (5 Programs)</strong></summary>
+<summary><strong>Utilities (5 Programs)</strong></summary>
 
 | Program | Utility | Description | Code |
 |:---|:---|:---|:-:|
@@ -529,77 +565,62 @@ As a computer engineer, understanding the underlying hardware-software interface
 
 ---
 
-<!-- PREREQUISITES -->
-## Prerequisites
-
-> [!WARNING]
-> **System Requirements**: Ensure your environment meets these requirements before running the programs.
-
-| Component | Requirement |
-|-----------|-------------|
-| 🖥️ **Windows** | Windows 7, 8, 10, or 11 (Emu8086 native support) |
-| 🍎 **Mac/Linux** | [DOSBox](https://www.dosbox.com/) with TASM/MASM **or** Emu8086 via [Wine](https://www.winehq.org/) / VM |
-| 💻 **Emulator** | [Emu8086](https://github.com/Acurr/Emu8086) (Recommended for Windows) |
-| ✏️ **Text Editor** | [VS Code](https://code.visualstudio.com/) (Optional, for syntax highlighting) |
-
----
-
 <!-- LEARNING ROADMAP -->
 ## Learning Roadmap
 
 Suggested progression for mastering 8086 assembly using this repository:
 
-1.  **Basics (Level 1)**: Start with `Introduction` to understand syntax (`MOV`, variables) and `Addressing Modes`.
-2.  **Logic (Level 2)**: Move to `Arithmetic`, `Bitwise Operations`, and `Flags` to grasp data manipulation.
-3.  **Control (Level 3)**: Master `Control Flow` (loops/jumps) and `Conversion` logic.
-4.  **Advanced (Level 4)**: Tackle `Procedures`, `Macros`, and `Stack Operations` for modular code.
-5.  **System (Level 5)**: Explore `Interrupts`, `File Operations`, and `External Devices` for real-world interaction.
+| Level | Phase | Modules to Study | Key Concepts |
+|:---:|:---|:---|:---|
+| **1** | **Foundations** | `Introduction` • `Addressing Modes` | Syntax (`MOV`, `DB`/`DW`), Memory Segments, Direct/Indirect Addressing |
+| **2** | **Core Logic** | `Arithmetic` • `Bitwise Operations` • `Flags` | Binary Math (`ADD`, `SUB`, `MUL`, `DIV`), Logic Gates (`AND`, `OR`, `XOR`), CPU Status Flags |
+| **3** | **Control Flow** | `Control Flow` • `Conversion` • `String Operations` | Looping (`LOOP`, `JZ`), Conditional Branching, Hex/BCD Conversion, String Manipulation |
+| **4** | **Modular Design** | `Procedures` • `Macros` • `Stack Operations` | Stack Management (`PUSH`/`POP`), Subroutines, Code Reusability (`MACRO`) |
+| **5** | **System Level** | `Interrupts` • `File Operations` • `External Devices` | DOS/BIOS Interrupts (`INT 21h`, `INT 10h`), File I/O, Hardware Simulation |
 
 ---
 
 <!-- BEST PRACTICES -->
 ## Best Practices for Assembly
 
-Writing maintainable assembly code is an art. Follow these principles used in this repository:
-
--   **Consistent Commenting**: Assembly is cryptic. Comment *every* logical block, not just instructions (e.g., `; Check if divisible by 2` instead of `; Compare AX with 0`).
--   **Meaningful Labels**: Use descriptive labels like `calculate_sum:` or `handle_error:` instead of generic `L1:`, `NEXT:`.
--   **Modular Design**: Break complex tasks into `PROC` (Procedures) or `MACRO`s to reduce redundancy.
--   **Register Preservation**: Always `PUSH` registers onto the stack before modifying them in a procedure, and `POP` them back before returning.
--   **Data Segmentation**: Clearly separate your `DATA`, `CODE`, and `STACK` segments to avoid memory overlaps.
+| Principle | Implementation Strategy | Architectural Rationale |
+|:---|:---|:---|
+| **Documentation** | **Inline Annotation**: Comment logical blocks rather than individual instructions (e.g., `; Check parity` vs `; TEST AL, 1`). | Mitigates the inherent opacity of low-level machine directives and enhances maintainability. |
+| **Labeling** | **Semantic Identifiers**: Use descriptive labels (`calculate_sum:`) instead of generic tokens (`L1:`). | Improves control flow legibility and facilitates efficient debugging. |
+| **Modularity** | **Procedural Abstraction**: Encapsulate logic within `PROC` definitions and `MACRO` expansions. | Reduces code redundancy and promotes a structured, hierarchical program design. |
+| **State Safety** | **Register Preservation**: Systematically `PUSH` and `POP` registers across procedure calls. | Prevents volatile state corruption and ensures referential transparency between routines. |
+| **Segmentation** | **Memory Isolation**: Explicitly delineate `DATA`, `CODE`, and `STACK` segments. | Prevents memory access violations and ensures rigorous structural organization. |
 
 ---
 
 <!-- QUICK REFERENCE -->
-## Quick 8086 Reference
-
-A handy cheat sheet of the most frequently used interrupts in this repository:
-
-| Interrupt | Function (AH) | Description | Usage Example |
-|:---:|:---:|:---|:---|
-| **INT 21h** | `01h` | Read Single Character | `MOV AH, 01h; INT 21h` |
-| **INT 21h** | `02h` | Print Single Character | `MOV AH, 02h; MOV DL, 'A'; INT 21h` |
-| **INT 21h** | `09h` | Print String (ends with `$`) | `MOV AH, 09h; LEA DX, MSG; INT 21h` |
-| **INT 21h** | `4Ch` | Terminate Program | `MOV AH, 4Ch; INT 21h` |
-| **INT 10h** | `00h` | Set Video Mode | `MOV AH, 00h; MOV AL, 13h; INT 10h` |
-| **INT 10h** | `0Eh` | Teletype Output | `MOV AH, 0Eh; MOV AL, 'X'; INT 10h` |
-| **INT 16h** | `00h` | Read Key Press (Wait) | `MOV AH, 00h; INT 16h` |
+## Interrupt Vector Specifications
+ 
+ The following table details the primary BIOS and DOS interrupt vectors utilized within this repository, indexed by their functional hexadecimal codes.
+ 
+ | Interrupt Vector | Service Code (`AH`) | Operational Semantics | Implementation Syntax |
+ |:---:|:---:|:---|:---|
+ | **DOS API** (`INT 21h`) | `01h` | **Standard Input Read**: Reads a character from `STDIN` and echoes to `STDOUT`. | `MOV AH, 01h; INT 21h` |
+ | **DOS API** (`INT 21h`) | `02h` | **Standard Output Write**: Writes a specific character (in `DL`) to `STDOUT`. | `MOV AH, 02h; MOV DL, 'A'; INT 21h` |
+ | **DOS API** (`INT 21h`) | `09h` | **String Output**: Writes a `$`-terminated string (pointed to by `DX`) to `STDOUT`. | `MOV AH, 09h; LEA DX, MSG; INT 21h` |
+ | **DOS API** (`INT 21h`) | `4Ch` | **Process Termination**: Safely terminates the current process and returns control to the OS. | `MOV AH, 4Ch; INT 21h` |
+ | **BIOS Video** (`INT 10h`) | `00h` | **Video Mode Control**: Sets the video display mode (e.g., VGA `13h`) via register `AL`. | `MOV AH, 00h; MOV AL, 13h; INT 10h` |
+ | **BIOS Video** (`INT 10h`) | `0Eh` | **Teletype Output**: Writes a character (in `AL`) to the active page in Teletype mode. | `MOV AH, 0Eh; MOV AL, 'X'; INT 10h` |
+ | **BIOS Keyboard** (`INT 16h`) | `00h` | **Keystroke Retrieval**: Blocks execution until a key is pressed, returning the scan code. | `MOV AH, 00h; INT 16h` |
 
 ---
-
-
 
 <!-- TROUBLESHOOTING -->
-## Common Issues & Troubleshooting
-
-| Issue | Possible Cause | Solution |
-|:---|:---|:---|
-| **"Wrong parameters"** | Mismatched operand sizes (e.g., `MOV AX, BL`) | Ensure both operands are 8-bit or 16-bit. Use `MOV AX, BX` or `MOV AL, BL`. |
-| **"Undefined symbol"** | Variable not declared in `DATA` segment | Define variables using `DB` (byte) or `DW` (word) before usage. |
-| **Infinite Loop** | Counter register (`CX`) not decrementing | Ensure `LOOP` or `DEC CX` is used correctly. Avoid modifying `CX` inside the loop body unnecessarily. |
-| **Garbage Output** | Missing string terminator | Ensure all strings displayed via `INT 21h/09h` end with a `$` character. |
-
----
+## Debugging & Error Analysis
+ 
+ A structured guide to diagnosing and resolving non-deterministic behaviors and assembler errors.
+ 
+ | Error Condition | Root Cause Analysis | Resolution Strategy |
+ |:---|:---|:---|
+ | **Operand Size Mismatch** | **Type Incompatibility**: Attempting to operate on disparate data widths (e.g., `MOV AX, BL`) without casting. | Ensure operand bit-width parity. Use explicit type matching, e.g., `MOV AX, BX` (16-bit) or `MOV AL, BL` (8-bit). |
+ | **Unresolved Symbol** | **Declaration Void**: Referencing a label or variable identifier not defined within the accessible `DATA` or `CODE` scope. | Verify symbol definitions. Instantiate variables using appropriate directives (`DB`, `DW`) prior to instruction reference. |
+ | **Non-Terminating Loop** | **Control Logic Failure**: The Loop Counter register (`CX`) fails to converge to zero, or is unwittingly mutated. | Validate `LOOP` logic. Ensure strict monotonicity of `CX` decrement and avoid side-effect mutations within the iterative body. |
+ | **String Termination Fault**| **Buffer Overrun**: The string output routine (`INT 21h/09h`) continues reading memory past the intended buffer. | Enforce string termination. Append the DOS-standard `$` delimiter to all string definitions to signal End-of-String. |
 
 ---
 
@@ -608,49 +629,47 @@ A handy cheat sheet of the most frequently used interrupts in this repository:
 
 Essential tools and documentation for 8086 programming:
 
-*   **Documentation**: [Intel 8086 Datasheet](https://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/s2009/fjc23_dc324/8086_datasheet.pdf) (PDF)
+*   **Documentation**: [Intel 8086 Datasheet](https://www.inf.pucrs.br/calazans/undergrad/orgcomp_EC/mat_microproc/intel-8086_datasheet.pdf) (PDF)
 *   **Reference**: [x86 Instruction Set Reference](https://www.felixcloutier.com/x86/)
 *   **Tools**: [ASCII Table](https://www.asciitable.com/) | [Online Hex Converter](https://www.rapidtables.com/convert/number/hex-to-decimal.html)
-*   **Emulator**: [Emu8086 Documentation](https://github.com/Acurr/Emu8086)
+*   **Emulator**: [8086.js Web Emulator](https://yjdoc2.github.io/8086-emulator-web/)
 
 ---
 
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+This repository maintains a rigorous fork-and-pull collaboration model. Contributions that enhance the codebase's educational value and technical precision are highly appreciated.
 
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/NewAlgorithm`)
-3.  Commit your Changes (`git commit -m 'Add some NewAlgorithm'`)
-4.  Push to the Branch (`git push origin feature/NewAlgorithm`)
-5.  Open a Pull Request
+1.  **Fork the Repository**
+    Replicate the repository to your personal remote namespace.
 
----
-
-<!-- EXECUTION STEPS -->
-## Execution Steps
-
-1.  **Clone the Repository**:
+2.  **Initialize Feature Branch**
     ```bash
-    git clone https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS.git
+    git checkout -b feature/Optimization
     ```
 
-2.  **Open in Emulator**:
-    - Launch **Emu8086**
-    - Click `Open` and navigate to the desired `.asm` file (e.g., `Arithmetic/addition_16bit_simple.asm`)
+3.  **Snapshot Changes**
+    Stage and record changes with semantic messaging:
+    ```bash
+    git commit -m 'Refactor: Optimize loop logic'
+    ```
 
-3.  **Assemble and Run**:
-    - Click the `emulate` button to compile
-    - Use the `Run` or `Single Step` controls to execute the code and observe register changes
+4.  **Push to Origin**
+    Upload the branch to your remote origin:
+    ```bash
+    git push origin feature/Optimization
+    ```
+
+5.  **Submit Pull Request**
+    Initiate a formal code review process for integration.
 
 ---
 
 <!-- USAGE -->
 ## Usage Guidelines
 
-> [!NOTE]
-> This repository is openly shared to support learning and knowledge exchange across the academic community.
+This repository is openly shared to support learning and knowledge exchange across the academic community.
 
 **For Students**  
 Use these programs as reference materials for understanding assembly logic, instruction syntax, and modular programming. Code is heavily commented to facilitate self-paced learning.
@@ -697,11 +716,13 @@ Special thanks to the peers whose discussions and support contributed meaningful
 <!-- FOOTER -->
 <div align="center">
 
-  [Authors](#authors) &nbsp;·&nbsp; [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Program Details](#program-details) &nbsp;·&nbsp; [Prerequisites](#prerequisites) &nbsp;·&nbsp; [Roadmap](#learning-roadmap) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Quick Reference](#quick-8086-reference) &nbsp;·&nbsp; [Troubleshooting](#common-issues--troubleshooting) &nbsp;·&nbsp; [Resources](#useful-resources) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [Execution Steps](#execution-steps) &nbsp;·&nbsp; [Usage](#usage-guidelines) &nbsp;·&nbsp; [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
+  [↑ Back to Top](#8086-assembly-language-programs)
+
+  [Authors](#authors) &nbsp;·&nbsp; [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Quick Start](#quick-start) &nbsp;·&nbsp; [Program Details](#program-details) &nbsp;·&nbsp; [Roadmap](#learning-roadmap) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Specifications](#interrupt-vector-specifications) &nbsp;·&nbsp; [Debugging](#debugging--error-analysis) &nbsp;·&nbsp; [Resources](#useful-resources) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [Usage](#usage-guidelines) &nbsp;·&nbsp; [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
 
   <br>
 
-  🔬 **[Microprocessor Lab](https://github.com/Amey-Thakur/MICROPROCESSOR-AND-MICROPROCESSOR-LAB)** &nbsp;&middot;&nbsp; 💻 **[8086-ASSEMBLY-LANGUAGE-PROGRAMS](https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS)**
+  🔬 **[Microprocessor Lab](https://github.com/Amey-Thakur/MICROPROCESSOR-AND-MICROPROCESSOR-LAB)** &nbsp;·&nbsp; 💻 **[8086-ASSEMBLY-LANGUAGE-PROGRAMS](https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS)**
 
 </div>
 
