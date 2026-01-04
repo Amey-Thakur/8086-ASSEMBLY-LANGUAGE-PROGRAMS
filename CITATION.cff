@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this Computer Engineering project or its associated academic materials, please cite them as below."
+authors:
+- family-names: "Thakur"
+  given-names: "Amey"
+  orcid: "https://orcid.org/0000-0001-5644-1575"
+title: "8086-ASSEMBLY-LANGUAGE-PROGRAMS"
+version: 1.0.0
+date-released: 2021-01-19
+url: "https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS"
