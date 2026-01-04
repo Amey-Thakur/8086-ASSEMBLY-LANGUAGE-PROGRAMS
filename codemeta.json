@@ -3,24 +3,36 @@
     "@type": "SoftwareSourceCode",
     "name": "8086-ASSEMBLY-LANGUAGE-PROGRAMS",
     "description": "A comprehensive collection of 161 professionally documented 8086 Assembly Language programs, covering arithmetic, logic, data structures, and hardware simulation.",
+    "identifier": "8086-ASSEMBLY-LANGUAGE-PROGRAMS",
+    "license": "https://spdx.org/licenses/MIT.html",
+    "programmingLanguage": [
+        "Assembly"
+    ],
     "author": [
         {
             "@type": "Person",
             "givenName": "Amey",
             "familyName": "Thakur",
-            "url": "https://github.com/Amey-Thakur"
+            "id": "https://orcid.org/0000-0001-5644-1575",
+            "affiliation": {
+                "@type": "Organization",
+                "name": "Terna Engineering College"
+            }
         }
     ],
     "dateReleased": "2021-08-12",
-    "dateModified": "2026-01-04",
-    "license": "https://spdx.org/licenses/MIT.html",
-    "programmingLanguage": [
-        {
-            "@type": "ComputerLanguage",
-            "name": "Assembly",
-            "url": "https://en.wikipedia.org/wiki/Assembly_language"
-        }
+    "codeRepository": "https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS",
+    "developmentStatus": "complete",
+    "runtimePlatform": [
+        "DOS",
+        "Emu8086"
     ],
-    "operatingSystem": "DOS/Windows",
-    "softwareRequirements": "Emu8086"
+    "applicationCategory": "Educational Software",
+    "keywords": [
+        "8086",
+        "Assembly Language",
+        "Microprocessor",
+        "Computer Engineering",
+        "Standardized"
+    ]
 }
