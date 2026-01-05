@@ -109,42 +109,45 @@ As a computer engineer, understanding the underlying hardware-software interface
 ```
 8086-ASSEMBLY-LANGUAGE-PROGRAMS/
 │
-├── Source Code/
-│   ├── Addressing Modes/        # Comprehensive Addressing Modes Reference
-│   ├── Arithmetic/              # Basic Math (Add, Sub, Mul, Div, BCD)
-│   ├── Array Operations/        # Sum, Min/Max, Deletion, Insertion
-│   ├── Bitwise Operations/      # AND, OR, XOR, Shifts (SHL/SHR), Rotates
-│   ├── Control Flow/            # Loops, If-Else, Switch-Case, Jumps
-│   ├── Conversion/              # Hex-BCD, Binary, Octal, ASCII, 7-Segment
-│   ├── Data Structures/         # Stack (LIFO) & Queue (FIFO) Implementations
-│   ├── Expression/              # Factorial, Fibonacci, GCD, Power, Series
-│   ├── External Devices/        # Traffic Lights, Stepper Motor, Keyboard, Mouse
-│   ├── File Operations/         # Create, Read, Write, Delete Files (DOS)
-│   ├── Flags/                   # Carry, Parity, Zero, Sign, Overflow Flags
-│   ├── Graphics/                # VGA Mode, Line, Rectangle, Pixel Drawing
-│   ├── Input Output/            # Read/Display Decimal, Hex, Binary Numbers
-│   ├── Interrupts/              # BIOS (INT 10h/16h) & DOS (INT 21h) Interrupts
-│   ├── Introduction/            # Hello World, Syntax Demo, System Time
-│   ├── Macros/                  # Conditional Macros, Nested Macros, Parameters
-│   ├── Mathematics/             # LCM, Square Root, Perfect Number, Armstrong
-│   ├── Matrix/                  # Matrix Addition & Transpose Operations
-│   ├── Memory Operations/       # Block Transfer, Compare, Fill, Scan
-│   ├── Patterns/                # Pyramids, Triangles, Diamond Shapes
-│   ├── Procedures/              # Recursion, Parameters, Local Variables
-│   ├── Searching/               # Binary Search, Linear Search, Char Count
-│   ├── Simulation/              # Fire Alarm, Water Level, Defect Detection
-│   ├── Sorting/                 # Bubble, Selection, Insertion, Asc/Desc Sorts
-│   ├── Stack Operations/        # String Reverse, Swap, Push/Pop Demos
-│   ├── String Operations/       # Length, Reverse, Palindrome, Case Conv.
-│   └── Utilities/               # Delays, Password Input, Sound, Clear Screen
+├── docs/                            # Formal Documentation
+│   └── SPECIFICATION.md             # Technical Architecture & Spec
 │
-├── docs/                        # Project Documentation
-│   └── SPECIFICATION.md         # Formal Technical Specification
+├── Source Code/                     # 8086 Assembly Programs (161 Files)
+│   ├── Addressing Modes/            # Comprehensive Addressing Modes Reference (1)
+│   ├── Arithmetic/                  # Basic Math: Add, Sub, Mul, Div, BCD (14)
+│   ├── Array Operations/            # Sum, Min/Max, Deletion, Insertion (7)
+│   ├── Bitwise Operations/          # AND, OR, XOR, Shifts, Rotates (8)
+│   ├── Control Flow/                # Loops, If-Else, Switch-Case, Jumps (7)
+│   ├── Conversion/                  # Hex-BCD, Binary, Octal, ASCII, 7-Seg (11)
+│   ├── Data Structures/             # Stack (LIFO) & Queue (FIFO) (2)
+│   ├── Expression/                  # Factorial, Fibonacci, GCD, Power (13)
+│   ├── External Devices/            # Traffic Lights, Stepper Motor, I/O (9)
+│   ├── File Operations/             # Create, Read, Write, Delete (DOS) (4)
+│   ├── Flags/                       # Carry, Parity, Zero, Sign, Overflow (5)
+│   ├── Graphics/                    # VGA Mode, Line, Rectangle, Pixel (4)
+│   ├── Input Output/                # Read/Display Dec, Hex, Binary (4)
+│   ├── Interrupts/                  # BIOS (INT 10h/16h) & DOS (INT 21h) (8)
+│   ├── Introduction/                # Hello World, Syntax Demo, Time (15)
+│   ├── Macros/                      # Conditional, Nested, Parameters (4)
+│   ├── Mathematics/                 # LCM, Square Root, Perfect, Armstrong (5)
+│   ├── Matrix/                      # Matrix Addition & Transpose (2)
+│   ├── Memory Operations/           # Block Transfer, Compare, Fill (4)
+│   ├── Patterns/                    # Pyramids, Triangles, Diamond (4)
+│   ├── Procedures/                  # Recursion, Parameters, Local Vars (5)
+│   ├── Searching/                   # Binary Search, Linear Search (4)
+│   ├── Simulation/                  # Fire Alarm, Water Level, Defect (3)
+│   ├── Sorting/                     # Bubble, Selection, Insertion (5)
+│   ├── Stack Operations/            # String Reverse, Swap, Push/Pop (3)
+│   ├── String Operations/           # Length, Reverse, Palindrome (5)
+│   └── Utilities/                   # Delays, Password, Sound, Clear (5)
 │
-├── LICENSE                      # MIT License
-├── SECURITY.md                  # Security Policy & Posture
-├── codemeta.json                # Project Metadata (JSON-LD)
-└── README.md                    # Project Documentation
+├── .gitattributes                   # Git Line Ending Configuration
+├── .gitignore                       # Git Ignore Rules
+├── CITATION.cff                     # Citation Metadata
+├── codemeta.json                    # Project Metadata (JSON-LD)
+├── LICENSE                          # MIT License
+├── README.md                        # Project Documentation
+└── SECURITY.md                      # Security Policy & Posture
 ```
 
 ---
