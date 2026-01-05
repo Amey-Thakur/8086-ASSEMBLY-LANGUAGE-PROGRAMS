@@ -18,7 +18,7 @@
 
 <div align="center">
 
-  [Authors](#authors) &nbsp;·&nbsp; [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Quick Start](#quick-start) &nbsp;·&nbsp; [Program Details](#program-details) &nbsp;·&nbsp; [Roadmap](#learning-roadmap) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Specifications](#interrupt-vector-specifications) &nbsp;·&nbsp; [Debugging](#debugging--error-analysis) &nbsp;·&nbsp; [Resources](#useful-resources) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [Usage](#usage-guidelines) &nbsp;·&nbsp; [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
+  [Authors](#authors) &nbsp;·&nbsp; [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Quick Start](#quick-start) &nbsp;·&nbsp; [Program Details](#program-details) &nbsp;·&nbsp; [Roadmap](#learning-roadmap) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Specifications](#interrupt-vector-specifications) &nbsp;·&nbsp; [Debugging](#debugging--error-analysis) &nbsp;·&nbsp; [Resources](#useful-resources) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [Usage Guidelines](#usage-guidelines) &nbsp;·&nbsp; [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
 
 </div>
 
@@ -669,7 +669,9 @@ This repository maintains a rigorous fork-and-pull collaboration model. Contribu
 
 ---
 
-<!-- USAGE -->
+<!-- =========================================================================================
+                                     USAGE SECTION
+     ========================================================================================= -->
 ## Usage Guidelines
 
 This repository is openly shared to support learning and knowledge exchange across the academic community.
@@ -722,7 +724,7 @@ Special thanks to the peers whose discussions and support contributed meaningful
 
   [↑ Back to Top](#8086-assembly-language-programs)
 
-  [Authors](#authors) &nbsp;·&nbsp; [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Quick Start](#quick-start) &nbsp;·&nbsp; [Program Details](#program-details) &nbsp;·&nbsp; [Roadmap](#learning-roadmap) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Specifications](#interrupt-vector-specifications) &nbsp;·&nbsp; [Debugging](#debugging--error-analysis) &nbsp;·&nbsp; [Resources](#useful-resources) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [Usage](#usage-guidelines) &nbsp;·&nbsp; [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
+  [Authors](#authors) &nbsp;·&nbsp; [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Quick Start](#quick-start) &nbsp;·&nbsp; [Program Details](#program-details) &nbsp;·&nbsp; [Roadmap](#learning-roadmap) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Specifications](#interrupt-vector-specifications) &nbsp;·&nbsp; [Debugging](#debugging--error-analysis) &nbsp;·&nbsp; [Resources](#useful-resources) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [Usage Guidelines](#usage-guidelines) &nbsp;·&nbsp; [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
 
   <br>
 
