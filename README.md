@@ -113,33 +113,194 @@ As a computer engineer, understanding the underlying hardware-software interface
 │   └── SPECIFICATION.md             # Technical Architecture & Spec
 │
 ├── Source Code/                     # 8086 Assembly Programs (161 Files)
-│   ├── Addressing Modes/            # Comprehensive Addressing Modes Reference (1)
-│   ├── Arithmetic/                  # Basic Math: Add, Sub, Mul, Div, BCD (14)
-│   ├── Array Operations/            # Sum, Min/Max, Deletion, Insertion (7)
-│   ├── Bitwise Operations/          # AND, OR, XOR, Shifts, Rotates (8)
-│   ├── Control Flow/                # Loops, If-Else, Switch-Case, Jumps (7)
-│   ├── Conversion/                  # Hex-BCD, Binary, Octal, ASCII, 7-Seg (11)
-│   ├── Data Structures/             # Stack (LIFO) & Queue (FIFO) (2)
-│   ├── Expression/                  # Factorial, Fibonacci, GCD, Power (13)
-│   ├── External Devices/            # Traffic Lights, Stepper Motor, I/O (9)
-│   ├── File Operations/             # Create, Read, Write, Delete (DOS) (4)
-│   ├── Flags/                       # Carry, Parity, Zero, Sign, Overflow (5)
-│   ├── Graphics/                    # VGA Mode, Line, Rectangle, Pixel (4)
-│   ├── Input Output/                # Read/Display Dec, Hex, Binary (4)
-│   ├── Interrupts/                  # BIOS (INT 10h/16h) & DOS (INT 21h) (8)
-│   ├── Introduction/                # Hello World, Syntax Demo, Time (15)
-│   ├── Macros/                      # Conditional, Nested, Parameters (4)
-│   ├── Mathematics/                 # LCM, Square Root, Perfect, Armstrong (5)
-│   ├── Matrix/                      # Matrix Addition & Transpose (2)
-│   ├── Memory Operations/           # Block Transfer, Compare, Fill (4)
-│   ├── Patterns/                    # Pyramids, Triangles, Diamond (4)
-│   ├── Procedures/                  # Recursion, Parameters, Local Vars (5)
-│   ├── Searching/                   # Binary Search, Linear Search (4)
-│   ├── Simulation/                  # Fire Alarm, Water Level, Defect (3)
-│   ├── Sorting/                     # Bubble, Selection, Insertion (5)
-│   ├── Stack Operations/            # String Reverse, Swap, Push/Pop (3)
-│   ├── String Operations/           # Length, Reverse, Palindrome (5)
-│   └── Utilities/                   # Delays, Password, Sound, Clear (5)
+│   ├── Addressing Modes/            # Comprehensive Addressing Modes Reference
+│   │   └── comprehensive_8086_addressing_modes_reference.asm
+│   ├── Arithmetic/                  # Basic Math: Add, Sub, Mul, Div, BCD
+│   │   ├── add_array_of_bytes_from_memory.asm
+│   │   ├── addition_16bit_packed_bcd.asm
+│   │   ├── addition_16bit_simple.asm
+│   │   ├── addition_16bit_with_carry_detection.asm
+│   │   ├── addition_8bit_with_user_input.asm
+│   │   ├── calculate_sum_of_first_n_natural_numbers.asm
+│   │   ├── count_set_bits_in_16bit_binary.asm
+│   │   ├── decimal_adjust_after_addition_demo.asm
+│   │   ├── division_16bit_dividend_by_8bit_divisor.asm
+│   │   ├── generate_multiplication_table_for_number.asm
+│   │   ├── multiplication_8bit_unsigned.asm
+│   │   ├── signed_addition_and_subtraction_demo.asm
+│   │   ├── subtraction_8bit_with_user_input.asm
+│   │   └── swap_two_numbers_using_registers.asm
+│   ├── Array Operations/            # Sum, Min/Max, Deletion, Insertion
+│   │   ├── calculate_sum_of_array_elements.asm
+│   │   ├── copy_block_of_data_between_arrays.asm
+│   │   ├── count_odd_and_even_numbers_in_array.asm
+│   │   ├── delete_element_from_array_by_index.asm
+│   │   ├── find_maximum_element_in_array.asm
+│   │   ├── find_minimum_element_in_array.asm
+│   │   └── insert_element_into_array_at_index.asm
+│   ├── Bitwise Operations/          # AND, OR, XOR, Shifts, Rotates
+│   │   ├── bitwise_and_logic_demonstration.asm
+│   │   ├── bitwise_logical_shift_left_and_multiplication.asm
+│   │   ├── bitwise_logical_shift_right_and_division.asm
+│   │   ├── bitwise_not_ones_complement_demonstration.asm
+│   │   ├── bitwise_or_logic_demonstration.asm
+│   │   ├── bitwise_rotate_left_circular_shift.asm
+│   │   ├── bitwise_rotate_right_circular_shift.asm
+│   │   └── bitwise_xor_logic_demonstration.asm
+│   ├── Control Flow/                # Loops, If-Else, Switch-Case, Jumps
+│   │   ├── conditional_branching_and_status_flags.asm
+│   │   ├── for_loop_counter_iteration_pattern.asm
+│   │   ├── if_then_else_conditional_logic_structure.asm
+│   │   ├── loop_instruction_cx_register_control.asm
+│   │   ├── switch_case_multiway_branching_logic.asm
+│   │   ├── unconditional_jump_and_program_redirection.asm
+│   │   └── while_loop_pre_test_conditional_iteration.asm
+│   ├── Conversion/                  # Hex-BCD, Binary, Octal, ASCII, 7-Seg
+│   │   ├── celsius_fahrenheit_temperature_converter.asm
+│   │   ├── convert_decimal_to_binary_representation.asm
+│   │   ├── convert_decimal_to_octal_representation.asm
+│   │   ├── convert_hexadecimal_to_decimal_string.asm
+│   │   ├── convert_hexadecimal_to_packed_bcd.asm
+│   │   ├── convert_packed_bcd_to_hexadecimal.asm
+│   │   ├── hex_to_seven_segment_decoder_lookup.asm
+│   │   ├── reverse_digits_of_integer_value.asm
+│   │   ├── string_comparison_lexicographical_check.asm
+│   │   ├── string_copy_using_manual_loop_iteration.asm
+│   │   └── string_copy_using_movsb_instruction.asm
+│   ├── Data Structures/             # Stack (LIFO) & Queue (FIFO)
+│   │   ├── queue.asm
+│   │   └── stack_array.asm
+│   ├── Expression/                  # Factorial, Fibonacci, GCD, Power
+│   │   ├── average_of_array.asm
+│   │   ├── calculator.asm
+│   │   ├── check_even_odd.asm
+│   │   ├── count_vowels.asm
+│   │   ├── count_words.asm
+│   │   ├── factorial.asm
+│   │   ├── fibonacci.asm
+│   │   ├── gcd_two_numbers.asm
+│   │   ├── power.asm
+│   │   ├── prime_number_check.asm
+│   │   ├── reverse_array.asm
+│   │   ├── string_concatenation.asm
+│   │   └── substring_search.asm
+│   ├── External Devices/            # Traffic Lights, Stepper Motor, I/O
+│   │   ├── keyboard.asm
+│   │   ├── led_display_test.asm
+│   │   ├── mouse.asm
+│   │   ├── robot.asm
+│   │   ├── stepper_motor.asm
+│   │   ├── thermometer.asm
+│   │   ├── timer.asm
+│   │   ├── traffic_lights.asm
+│   │   └── traffic_lights_advanced.asm
+│   ├── File Operations/             # Create, Read, Write, Delete (DOS)
+│   │   ├── create_file.asm
+│   │   ├── delete_file.asm
+│   │   ├── read_file.asm
+│   │   └── write_file.asm
+│   ├── Flags/                       # Carry, Parity, Zero, Sign, Overflow
+│   │   ├── carry_flag.asm
+│   │   ├── overflow_flag.asm
+│   │   ├── parity_flag.asm
+│   │   ├── sign_flag.asm
+│   │   └── zero_flag.asm
+│   ├── Graphics/                    # VGA Mode, Line, Rectangle, Pixel
+│   │   ├── colored_text.asm
+│   │   ├── draw_line.asm
+│   │   ├── draw_pixel.asm
+│   │   └── draw_rectangle.asm
+│   ├── Input Output/                # Read/Display Dec, Hex, Binary
+│   │   ├── display_binary.asm
+│   │   ├── display_decimal.asm
+│   │   ├── display_hex.asm
+│   │   └── read_number.asm
+│   ├── Interrupts/                  # BIOS (INT 10h/16h) & DOS (INT 21h)
+│   │   ├── bios_cursor_position.asm
+│   │   ├── bios_keyboard.asm
+│   │   ├── bios_system_time.asm
+│   │   ├── bios_video_mode.asm
+│   │   ├── dos_display_char.asm
+│   │   ├── dos_display_string.asm
+│   │   ├── dos_read_char.asm
+│   │   └── dos_read_string.asm
+│   ├── Introduction/                # Hello World, Syntax Demo, Time
+│   │   ├── data_definition_demo.asm
+│   │   ├── display_characters.asm
+│   │   ├── display_string_direct.asm
+│   │   ├── display_system_time.asm
+│   │   ├── hello_world_dos.asm
+│   │   ├── hello_world_interrupt.asm
+│   │   ├── hello_world_procedure.asm
+│   │   ├── hello_world_procedure_advanced.asm
+│   │   ├── hello_world_string.asm
+│   │   ├── hello_world_vga.asm
+│   │   ├── keyboard_wait_input.asm
+│   │   ├── mov_instruction_demo.asm
+│   │   ├── print_alphabets.asm
+│   │   ├── procedure_demo.asm
+│   │   └── procedure_multiplication.asm
+│   ├── Macros/                      # Conditional, Nested, Parameters
+│   │   ├── conditional_macros.asm
+│   │   ├── macro_with_parameters.asm
+│   │   ├── nested_macros.asm
+│   │   └── print_string_macro.asm
+│   ├── Mathematics/                 # LCM, Square Root, Perfect, Armstrong
+│   │   ├── armstrong_number.asm
+│   │   ├── lcm.asm
+│   │   ├── perfect_number.asm
+│   │   ├── square_root.asm
+│   │   └── twos_complement.asm
+│   ├── Matrix/                      # Matrix Addition & Transpose
+│   │   ├── matrix_addition.asm
+│   │   └── matrix_transpose.asm
+│   ├── Memory Operations/           # Block Transfer, Compare, Fill
+│   │   ├── block_copy.asm
+│   │   ├── memory_compare.asm
+│   │   ├── memory_fill.asm
+│   │   └── memory_scan.asm
+│   ├── Patterns/                    # Pyramids, Triangles, Diamond
+│   │   ├── diamond_pattern.asm
+│   │   ├── inverted_triangle.asm
+│   │   ├── number_pyramid.asm
+│   │   └── triangle_pattern.asm
+│   ├── Procedures/                  # Recursion, Parameters, Local Vars
+│   │   ├── basic_procedure.asm
+│   │   ├── local_variables.asm
+│   │   ├── nested_procedures.asm
+│   │   ├── procedure_parameters.asm
+│   │   └── recursive_factorial.asm
+│   ├── Searching/                   # Binary Search, Linear Search
+│   │   ├── binary_search.asm
+│   │   ├── character_occurrences_count.asm
+│   │   ├── linear_search.asm
+│   │   └── search_element_array.asm
+│   ├── Simulation/                  # Fire Alarm, Water Level, Defect
+│   │   ├── fire_monitoring_system.asm
+│   │   ├── garment_defect.asm
+│   │   └── water_level_controller.asm
+│   ├── Sorting/                     # Bubble, Selection, Insertion
+│   │   ├── array_ascending.asm
+│   │   ├── array_descending.asm
+│   │   ├── bubble_sort.asm
+│   │   ├── insertion_sort.asm
+│   │   └── selection_sort.asm
+│   ├── Stack Operations/            # String Reverse, Swap, Push/Pop
+│   │   ├── push_pop.asm
+│   │   ├── reverse_string_stack.asm
+│   │   └── swap_using_stack.asm
+│   ├── String Operations/           # Length, Reverse, Palindrome
+│   │   ├── palindrome_check.asm
+│   │   ├── string_length.asm
+│   │   ├── string_reverse.asm
+│   │   ├── to_lowercase.asm
+│   │   └── to_uppercase.asm
+│   └── Utilities/                   # Delays, Password, Sound, Clear
+│       ├── beep_sound.asm
+│       ├── clear_screen.asm
+│       ├── delay_timer.asm
+│       ├── display_date.asm
+│       └── password_input.asm
 │
 ├── .gitattributes                   # Git Line Ending Configuration
 ├── .gitignore                       # Git Ignore Rules
@@ -732,6 +893,8 @@ Special thanks to the peers whose discussions and support contributed meaningful
 ---
 
 <div align="center">
+
+  ### Developed as part of the Microprocessor Lab Coursework @ Terna Engineering College
 
   ### 🎓 [Computer Engineering Repository](https://github.com/Amey-Thakur/COMPUTER-ENGINEERING)
 
