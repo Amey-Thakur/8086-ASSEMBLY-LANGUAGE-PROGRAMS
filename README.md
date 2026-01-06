@@ -1,6 +1,6 @@
 <div align="center">
 
-  # 8086-ASSEMBLY-LANGUAGE-PROGRAMS
+  # 8086 Assembly Language Programs
 
   [![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
   ![Status](https://img.shields.io/badge/Status-Completed-success)
