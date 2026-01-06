@@ -67,6 +67,11 @@ As a computer engineer, understanding the underlying hardware-software interface
 - **Academic Documentation**: To authentically document my learning journey through 8086 assembly programming.
 - **Community Contribution**: To provide a structured and verified code reference for fellow engineering students.
 
+> [!TIP]
+> **Emulation Environments**
+> 
+> To achieve full execution fidelity, it is recommended to use the **Emu8086** emulator or **DOSBox** with the **TASM/MASM** assembler suite. These environments provide comprehensive debugging capabilities, including real-time register monitoring and memory segment inspection, which are essential for mastering 16-bit architecture.
+
 ---
 
 <!-- FEATURES -->
@@ -158,7 +163,9 @@ As a computer engineer, understanding the underlying hardware-software interface
 ### Prerequisites
 
 > [!WARNING]
-> **System Requirements**: Ensure your environment meets these requirements before running the programs.
+> **Architectural Constraints & Safety**
+> 
+> These programs are designed for the **Intel 8086 (16-bit)** architecture. Executing them in modern 64-bit operating systems without proper emulation (e.g., DOSBox) may lead to system crashes or undefined behavior due to direct memory access and interrupt usage. Always use a sandboxed 16-bit environment.
 
 - **Operating System**: Windows 7, 8, 10, or 11 is required for native Emu8086 support.
 - **Emulator Software**: The **Emu8086** microprocessor emulator is required to assemble and execute the code.
