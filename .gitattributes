@@ -8,6 +8,10 @@
 *.md text eol=lf
 *.asm text eol=lf
 *.inc text eol=lf
+*.cff text eol=lf
+*.json text eol=lf
+.gitattributes text eol=lf
+.gitignore text eol=lf
 LICENSE text eol=lf
 
 # Explicitly mark binary files

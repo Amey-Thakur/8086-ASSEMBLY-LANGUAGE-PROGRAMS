@@ -31,19 +31,8 @@
 
   **Terna Engineering College | Computer Engineering | Batch of 2022**
 
-  <table>
-  <tr>
-  <td align="center">
-  <a href="https://github.com/Amey-Thakur">
-  <img src="https://github.com/Amey-Thakur.png" width="180px;" alt="Amey Thakur"/><br />
-  <sub><b>Amey Thakur</b></sub>
-  </a><br /><br />
-  <a href="https://orcid.org/0000-0001-5644-1575">
-  <img src="https://img.shields.io/badge/ORCID-0000--0001--5644--1575-brightgreen" alt="ORCID"/>
-  </a>
-  </td>
-  </tr>
-  </table>
+| <a href="https://github.com/Amey-Thakur"><img src="https://github.com/Amey-Thakur.png" width="150" height="150" alt="Amey Thakur"></a><br>[**Amey Thakur**](https://github.com/Amey-Thakur)<br><br>[![ORCID](https://img.shields.io/badge/ORCID-0000--0001--5644--1575-green.svg)](https://orcid.org/0000-0001-5644-1575) |
+| :---: |
 
 </div>
 
@@ -114,48 +103,48 @@ As a computer engineer, understanding the underlying hardware-software interface
 <!-- STRUCTURE -->
 ## Project Structure
 
-```
+```python
 8086-ASSEMBLY-LANGUAGE-PROGRAMS/
 │
-├── docs/                            # Formal Documentation
-│   └── SPECIFICATION.md             # Technical Architecture & Spec
+├── docs/                                    # Formal Documentation
+│   └── SPECIFICATION.md                     # Technical Architecture & Specification
 │
-├── Source Code/                     # 8086 Assembly Programs (161 Files)
-│   ├── Addressing Modes/            # Comprehensive Addressing Modes Reference (1)
-│   ├── Arithmetic/                  # Basic Math: Add, Sub, Mul, Div, BCD (14)
-│   ├── Array Operations/            # Sum, Min/Max, Deletion, Insertion (7)
-│   ├── Bitwise Operations/          # AND, OR, XOR, Shifts, Rotates (8)
-│   ├── Control Flow/                # Loops, If-Else, Switch-Case, Jumps (7)
-│   ├── Conversion/                  # Hex-BCD, Binary, Octal, ASCII, 7-Seg (11)
-│   ├── Data Structures/             # Stack (LIFO) & Queue (FIFO) (2)
-│   ├── Expression/                  # Factorial, Fibonacci, GCD, Power (13)
-│   ├── External Devices/            # Traffic Lights, Stepper Motor, I/O (9)
-│   ├── File Operations/             # Create, Read, Write, Delete (DOS) (4)
-│   ├── Flags/                       # Carry, Parity, Zero, Sign, Overflow (5)
-│   ├── Graphics/                    # VGA Mode, Line, Rectangle, Pixel (4)
-│   ├── Input Output/                # Read/Display Dec, Hex, Binary (4)
-│   ├── Interrupts/                  # BIOS (INT 10h/16h) & DOS (INT 21h) (8)
-│   ├── Introduction/                # Hello World, Syntax Demo, Time (15)
-│   ├── Macros/                      # Conditional, Nested, Parameters (4)
-│   ├── Mathematics/                 # LCM, Square Root, Perfect, Armstrong (5)
-│   ├── Matrix/                      # Matrix Addition & Transpose (2)
-│   ├── Memory Operations/           # Block Transfer, Compare, Fill (4)
-│   ├── Patterns/                    # Pyramids, Triangles, Diamond (4)
-│   ├── Procedures/                  # Recursion, Parameters, Local Vars (5)
-│   ├── Searching/                   # Binary Search, Linear Search (4)
-│   ├── Simulation/                  # Fire Alarm, Water Level, Defect (3)
-│   ├── Sorting/                     # Bubble, Selection, Insertion (5)
-│   ├── Stack Operations/            # String Reverse, Swap, Push/Pop (3)
-│   ├── String Operations/           # Length, Reverse, Palindrome (5)
-│   └── Utilities/                   # Delays, Password, Sound, Clear (5)
+├── Source Code/                             # 8086 Assembly Programs (161 Files)
+│   ├── Addressing Modes/                    # Comprehensive Addressing Modes Reference (1)
+│   ├── Arithmetic/                          # Basic Math: Add, Sub, Mul, Div, BCD (14)
+│   ├── Array Operations/                    # Sum, Min/Max, Deletion, Insertion (7)
+│   ├── Bitwise Operations/                  # AND, OR, XOR, Shifts, Rotates (8)
+│   ├── Control Flow/                        # Loops, If-Else, Switch-Case, Jumps (7)
+│   ├── Conversion/                          # Hex-BCD, Binary, Octal, ASCII, 7-Seg (11)
+│   ├── Data Structures/                     # Stack (LIFO) & Queue (FIFO) (2)
+│   ├── Expression/                          # Factorial, Fibonacci, GCD, Power (13)
+│   ├── External Devices/                    # Traffic Lights, Stepper Motor, I/O (9)
+│   ├── File Operations/                     # Create, Read, Write, Delete (DOS) (4)
+│   ├── Flags/                               # Carry, Parity, Zero, Sign, Overflow (5)
+│   ├── Graphics/                            # VGA Mode, Line, Rectangle, Pixel (4)
+│   ├── Input Output/                        # Read/Display Dec, Hex, Binary (4)
+│   ├── Interrupts/                          # BIOS (INT 10h/16h) & DOS (INT 21h) (8)
+│   ├── Introduction/                        # Hello World, Syntax Demo, Time (15)
+│   ├── Macros/                              # Conditional, Nested, Parameters (4)
+│   ├── Mathematics/                         # LCM, Square Root, Perfect, Armstrong (5)
+│   ├── Matrix/                              # Matrix Addition & Transpose (2)
+│   ├── Memory Operations/                   # Block Transfer, Compare, Fill (4)
+│   ├── Patterns/                            # Pyramids, Triangles, Diamond (4)
+│   ├── Procedures/                          # Recursion, Parameters, Local Vars (5)
+│   ├── Searching/                           # Binary Search, Linear Search (4)
+│   ├── Simulation/                          # Fire Alarm, Water Level, Defect (3)
+│   ├── Sorting/                             # Bubble, Selection, Insertion (5)
+│   ├── Stack Operations/                    # String Reverse, Swap, Push/Pop (3)
+│   ├── String Operations/                   # Length, Reverse, Palindrome (5)
+│   └── Utilities/                           # Delays, Password, Sound, Clear (5)
 │
-├── .gitattributes                   # Git Line Ending Configuration
-├── .gitignore                       # Git Ignore Rules
-├── CITATION.cff                     # Citation Metadata
-├── codemeta.json                    # Project Metadata (JSON-LD)
-├── LICENSE                          # MIT License
-├── README.md                        # Project Documentation
-└── SECURITY.md                      # Security Policy & Posture
+├── .gitattributes                           # Git Configuration
+├── .gitignore                               # Git Ignore Rules
+├── CITATION.cff                             # Citation Metadata
+├── codemeta.json                            # Project Metadata (JSON-LD)
+├── LICENSE                                  # MIT License
+├── README.md                                # Main Documentation
+└── SECURITY.md                              # Security Policy & Posture
 ```
 
 ---
@@ -719,13 +708,13 @@ Copyright © 2021 [Amey Thakur](https://github.com/Amey-Thakur)
 
 This repository represents a comprehensive collection of 8086 assembly programs developed, verified, and documented during my academic journey. All content has been carefully organized to serve as a valuable resource for mastering low-level system architecture.
 
-**Connect**: [GitHub](https://github.com/Amey-Thakur) · [LinkedIn](https://www.linkedin.com/in/amey-thakur) · [ORCID](https://orcid.org/0000-0001-5644-1575)
+**Connect:** [GitHub](https://github.com/Amey-Thakur) &nbsp;·&nbsp; [LinkedIn](https://www.linkedin.com/in/amey-thakur) &nbsp;·&nbsp; [ORCID](https://orcid.org/0000-0001-5644-1575)
 
 ### Acknowledgments
 
-Special thanks to the faculty members of the **Department of Computer Engineering** at Terna Engineering College for their guidance and instruction in Microprocessors. Their clear teaching and continued support helped develop a strong understanding of low-level system architecture.
+Grateful acknowledgment to the faculty members of the **Department of Computer Engineering** at Terna Engineering College for their guidance and instruction in Microprocessors. Their clear teaching and continued support helped develop a strong understanding of low-level system architecture and 16-bit CISC operations.
 
-Special thanks to the peers whose discussions and support contributed meaningfully to this learning experience.
+Special thanks to the mentors and peers whose encouragement, discussions, and support contributed meaningfully to this learning journey.
 
 ---
 
@@ -748,7 +737,9 @@ Special thanks to the peers whose discussions and support contributed meaningful
 
   ### 🎓 [Computer Engineering Repository](https://github.com/Amey-Thakur/COMPUTER-ENGINEERING)
 
-  **Computer Engineering (B.E.) - University of Mumbai**
+  #### Computer Engineering (B.E.) - University of Mumbai
+
+  ---
 
   *Semester-wise curriculum, laboratories, projects, and academic notes.*
 
