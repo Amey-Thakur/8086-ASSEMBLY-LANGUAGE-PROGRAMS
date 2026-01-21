@@ -42,10 +42,13 @@ class Emulator8086 {
         this.memory = new Uint8Array(65536);
         // Data segment
         this.dataLabels = {};
+        this.dataPointer = 0x2000; // Start data at 8KB offset
         this.output = '';
         this.pc = 0;
         this.instructions = [];
         this.running = false;
+        this.waiting = false;  // Fix: Clear input wait state
+        this.echoInput = false;
         this.errors = []; // Compilation errors
         this.isCompiled = false;
 
@@ -223,45 +226,76 @@ class Emulator8086 {
             const dataMatch = line.match(/^(\w+)?\s*(DB|DW)\s+(.+)$/i);
             if (dataMatch) {
                 const label = dataMatch[1] ? dataMatch[1].toUpperCase() : null;
-                const type = dataMatch[2].toUpperCase();
+                const type = dataMatch[2].toUpperCase(); // DB or DW
                 let value = dataMatch[3].trim();
 
-                const addr = Object.keys(this.dataLabels).length * 256 + 0x200; // Simplified alloc
+                // Allocate address (linear)
+                const addr = this.dataPointer;
                 if (label) this.dataLabels[label] = addr;
 
-                // String definition
-                if (value.startsWith("'")) {
-                    const strMatch = value.match(/'([^']+)'/);
-                    if (strMatch) {
-                        for (let j = 0; j < strMatch[1].length; j++) {
-                            this.memory[addr + j] = strMatch[1].charCodeAt(j);
-                        }
-                        // Handle extra bytes like 0DH, 0AH, '$'
-                        const parts = value.split(',');
-                        let offset = strMatch[1].length;
-                        for (let p = 1; p < parts.length; p++) {
-                            let part = parts[p].trim();
-                            if (part === "'$'" || part === '"$"') {
-                                this.memory[addr + offset++] = 36; // '$'
-                            } else if (part.endsWith('H')) {
-                                this.memory[addr + offset++] = parseInt(part.slice(0, -1), 16);
-                            } else if (!isNaN(part)) {
-                                this.memory[addr + offset++] = parseInt(part, 10);
-                            }
+                // Parse Value
+                let bytes = [];
+
+                // String handling: 'text', 10, 13, '$'
+                if (value.includes("'") || value.includes('"')) {
+                    // Primitive regex split - improving to handle tokens
+                    // Note: This is a simplified parser. It assumes standard formats.
+                    // 1. Extract string literals
+                    const strMatches = [];
+                    value = value.replace(/(["'])(.*?)\1/g, (match, quote, content) => {
+                        strMatches.push(content);
+                        return `__STR_${strMatches.length - 1}__`;
+                    });
+
+                    // 2. Split by comma
+                    const parts = value.split(',');
+                    for (let p of parts) {
+                        p = p.trim();
+                        if (p.startsWith('__STR_')) {
+                            const idx = parseInt(p.match(/\d+/)[0]);
+                            const s = strMatches[idx];
+                            for (let k = 0; k < s.length; k++) bytes.push(s.charCodeAt(k));
+                        } else if (p.endsWith('H')) {
+                            bytes.push(parseInt(p.slice(0, -1), 16));
+                        } else if (!isNaN(p)) {
+                            bytes.push(parseInt(p));
+                        } else if (p === '$') {
+                            bytes.push(36);
+                        } else if (p === '?') {
+                            bytes.push(0);
+                        } else {
+                            // Try to find if it's a constant or label reference?
+                            // For simplicity, 0
+                            bytes.push(0);
                         }
                     }
                 } else {
-                    // Numeric definition
-                    if (label) this.dataLabels[label] = this.getValue(value);
+                    // Numeric / Simple
+                    if (value === '?') value = '0';
+                    let num = 0;
+                    if (value.endsWith('H')) num = parseInt(value.slice(0, -1), 16);
+                    else num = parseInt(value);
+
+                    if (isNaN(num)) num = 0; // Constants handling required?
+
+                    if (type === 'DB') bytes.push(num & 0xFF);
+                    else if (type === 'DW') { bytes.push(num & 0xFF); bytes.push((num >> 8) & 0xFF); }
                 }
+
+                // Write to memory
+                for (let b of bytes) {
+                    this.memory[this.dataPointer++] = b;
+                }
+
                 continue;
             }
 
-            // Check for code labels
-            const labelMatch = line.match(/^(\w+):/);
+            // Check for code labels or PROC definitions
+            const labelMatch = line.match(/^(\w+):/) || line.match(/^(\w+)\s+PROC/i);
             if (labelMatch) {
                 labels[labelMatch[1].toUpperCase()] = codeLines.length;
-                line = line.replace(/^(\w+):/, '').trim();
+                // Remove label or PROC declaration
+                line = line.replace(/^(\w+):/, '').replace(/^(\w+)\s+PROC/i, '').trim();
                 if (!line) continue;
             }
 
@@ -271,7 +305,11 @@ class Emulator8086 {
             }
 
             // Skip directives
+            // Skip directives / comments
             if (/^(ORG|END|SEGMENT|ENDS|ASSUME|NAME|\.MODEL|\.DATA|\.CODE|\.STACK|\.FARDATA)/i.test(line)) {
+                continue;
+            }
+            if (line.match(/\s+ENDP$/i)) { // Skip ENDP lines
                 continue;
             }
 
@@ -549,6 +587,7 @@ class Emulator8086 {
                     break;
                 case 0x02: // Display character
                     this.output += String.fromCharCode(this.getReg8('DL'));
+                    updateDisplay(); // Force update
                     break;
                 case 0x09: // Display string
                     const addr = this.regs.DX;
@@ -559,10 +598,12 @@ class Emulator8086 {
                         str += String.fromCharCode(ch);
                     }
                     this.output += str;
+                    updateDisplay(); // Force update
                     break;
                 case 0x4C: // Terminate
                     this.running = false;
                     this.output += '\n[Program Terminated]';
+                    updateDisplay(); // Force update
                     break;
             }
         } else if (num === 0x16) { // BIOS Keyboard
@@ -577,27 +618,59 @@ class Emulator8086 {
     waitInput(echo) {
         this.waiting = true;
         this.echoInput = echo;
-        this.output += '_'; // Cursor hint
+        this.output += '█';
         updateDisplay();
-        // Logic handled by global key listener
+
+        // Auto-focus output
+        const out = document.getElementById('output');
+        if (out) {
+            out.setAttribute('tabindex', '0');
+            out.focus();
+            // Removed blue outline as requested
+            out.style.outline = 'none';
+        }
+
+        // Blinking Cursor Logic
+        if (this.blinkInterval) clearInterval(this.blinkInterval);
+        this.blinkState = true;
+        this.blinkInterval = setInterval(() => {
+            if (this.waiting) {
+                if (this.blinkState) {
+                    if (this.output.endsWith('█')) this.output = this.output.slice(0, -1);
+                } else {
+                    this.output += '█';
+                }
+                this.blinkState = !this.blinkState;
+                updateDisplay();
+            }
+        }, 500);
     }
 
     // Process input key
     processInput(charCode) {
         if (!this.waiting) return;
 
-        // Clear cursor hint
-        if (this.output.endsWith('_')) {
+        // Stop blinking
+        if (this.blinkInterval) {
+            clearInterval(this.blinkInterval);
+            this.blinkInterval = null;
+        }
+
+        // Clear cursor if present
+        if (this.output.endsWith('█')) {
             this.output = this.output.slice(0, -1);
         }
 
         this.setReg8('AL', charCode);
         if (this.echoInput) {
             this.output += String.fromCharCode(charCode);
+            updateDisplay(); // Instant echo
+        } else {
+            updateDisplay(); // Remove cursor
         }
 
         this.waiting = false;
-        this.run(); // Resume execution
+        setTimeout(() => this.run(), 10); // Resume with slight delay to prevent stack overflow
     }
 
     // Run execution loop (Async)
@@ -1409,6 +1482,9 @@ if (editorInput && systemBus && footerChip) {
 // ========================================
 
 document.addEventListener('keydown', (e) => {
+    // Allow typing in Code Editor or Inputs
+    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+
     if (emu.waiting) {
         e.preventDefault();
 
@@ -1427,6 +1503,40 @@ document.addEventListener('keydown', (e) => {
         if (charCode > 0) {
             emu.processInput(charCode);
         }
+    }
+});
+
+
+// ========================================
+// Security & Easter Eggs
+// ========================================
+
+// 1. Console Signature
+console.log(
+    '%c 8086 Emulator Developed by Amey Thakur ',
+    'background: #161b22; color: #58a6ff; font-size: 16px; font-weight: bold; padding: 10px; border-radius: 5px; border: 1px solid #30363d;'
+);
+
+// 2. Low-Level Security (Anti-Right Click & DevTools)
+document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    return false;
+});
+
+document.addEventListener('keydown', (e) => {
+    // Prevent F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+    if (
+        e.key === 'F12' ||
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+        (e.ctrlKey && e.key === 'u')
+    ) {
+        e.preventDefault();
+        return false;
+    }
+
+    // 3. Easter Egg (Ctrl + Alt + E)
+    if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'e') {
+        alert('✨ Easter Egg Found! ✨\n\nDeveloped with ❤️ by Amey Thakur\n2021-' + new Date().getFullYear());
     }
 });
 

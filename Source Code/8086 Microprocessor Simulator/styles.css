@@ -1262,3 +1262,27 @@ a[href*="github"]:hover .icon {
         opacity: 1;
     }
 }
+
+/* ======================================== */
+/* Low-Level Security: Protection Features   */
+/* ======================================== */
+
+/* Disable Text Selection Globally */
+body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Enable Selection for Critical Content */
+#code-editor,
+#output,
+input,
+textarea {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    cursor: text;
+}
