@@ -649,6 +649,46 @@ END</textarea>
                 this.flags.PF = (ones % 2 === 0) ? 1 : 0;
             }
 
+            // Find similar opcode using Levenshtein distance
+            findSimilarOpcode(input, validOpcodes) {
+                let bestMatch = null;
+                let bestDistance = Infinity;
+
+                for (const opcode of validOpcodes) {
+                    const distance = this.levenshtein(input, opcode);
+                    if (distance < bestDistance && distance <= 2) { // Max 2 edits
+                        bestDistance = distance;
+                        bestMatch = opcode;
+                    }
+                }
+                return bestMatch;
+            }
+
+            // Levenshtein distance algorithm
+            levenshtein(a, b) {
+                const matrix = [];
+                for (let i = 0; i <= b.length; i++) {
+                    matrix[i] = [i];
+                }
+                for (let j = 0; j <= a.length; j++) {
+                    matrix[0][j] = j;
+                }
+                for (let i = 1; i <= b.length; i++) {
+                    for (let j = 1; j <= a.length; j++) {
+                        if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                            matrix[i][j] = matrix[i - 1][j - 1];
+                        } else {
+                            matrix[i][j] = Math.min(
+                                matrix[i - 1][j - 1] + 1, // substitution
+                                matrix[i][j - 1] + 1,     // insertion
+                                matrix[i - 1][j] + 1      // deletion
+                            );
+                        }
+                    }
+                }
+                return matrix[b.length][a.length];
+            }
+
             // Parse and execute
             parse(code) {
                 this.reset();
@@ -717,10 +757,16 @@ END</textarea>
                         'SHL', 'SAL', 'SHR', 'SAR', 'ROL', 'ROR', 'CMP', 'JMP', 'JZ', 'JE', 'JNZ', 'JNE', 'JC', 'JB',
                         'JNC', 'JNB', 'JAE', 'JG', 'JGE', 'JL', 'JLE', 'JA', 'JBE', 'LOOP', 'LOOPZ', 'LOOPNZ',
                         'LEA', 'PUSH', 'POP', 'XCHG', 'INT', 'RET', 'HLT', 'NOP', 'CALL', 'NEG', 'CBW', 'CWD',
-                        'MOVSB', 'MOVSW', 'STOSB', 'STOSW', 'LODSB', 'LODSW', 'REP', 'CLC', 'STC', 'CMC', 'CLD', 'STD'];
+                        'MOVSB', 'MOVSW', 'STOSB', 'STOSW', 'LODSB', 'LODSW', 'REP', 'CLC', 'STC', 'CMC', 'CLD', 'STD',
+                        'AAA', 'AAD', 'AAM', 'AAS', 'ADC', 'DAA', 'DAS', 'IDIV', 'IMUL', 'LAHF', 'SAHF', 'TEST'];
                     const opcode = line.split(/[\s,]+/)[0].toUpperCase();
                     if (!validOpcodes.includes(opcode)) {
-                        this.errors.push({ line: i + 1, instruction: line, message: `Unknown instruction: ${opcode}` });
+                        // Find similar opcode for suggestion
+                        const suggestion = this.findSimilarOpcode(opcode, validOpcodes);
+                        const msg = suggestion
+                            ? `Unknown instruction: ${opcode}. Did you mean: ${suggestion}?`
+                            : `Unknown instruction: ${opcode}`;
+                        this.errors.push({ line: i + 1, instruction: line, message: msg, suggestion });
                     }
 
                     codeLines.push({ instruction: line, lineNo: i + 1 });
