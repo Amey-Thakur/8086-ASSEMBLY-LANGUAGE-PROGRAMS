@@ -38,7 +38,7 @@
 ; CODE SEGMENT
 ; -----------------------------------------------------------------------------
 .CODE
-MAIN PROC
+MAIN:
     ; --- Step 1: Initialize Data Segment ---
     MOV AX, @DATA
     MOV DS, AX
@@ -126,13 +126,13 @@ DISPLAY_RESULT:
 L_EXIT:
     MOV AH, 4CH
     INT 21H
-MAIN ENDP
+; MAIN ENDP
 
 ; -----------------------------------------------------------------------------
 ; PROCEDURE: GET_OPERANDS
 ; DESCRIPTION: Prompts for and reads two 16-bit decimal numbers.
 ; -----------------------------------------------------------------------------
-GET_OPERANDS PROC
+GET_OPERANDS:
     ; Input Number 1
     LEA DX, STR_NUM1
     MOV AH, 09H
@@ -148,14 +148,14 @@ GET_OPERANDS PROC
     MOV VAL_NUM2, AX
     
     RET
-GET_OPERANDS ENDP
+; GET_OPERANDS ENDP
 
 ; -----------------------------------------------------------------------------
 ; PROCEDURE: READ_DECIMAL
 ; OUTPUT: AX = 16-bit Value
 ; DESCRIPTION: Reads ASCII digits until CR, converts to binary.
 ; -----------------------------------------------------------------------------
-READ_DECIMAL PROC
+READ_DECIMAL:
     PUSH BX
     PUSH CX
     PUSH DX
@@ -189,14 +189,14 @@ L_READ_DONE:
     POP CX
     POP BX
     RET
-READ_DECIMAL ENDP
+; READ_DECIMAL ENDP
 
 ; -----------------------------------------------------------------------------
 ; PROCEDURE: PRINT_DECIMAL
 ; INPUT: AX = 16-bit Value
 ; DESCRIPTION: Converts binary to ASCII and prints to standard output.
 ; -----------------------------------------------------------------------------
-PRINT_DECIMAL PROC
+PRINT_DECIMAL:
     PUSH AX
     PUSH BX
     PUSH CX
@@ -225,7 +225,7 @@ L_PRINT_STACK:
     POP BX
     POP AX
     RET
-PRINT_DECIMAL ENDP
+; PRINT_DECIMAL ENDP
 
 END MAIN 
 

@@ -135,6 +135,19 @@ class Emulator8086 {
         }
     }
 
+    // Stack operations
+    push(val) {
+        this.regs.SP -= 2;
+        this.memory[this.regs.SP] = val & 0xFF;
+        this.memory[this.regs.SP + 1] = (val >> 8) & 0xFF;
+    }
+
+    pop() {
+        const val = this.memory[this.regs.SP] | (this.memory[this.regs.SP + 1] << 8);
+        this.regs.SP += 2;
+        return val;
+    }
+
     // Update flags based on result
     updateFlags(result, is16bit = true) {
         const max = is16bit ? 0xFFFF : 0xFF;
@@ -509,16 +522,18 @@ class Emulator8086 {
                     break;
 
                 case 'PUSH':
-                    this.regs.SP -= 2;
-                    const pushVal = this.getValue(parts[1]);
-                    this.memory[this.regs.SP] = pushVal & 0xFF;
-                    this.memory[this.regs.SP + 1] = (pushVal >> 8) & 0xFF;
+                    this.push(this.getValue(parts[1]));
                     break;
 
                 case 'POP':
-                    const popVal = this.memory[this.regs.SP] | (this.memory[this.regs.SP + 1] << 8);
-                    this.setValue(parts[1], popVal);
-                    this.regs.SP += 2;
+                    this.setValue(parts[1], this.pop());
+                    break;
+
+                case 'CALL':
+                    if (this.labels[parts[1]] !== undefined) {
+                        this.push(this.pc + 1);
+                        this.pc = this.labels[parts[1]] - 1;
+                    }
                     break;
 
                 case 'IN':
@@ -556,6 +571,9 @@ class Emulator8086 {
                     break;
 
                 case 'RET':
+                    this.pc = this.pop() - 1;
+                    break;
+
                 case 'HLT':
                     this.running = false;
                     return false;
