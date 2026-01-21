@@ -1142,6 +1142,7 @@ MSG DB 'Hello, World!', 0DH, 0AH, '$'
                     document.getElementById('status').textContent = 'Loaded: ' + filename;
                     document.getElementById('status').className = 'status success';
                     resetEmulator();
+                    updateLineNumbers(); // Update line numbers after loading
                 } else {
                     document.getElementById('status').textContent = 'Failed to load file';
                     document.getElementById('status').className = 'status error';
