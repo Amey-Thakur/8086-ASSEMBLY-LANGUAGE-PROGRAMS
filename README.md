@@ -159,6 +159,10 @@ As a computer engineer, understanding the underlying hardware-software interface
 > 
 > These programs are designed for the **Intel 8086 (16-bit)** architecture. Executing them in modern 64-bit operating systems without proper emulation (e.g., DOSBox) may lead to system crashes or undefined behavior due to direct memory access and interrupt usage. Always use a sandboxed 16-bit environment.
 
+- **Operating System**: Windows 7, 8, 10, or 11 is required for native Emu8086 support.
+- **Emulator Software**: The **Emu8086** microprocessor emulator is required to assemble and execute the code.
+- **Alternative Environments**: For macOS or Linux users, a virtualization layer (e.g., Wine, VM) or DOSBox with an assembler (TASM/MASM) is necessary.
+
 ### Option 1: Web Emulator (Recommended)
 
 Run programs instantly in your browser without any installation.
