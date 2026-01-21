@@ -137,33 +137,65 @@
         }
 
         .btn:hover {
-            border-color: var(--accent);
-            background: #21262d;
-            transform: translateY(-2px) scale(1.02);
-            /* Tactile pop effect */
+            transform: translateY(-2px) scale(1.05);
+            /* Enhanced tactile pop */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            filter: brightness(1.1);
+            /* General brightness boost */
         }
 
         .btn:active {
             transform: translateY(0) scale(0.98);
-            /* Click press effect */
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--success) 0%, #2ea043 100%);
+            background: linear-gradient(135deg, #f2c744 0%, #d29922 100%);
+            /* Yellow/Amber */
             border-color: transparent;
-            color: #fff;
-            box-shadow: 0 2px 8px rgba(63, 185, 80, 0.3);
+            color: #24292f;
+            box-shadow: 0 2px 8px rgba(210, 153, 34, 0.4);
+            font-weight: 600;
         }
 
         .btn-primary:hover {
-            box-shadow: 0 4px 12px rgba(63, 185, 80, 0.4);
-            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(210, 153, 34, 0.5);
+            border-color: transparent;
+            filter: brightness(1.1);
         }
 
         .btn-secondary {
             background: var(--bg-primary);
             border-color: var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: #21262d;
+            border-color: var(--accent);
+        }
+
+        .btn-run {
+            background: linear-gradient(135deg, var(--success) 0%, #2ea043 100%);
+            /* Green */
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(63, 185, 80, 0.3);
+        }
+
+        .btn-run:hover {
+            box-shadow: 0 6px 16px rgba(63, 185, 80, 0.5);
+            border-color: transparent;
+        }
+
+        .btn-step {
+            background: linear-gradient(135deg, #a371f7 0%, #8957e5 100%);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(137, 87, 229, 0.3);
+        }
+
+        .btn-step:hover {
+            box-shadow: 0 6px 16px rgba(137, 87, 229, 0.5);
+            border-color: transparent;
         }
 
         .btn-danger {
@@ -174,7 +206,8 @@
         }
 
         .btn-danger:hover {
-            box-shadow: 0 4px 12px rgba(248, 81, 73, 0.4);
+            box-shadow: 0 6px 16px rgba(248, 81, 73, 0.5);
+            border-color: transparent;
         }
 
         .btn-ghost {
@@ -639,12 +672,10 @@
                     <path
                         d="M12 15.5A3.5 3.5 0 0115.5 12 3.5 3.5 0 0112 8.5 3.5 3.5 0 018.5 12 3.5 3.5 0 0112 15.5m7.43-2.53c.04-.32.07-.64.07-.97 0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0014 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1 0 .33.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66z" />
                 </svg> Compile</button>
-            <button class="btn btn-secondary" onclick="runCode()"><svg class="icon" viewBox="0 0 24 24"
-                    fill="currentColor">
+            <button class="btn btn-run" onclick="runCode()"><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M8 5v14l11-7z" />
                 </svg> Run</button>
-            <button class="btn btn-secondary" onclick="stepCode()"><svg class="icon" viewBox="0 0 24 24"
-                    fill="currentColor">
+            <button class="btn btn-step" onclick="stepCode()"><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
                 </svg> Step</button>
             <button class="btn btn-danger" onclick="resetEmulator()"><svg class="icon" viewBox="0 0 24 24"
