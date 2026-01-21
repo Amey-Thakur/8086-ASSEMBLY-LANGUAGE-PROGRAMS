@@ -759,10 +759,14 @@ END</textarea>
                         'LEA', 'PUSH', 'POP', 'XCHG', 'INT', 'RET', 'HLT', 'NOP', 'CALL', 'NEG', 'CBW', 'CWD',
                         'MOVSB', 'MOVSW', 'STOSB', 'STOSW', 'LODSB', 'LODSW', 'REP', 'CLC', 'STC', 'CMC', 'CLD', 'STD',
                         'AAA', 'AAD', 'AAM', 'AAS', 'ADC', 'DAA', 'DAS', 'IDIV', 'IMUL', 'LAHF', 'SAHF', 'TEST'];
+
+                    const validDirectives = ['ORG', 'END', 'SEGMENT', 'ENDS', 'ASSUME', 'PROC', 'ENDP', '.MODEL', '.DATA', '.CODE', '.STACK', 'DB', 'DW'];
+
                     const opcode = line.split(/[\s,]+/)[0].toUpperCase();
-                    if (!validOpcodes.includes(opcode)) {
-                        // Find similar opcode for suggestion
-                        const suggestion = this.findSimilarOpcode(opcode, validOpcodes);
+                    if (!validOpcodes.includes(opcode) && !validDirectives.includes(opcode)) {
+                        // Find similar opcode or directive for suggestion
+                        const allValidTokens = [...validOpcodes, ...validDirectives];
+                        const suggestion = this.findSimilarOpcode(opcode, allValidTokens);
                         const msg = suggestion
                             ? `Unknown instruction: ${opcode}. Did you mean: ${suggestion}?`
                             : `Unknown instruction: ${opcode}`;
