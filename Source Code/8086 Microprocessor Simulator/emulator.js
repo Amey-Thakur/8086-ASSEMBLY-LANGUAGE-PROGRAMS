@@ -137,14 +137,16 @@ class Emulator8086 {
 
     // Stack operations
     push(val) {
-        this.regs.SP -= 2;
-        this.memory[this.regs.SP] = val & 0xFF;
-        this.memory[this.regs.SP + 1] = (val >> 8) & 0xFF;
+        this.regs.SP = (this.regs.SP - 2) & 0xFFFF;
+        const addr = this.regs.SP;
+        this.memory[addr] = val & 0xFF;
+        this.memory[(addr + 1) & 0xFFFF] = (val >> 8) & 0xFF;
     }
 
     pop() {
-        const val = this.memory[this.regs.SP] | (this.memory[this.regs.SP + 1] << 8);
-        this.regs.SP += 2;
+        const addr = this.regs.SP;
+        const val = this.memory[addr] | (this.memory[(addr + 1) & 0xFFFF] << 8);
+        this.regs.SP = (this.regs.SP + 2) & 0xFFFF;
         return val;
     }
 
