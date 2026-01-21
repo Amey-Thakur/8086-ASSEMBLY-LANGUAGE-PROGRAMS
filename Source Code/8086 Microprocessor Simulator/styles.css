@@ -244,8 +244,23 @@ body {
     transform: rotate(15deg);
 }
 
-[data-theme="light"] .btn:hover {
+[data-theme="light"] .btn-secondary:hover {
     background: #e6e9ec;
+}
+
+/* Preserve colored button backgrounds in light theme */
+[data-theme="light"] .btn-primary,
+[data-theme="light"] .btn-run,
+[data-theme="light"] .btn-step,
+[data-theme="light"] .btn-danger {
+    color: #fff;
+}
+
+[data-theme="light"] .btn-primary:hover,
+[data-theme="light"] .btn-run:hover,
+[data-theme="light"] .btn-step:hover,
+[data-theme="light"] .btn-danger:hover {
+    filter: brightness(1.05);
 }
 
 [data-theme="light"] .header {
@@ -874,7 +889,7 @@ a[href*="github"]:hover .icon {
     color: var(--text-dim);
 }
 
-/* Register hover effect - Blue Glow */
+/* Register hover effect - Solid Blue like Buttons */
 .register {
     cursor: pointer;
     transition: all 0.2s ease;
@@ -882,18 +897,20 @@ a[href*="github"]:hover .icon {
 }
 
 .register:hover {
-    background: rgba(88, 166, 255, 0.15);
+    background: var(--accent);
     border-color: var(--accent);
-    box-shadow: 0 0 12px rgba(88, 166, 255, 0.4), inset 0 0 8px rgba(88, 166, 255, 0.1);
-    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(88, 166, 255, 0.4);
+}
+
+.register:hover .register-name {
+    color: #fff;
 }
 
 .register:hover .register-value {
     color: #fff;
-    text-shadow: 0 0 8px rgba(88, 166, 255, 0.6);
 }
 
-/* Flag hover effect - Blue Glow */
+/* Flag hover effect - Solid Blue like Buttons */
 .flag {
     cursor: pointer;
     transition: all 0.2s ease;
@@ -901,9 +918,16 @@ a[href*="github"]:hover .icon {
 }
 
 .flag:hover {
-    background: rgba(88, 166, 255, 0.25);
+    background: var(--accent);
     border-color: var(--accent);
-    box-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+    box-shadow: 0 2px 8px rgba(88, 166, 255, 0.4);
+    color: #fff;
+}
+
+/* Light theme text adjustments */
+[data-theme="light"] .register:hover .register-name,
+[data-theme="light"] .register:hover .register-value,
+[data-theme="light"] .flag:hover {
     color: #fff;
 }
 
