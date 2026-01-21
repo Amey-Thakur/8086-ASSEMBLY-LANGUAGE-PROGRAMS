@@ -1,5 +1,28 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
+<!--
+    ============================================================================
+    PROJECT: 8086 MICROPROCESSOR SIMULATOR
+    ============================================================================
+    AUTHOR:      Amey Thakur
+    GITHUB:      https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+    PROFILE:     https://github.com/Amey-Thakur
+    LICENSE:     MIT License
+    CREATED:     2021
+    
+    DESCRIPTION: 
+    A comprehensive, web-based simulation of the Intel 8086 microprocessor. 
+    This application provides an interactive environment for writing, compiling, 
+    and executing 8086 assembly language programs. It features a cycle-accurate
+    execution model, real-time register/flag visualization, and an intelligent
+    debugging interface with execution tracing.
+    
+    ARCHITECTURE:
+    - Frontend: Semantic HTML5, CSS3 with Glassmorphism UI
+    - Logic: Vanilla JavaScript (ES6+) emulation engine
+    - Storage: Browser-based virtual memory model (64KB segment)
+    ============================================================================
+-->
 
 <head>
     <meta charset="UTF-8">
@@ -82,7 +105,9 @@
             </button>
         </div>
     </div>
+    <!-- MAIN LAYOUT -->
     <div class="main">
+        <!-- SIDEBAR: Program Library -->
         <div class="sidebar">
             <h3><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
                     <path
@@ -90,6 +115,7 @@
                 </svg> Program Library (161)</h3>
             <div id="program-list"></div>
         </div>
+        <!-- CENTER: Code Editor Engine -->
         <div class="editor-panel">
             <div class="editor-header">
                 <div><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
@@ -133,9 +159,18 @@ START:
 
 MSG DB 'Hello, World!', 0DH, 0AH, '$'
 </textarea>
+                <div id="debug-bar" class="debug-bar">
+                    <div class="debug-content">
+                        <span class="debug-label">EXECUTION TRACE</span>
+                        <span class="debug-instruction" id="debug-instruction"></span>
+                        <span class="debug-explanation" id="debug-explanation"></span>
+                    </div>
+                </div>
             </div>
         </div>
+        <!-- RIGHT PANEL: Registers & Status -->
         <div class="right-panel">
+            <!-- 16-bit General Purpose Registers -->
             <div class="panel-section">
                 <h4><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
                         <path
@@ -189,6 +224,8 @@ MSG DB 'Hello, World!', 0DH, 0AH, '$'
                     <span class="flag" id="flag-af" data-flag="AF">AF</span>
                 </div>
             </div>
+
+            <!-- Output Console for Interrupts (INT 21H) -->
             <div class="panel-section output-section">
                 <h4><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
                         <path
@@ -200,7 +237,15 @@ MSG DB 'Hello, World!', 0DH, 0AH, '$'
         </div>
     </div>
     <div class="footer">
-        Created by &nbsp;<a href="https://github.com/Amey-Thakur" target="_blank">Amey Thakur</a>&nbsp; © 2021
+        <div id="system-bus" class="system-bus"></div>
+        <span>Created by</span>
+        <a href="https://github.com/Amey-Thakur" target="_blank" class="footer-link">
+            <svg class="footer-chip" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 2h12v2H6V2zM4 6h16v12H4V6zm2 2v8h12V8H6zm-4 2h2v4H2v-4zm20 0h2v4h-2v-4zM6 20h12v2H6v-2z" />
+            </svg>
+            Amey Thakur
+        </a>
+        <span class="copyright">© 2021</span>
     </div>
 
     <!-- Load JavaScript files -->
