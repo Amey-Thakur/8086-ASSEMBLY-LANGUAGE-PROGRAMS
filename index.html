@@ -1390,28 +1390,29 @@ MSG DB 'Hello, World!', 0DH, 0AH, '$'
             if (wasScrolledToBottom || emu.output) {
                 outputEl.scrollTop = outputEl.scrollHeight;
             }
+        }
 
-            // Theme toggle
-            function toggleTheme() {
-                const html = document.documentElement;
-                const currentTheme = html.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                html.setAttribute('data-theme', newTheme);
-                document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '🌙' : '☀️';
-                localStorage.setItem('8086-theme', newTheme);
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            localStorage.setItem('8086-theme', newTheme);
+        }
+
+        // Load saved theme
+        (function () {
+            const savedTheme = localStorage.getItem('8086-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            if (document.getElementById('theme-icon')) {
+                document.getElementById('theme-icon').textContent = savedTheme === 'dark' ? '🌙' : '☀️';
             }
+        })();
 
-            // Load saved theme
-            (function () {
-                const savedTheme = localStorage.getItem('8086-theme') || 'dark';
-                document.documentElement.setAttribute('data-theme', savedTheme);
-                if (document.getElementById('theme-icon')) {
-                    document.getElementById('theme-icon').textContent = savedTheme === 'dark' ? '🌙' : '☀️';
-                }
-            })();
-
-            // Initialize
-            initProgramList();
+        // Initialize
+        initProgramList();
     </script>
 </body>
 
