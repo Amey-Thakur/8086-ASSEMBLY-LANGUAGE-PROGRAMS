@@ -152,13 +152,20 @@ As a computer engineer, understanding the underlying hardware-software interface
 <!-- QUICK START -->
 ## Quick Start
 
+### Prerequisites
+
+> [!WARNING]
+> **Architectural Constraints & Safety**
+> 
+> These programs are designed for the **Intel 8086 (16-bit)** architecture. Executing them in modern 64-bit operating systems without proper emulation (e.g., DOSBox) may lead to system crashes or undefined behavior due to direct memory access and interrupt usage. Always use a sandboxed 16-bit environment.
+
 ### Option 1: Web Emulator (Recommended)
 
 Run programs instantly in your browser without any installation.
 
 1.  **Open the Live Demo**: [8086 Assembly Emulator](https://amey-thakur.github.io/8086-ASSEMBLY-LANGUAGE-PROGRAMS/)
 2.  **Select a Program**: Browse the sidebar library containing **161+ programs**.
-3.  **Run or Step**: fast-forward execution or debug line-by-line.
+3.  **Run or Step**: Fast-forward execution or debug line-by-line.
 
 ### Option 2: Local Development
 
