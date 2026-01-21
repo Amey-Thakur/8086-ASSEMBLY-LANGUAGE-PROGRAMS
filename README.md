@@ -8,7 +8,7 @@
   [![Technology](https://img.shields.io/badge/Technology-Assembly%208086-orange)](https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS)
   [![Developed by](https://img.shields.io/badge/Developed%20by-Amey%20Thakur-blue)](https://github.com/Amey-Thakur)
 
-  A comprehensive collection of **161 professionally documented 8086 Assembly Language programs** with an **interactive web-based emulator**. Features smart error detection, "Did you mean?" suggestions, dark/light themes, and step-by-step debugging.
+  A comprehensive collection of **161 professionally documented 8086 Assembly programs**, featuring an **interactive web-based emulator**, smart error detection, _“Did you mean?”_ suggestions, and **step-by-step debugging**.
 
   **[Microprocessor Lab](https://github.com/Amey-Thakur/MICROPROCESSOR-AND-MICROPROCESSOR-LAB)** &nbsp;·&nbsp; **[Source Code](Source%20Code/)** &nbsp;·&nbsp; **[Technical Specification](docs/SPECIFICATION.md)** &nbsp;·&nbsp; **[Live Demo](https://amey-thakur.github.io/8086-ASSEMBLY-LANGUAGE-PROGRAMS/)**
 
