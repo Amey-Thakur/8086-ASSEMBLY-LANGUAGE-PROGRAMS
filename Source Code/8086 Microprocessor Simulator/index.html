@@ -30,6 +30,10 @@
             <div class="loading-text">Simulating 8086 Architecture...</div>
         </div>
     </div>
+
+    <!-- Intelligent Tooltip -->
+    <div id="tooltip" class="tooltip"></div>
+
     <div class="header">
         <div class="header-left">
             <span class="header-logo"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -138,35 +142,35 @@ MSG DB 'Hello, World!', 0DH, 0AH, '$'
                             d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
                     </svg> Registers</h4>
                 <div class="registers">
-                    <div class="register">
+                    <div class="register" data-reg="AX">
                         <div class="register-name">AX</div>
                         <div class="register-value" id="reg-ax">0000</div>
                     </div>
-                    <div class="register">
+                    <div class="register" data-reg="BX">
                         <div class="register-name">BX</div>
                         <div class="register-value" id="reg-bx">0000</div>
                     </div>
-                    <div class="register">
+                    <div class="register" data-reg="CX">
                         <div class="register-name">CX</div>
                         <div class="register-value" id="reg-cx">0000</div>
                     </div>
-                    <div class="register">
+                    <div class="register" data-reg="DX">
                         <div class="register-name">DX</div>
                         <div class="register-value" id="reg-dx">0000</div>
                     </div>
-                    <div class="register">
+                    <div class="register" data-reg="SI">
                         <div class="register-name">SI</div>
                         <div class="register-value" id="reg-si">0000</div>
                     </div>
-                    <div class="register">
+                    <div class="register" data-reg="DI">
                         <div class="register-name">DI</div>
                         <div class="register-value" id="reg-di">0000</div>
                     </div>
-                    <div class="register">
+                    <div class="register" data-reg="SP">
                         <div class="register-name">SP</div>
                         <div class="register-value" id="reg-sp">FFFE</div>
                     </div>
-                    <div class="register">
+                    <div class="register" data-reg="BP">
                         <div class="register-name">BP</div>
                         <div class="register-value" id="reg-bp">0000</div>
                     </div>
@@ -177,12 +181,12 @@ MSG DB 'Hello, World!', 0DH, 0AH, '$'
                         <path d="M14 6l-1-2H5v17h2v-7h5l1 2h7V6h-6zm4 8h-4l-1-2H7V6h5l1 2h5v6z" />
                     </svg> Flags</h4>
                 <div class="flags">
-                    <span class="flag" id="flag-cf">CF</span>
-                    <span class="flag" id="flag-zf">ZF</span>
-                    <span class="flag" id="flag-sf">SF</span>
-                    <span class="flag" id="flag-of">OF</span>
-                    <span class="flag" id="flag-pf">PF</span>
-                    <span class="flag" id="flag-af">AF</span>
+                    <span class="flag" id="flag-cf" data-flag="CF">CF</span>
+                    <span class="flag" id="flag-zf" data-flag="ZF">ZF</span>
+                    <span class="flag" id="flag-sf" data-flag="SF">SF</span>
+                    <span class="flag" id="flag-of" data-flag="OF">OF</span>
+                    <span class="flag" id="flag-pf" data-flag="PF">PF</span>
+                    <span class="flag" id="flag-af" data-flag="AF">AF</span>
                 </div>
             </div>
             <div class="panel-section output-section">

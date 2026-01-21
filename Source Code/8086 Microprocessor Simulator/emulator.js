@@ -29,10 +29,18 @@ class Emulator8086 {
         this.pc = 0;
         this.instructions = [];
         this.running = false;
-        this.instructions = [];
-        this.running = false;
         this.errors = []; // Compilation errors
         this.isCompiled = false;
+
+        // Tracking for intelligent tooltips
+        this.registerHistory = {
+            AX: [], BX: [], CX: [], DX: [],
+            SI: [], DI: [], SP: [], BP: []
+        };
+        this.flagHistory = {
+            CF: null, ZF: null, SF: null, OF: null, PF: null, AF: null
+        };
+        this.lastInstruction = null;
     }
 
     // Get 8-bit register value
@@ -899,3 +907,315 @@ window.addEventListener('load', function () {
         }
     }, 1600); // 100ms delay + 1.5s transition
 });
+
+// ========================================
+// Intelligent Tooltip System
+// ========================================
+
+// Register descriptions and metadata
+const registerInfo = {
+    AX: { fullName: 'Accumulator', description: 'Primary register for arithmetic operations, I/O, and interrupt calls.' },
+    BX: { fullName: 'Base Register', description: 'Often used as a base pointer for memory addressing.' },
+    CX: { fullName: 'Counter', description: 'Used as a loop counter and for shift/rotate operations.' },
+    DX: { fullName: 'Data Register', description: 'Used in I/O operations, multiplication, and division.' },
+    SI: { fullName: 'Source Index', description: 'Points to source data for string operations.' },
+    DI: { fullName: 'Destination Index', description: 'Points to destination for string operations.' },
+    SP: { fullName: 'Stack Pointer', description: 'Points to the top of the stack.' },
+    BP: { fullName: 'Base Pointer', description: 'Used to access parameters and local variables on the stack.' }
+};
+
+const flagInfo = {
+    CF: { fullName: 'Carry Flag', description: 'Set when arithmetic operation generates a carry or borrow.' },
+    ZF: { fullName: 'Zero Flag', description: 'Set when result of operation is zero.' },
+    SF: { fullName: 'Sign Flag', description: 'Set when result is negative (MSB is 1).' },
+    OF: { fullName: 'Overflow Flag', description: 'Set when signed arithmetic overflow occurs.' },
+    PF: { fullName: 'Parity Flag', description: 'Set when low byte has even number of 1-bits.' },
+    AF: { fullName: 'Auxiliary Flag', description: 'Set when carry from bit 3 to bit 4 occurs (BCD operations).' }
+};
+
+// Track instruction execution for register history
+function trackRegisterChange(reg, value, instruction) {
+    if (emu.registerHistory[reg]) {
+        emu.registerHistory[reg].push({
+            value: value,
+            instruction: instruction,
+            pc: emu.pc
+        });
+    }
+}
+
+// Track flag changes
+function trackFlagChange(flag, value, instruction, reason) {
+    emu.flagHistory[flag] = {
+        value: value,
+        instruction: instruction,
+        reason: reason,
+        pc: emu.pc
+    };
+}
+
+// Generate register tooltip content
+function generateRegisterTooltip(reg) {
+    const value = emu.regs[reg];
+    const info = registerInfo[reg];
+    const history = emu.registerHistory[reg] || [];
+
+    // Value conversions
+    const hexVal = value.toString(16).toUpperCase().padStart(4, '0');
+    const decVal = value;
+    const binVal = value.toString(2).padStart(16, '0');
+    const signedVal = value > 0x7FFF ? value - 0x10000 : value;
+
+    // Build context section
+    let contextHTML = '';
+    if (history.length > 0) {
+        const lastChange = history[history.length - 1];
+        contextHTML = `
+            <div class="tooltip-section">
+                <div class="tooltip-section-title">EXECUTION CONTEXT</div>
+                <div class="tooltip-context">
+                    <ul>
+                        <li>Modified <strong>${history.length}</strong> time${history.length > 1 ? 's' : ''}</li>
+                        <li>Last set by: <code>${lastChange.instruction}</code></li>
+                        ${getRegisterUsageHint(reg, history)}
+                    </ul>
+                </div>
+            </div>
+        `;
+    } else if (!emu.isCompiled) {
+        contextHTML = `
+            <div class="tooltip-section">
+                <div class="tooltip-section-title">NOTE</div>
+                <div class="tooltip-context">Compile and run a program to see how this register is used.</div>
+            </div>
+        `;
+    } else {
+        contextHTML = `
+            <div class="tooltip-section">
+                <div class="tooltip-section-title">EXECUTION CONTEXT</div>
+                <div class="tooltip-context">Not modified in this program.</div>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="tooltip-header">
+            <span class="tooltip-title">${reg} (${info.fullName})</span>
+            <span class="tooltip-value">0x${hexVal}</span>
+        </div>
+        <div class="tooltip-section">
+            <div class="tooltip-section-title">VALUE BREAKDOWN</div>
+            <div class="tooltip-values">
+                <div class="tooltip-value-item">
+                    <span class="tooltip-value-label">Decimal</span>
+                    <span class="tooltip-value-data">${decVal}</span>
+                </div>
+                <div class="tooltip-value-item">
+                    <span class="tooltip-value-label">Signed</span>
+                    <span class="tooltip-value-data">${signedVal}</span>
+                </div>
+                <div class="tooltip-value-item">
+                    <span class="tooltip-value-label">Binary</span>
+                    <span class="tooltip-value-data">${binVal.slice(0, 8)} ${binVal.slice(8)}</span>
+                </div>
+            </div>
+        </div>
+        ${contextHTML}
+        <div class="tooltip-section">
+            <div class="tooltip-section-title">DESCRIPTION</div>
+            <div class="tooltip-description">${info.description}</div>
+        </div>
+    `;
+}
+
+// Generate usage hint based on register history
+function getRegisterUsageHint(reg, history) {
+    if (history.length === 0) return '';
+
+    // Analyze instructions to determine usage
+    const instructions = history.map(h => h.instruction.toUpperCase());
+
+    if (reg === 'CX' && instructions.some(i => i.includes('LOOP'))) {
+        return '<li>Used as: <strong>Loop counter</strong></li>';
+    }
+    if (reg === 'AX' && instructions.some(i => i.includes('MUL') || i.includes('DIV'))) {
+        return '<li>Contains: <strong>Arithmetic result</strong></li>';
+    }
+    if ((reg === 'DX' || reg === 'AX') && instructions.some(i => i.includes('INT'))) {
+        return '<li>Used for: <strong>DOS/BIOS interrupt</strong></li>';
+    }
+    if ((reg === 'SI' || reg === 'DI') && instructions.some(i => i.includes('MOVS') || i.includes('LODS') || i.includes('STOS'))) {
+        return '<li>Used as: <strong>String pointer</strong></li>';
+    }
+    return '';
+}
+
+// Generate flag tooltip content
+function generateFlagTooltip(flag) {
+    const value = emu.flags[flag];
+    const info = flagInfo[flag];
+    const history = emu.flagHistory[flag];
+
+    const statusClass = value ? 'set' : 'clear';
+    const statusText = value ? 'SET' : 'CLEAR';
+
+    // Build context section
+    let contextHTML = '';
+    if (history && history.instruction) {
+        contextHTML = `
+            <div class="tooltip-section">
+                <div class="tooltip-section-title">EXECUTION CONTEXT</div>
+                <div class="tooltip-context">
+                    <ul>
+                        <li>${value ? 'Set' : 'Cleared'} by: <code>${history.instruction}</code></li>
+                        ${getFlagImpactHint(flag, value)}
+                    </ul>
+                </div>
+            </div>
+        `;
+    } else if (!emu.isCompiled) {
+        contextHTML = `
+            <div class="tooltip-section">
+                <div class="tooltip-section-title">NOTE</div>
+                <div class="tooltip-context">Compile and run to see how flags change during execution.</div>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="tooltip-header">
+            <span class="tooltip-title">${flag} (${info.fullName})</span>
+            <span class="tooltip-status ${statusClass}">${statusText}</span>
+        </div>
+        ${contextHTML}
+        <div class="tooltip-section">
+            <div class="tooltip-section-title">DESCRIPTION</div>
+            <div class="tooltip-description">${info.description}</div>
+        </div>
+        <div class="tooltip-section">
+            <div class="tooltip-section-title">AFFECTED INSTRUCTIONS</div>
+            <div class="tooltip-description">${getFlagJumps(flag)}</div>
+        </div>
+    `;
+}
+
+// Get jump instructions affected by flag
+function getFlagJumps(flag) {
+    const jumps = {
+        CF: 'JC/JB (jump if carry), JNC/JNB/JAE (jump if no carry)',
+        ZF: 'JZ/JE (jump if zero), JNZ/JNE (jump if not zero)',
+        SF: 'JS (jump if sign), JNS (jump if not sign)',
+        OF: 'JO (jump if overflow), JNO (jump if no overflow)',
+        PF: 'JP/JPE (jump if parity even), JNP/JPO (jump if parity odd)',
+        AF: 'Used internally for BCD arithmetic (AAA, AAS, DAA, DAS)'
+    };
+    return jumps[flag] || 'N/A';
+}
+
+// Get flag impact hint
+function getFlagImpactHint(flag, value) {
+    if (flag === 'ZF' && value) {
+        return '<li>Impact: <strong>JZ/JE will branch</strong></li>';
+    }
+    if (flag === 'ZF' && !value) {
+        return '<li>Impact: <strong>JNZ/JNE will branch</strong></li>';
+    }
+    if (flag === 'CF' && value) {
+        return '<li>Impact: <strong>JC/JB will branch</strong></li>';
+    }
+    return '';
+}
+
+// Tooltip element and show/hide logic
+const tooltip = document.getElementById('tooltip');
+let tooltipTimeout = null;
+
+function showTooltip(element, content, event) {
+    if (!tooltip) return;
+
+    tooltip.innerHTML = content;
+    tooltip.classList.add('visible');
+
+    // Position tooltip near cursor but within viewport
+    const rect = element.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    let left = rect.left;
+    let top = rect.bottom + 8;
+
+    // Keep within viewport
+    if (left + 320 > window.innerWidth) {
+        left = window.innerWidth - 330;
+    }
+    if (top + tooltipRect.height > window.innerHeight) {
+        top = rect.top - tooltipRect.height - 8;
+    }
+
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+}
+
+function hideTooltip() {
+    if (tooltip) {
+        tooltip.classList.remove('visible');
+    }
+}
+
+// Attach hover events to registers
+document.querySelectorAll('.register[data-reg]').forEach(el => {
+    el.addEventListener('mouseenter', function (e) {
+        const reg = this.dataset.reg;
+        const content = generateRegisterTooltip(reg);
+        clearTimeout(tooltipTimeout);
+        tooltipTimeout = setTimeout(() => showTooltip(this, content, e), 150);
+    });
+
+    el.addEventListener('mouseleave', function () {
+        clearTimeout(tooltipTimeout);
+        hideTooltip();
+    });
+});
+
+// Attach hover events to flags
+document.querySelectorAll('.flag[data-flag]').forEach(el => {
+    el.addEventListener('mouseenter', function (e) {
+        const flag = this.dataset.flag;
+        const content = generateFlagTooltip(flag);
+        clearTimeout(tooltipTimeout);
+        tooltipTimeout = setTimeout(() => showTooltip(this, content, e), 150);
+    });
+
+    el.addEventListener('mouseleave', function () {
+        clearTimeout(tooltipTimeout);
+        hideTooltip();
+    });
+});
+
+// Modify step function to track changes (wrap original)
+const originalStep = emu.step.bind(emu);
+emu.step = function () {
+    const prevRegs = { ...this.regs };
+    const prevFlags = { ...this.flags };
+    const instr = this.instructions[this.pc];
+
+    const result = originalStep();
+
+    if (instr) {
+        // Track register changes
+        for (const reg of Object.keys(this.regs)) {
+            if (this.regs[reg] !== prevRegs[reg]) {
+                trackRegisterChange(reg, this.regs[reg], instr.instruction);
+            }
+        }
+
+        // Track flag changes
+        for (const flag of Object.keys(this.flags)) {
+            if (this.flags[flag] !== prevFlags[flag]) {
+                trackFlagChange(flag, this.flags[flag], instr.instruction, '');
+            }
+        }
+    }
+
+    return result;
+};
+
