@@ -535,88 +535,89 @@
         h3 .icon,
         h4 .icon {
             margin-right: 6px;
+        }
 
-            /* Lively Animations */
-            @keyframes spin {
-                100% {
-                    transform: rotate(360deg);
-                }
+        /* Lively Animations */
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
             }
 
-            @keyframes pulse {
-                0% {
-                    transform: scale(1);
-                }
-
-                50% {
-                    transform: scale(1.2);
-                }
-
-                100% {
-                    transform: scale(1);
-                }
+            50% {
+                transform: scale(1.2);
             }
 
-            @keyframes slide {
-                0% {
-                    transform: translateX(0);
-                }
+            100% {
+                transform: scale(1);
+            }
+        }
 
-                50% {
-                    transform: translateX(3px);
-                }
-
-                100% {
-                    transform: translateX(0);
-                }
+        @keyframes slide {
+            0% {
+                transform: translateX(0);
             }
 
-            @keyframes rotate-reset {
-                0% {
-                    transform: rotate(0);
-                }
-
-                100% {
-                    transform: rotate(-360deg);
-                }
+            50% {
+                transform: translateX(3px);
             }
 
-            @keyframes wave {
+            100% {
+                transform: translateX(0);
+            }
+        }
 
-                0%,
-                100% {
-                    transform: rotate(0);
-                }
-
-                25% {
-                    transform: rotate(-15deg);
-                }
-
-                75% {
-                    transform: rotate(15deg);
-                }
+        @keyframes rotate-reset {
+            0% {
+                transform: rotate(0);
             }
 
-            /* Specific Button Hover Animations */
-            button[onclick="compileCode()"]:hover .icon {
-                animation: spin 2s linear infinite;
+            100% {
+                transform: rotate(-360deg);
+            }
+        }
+
+        @keyframes wave {
+
+            0%,
+            100% {
+                transform: rotate(0);
             }
 
-            button[onclick="runCode()"]:hover .icon {
-                animation: pulse 1s ease infinite;
+            25% {
+                transform: rotate(-15deg);
             }
 
-            button[onclick="stepCode()"]:hover .icon {
-                animation: slide 1s ease infinite;
+            75% {
+                transform: rotate(15deg);
             }
+        }
 
-            button[onclick="resetEmulator()"]:hover .icon {
-                animation: rotate-reset 0.8s ease;
-            }
+        /* Specific Button Hover Animations */
+        button[onclick="compileCode()"]:hover .icon {
+            animation: spin 2s linear infinite;
+        }
 
-            a[href*="github"]:hover .icon {
-                animation: wave 1s ease infinite;
-            }
+        button[onclick="runCode()"]:hover .icon {
+            animation: pulse 1s ease infinite;
+        }
+
+        button[onclick="stepCode()"]:hover .icon {
+            animation: slide 1s ease infinite;
+        }
+
+        button[onclick="resetEmulator()"]:hover .icon {
+            animation: rotate-reset 0.8s ease;
+        }
+
+        a[href*="github"]:hover .icon {
+            animation: wave 1s ease infinite;
+        }
     </style>
 </head>
 
