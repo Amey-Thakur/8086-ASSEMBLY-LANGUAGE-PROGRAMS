@@ -1385,9 +1385,9 @@ MSG DB 'Hello, World!', 0DH, 0AH, '$'
             }
             // Output
             const outputEl = document.getElementById('output');
-            const wasScrolledToBottom = outputEl.scrollHeight - outputEl.scrollTop <= outputEl.clientHeight + 50; // Check if near bottom
+            const isAtBottom = outputEl.scrollHeight - outputEl.scrollTop <= outputEl.clientHeight + 20; // 20px threshold
             outputEl.textContent = emu.output || '(No output)';
-            if (wasScrolledToBottom || emu.output) {
+            if (isAtBottom) {
                 outputEl.scrollTop = outputEl.scrollHeight;
             }
         }
