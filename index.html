@@ -442,6 +442,7 @@
             </div>
         </div>
         <div class="toolbar">
+            <button class="btn btn-secondary" onclick="compileCode()">⚙ Compile</button>
             <button class="btn btn-primary" onclick="runCode()">▶ Run</button>
             <button class="btn btn-secondary" onclick="stepCode()">⏭ Step</button>
             <button class="btn btn-danger" onclick="resetEmulator()">⟳ Reset</button>
@@ -1029,10 +1030,38 @@ END</textarea>
             }
         }
 
+        // Compile code (parse and check for errors)
+        function compileCode() {
+            try {
+                const code = document.getElementById('code-editor').value;
+                if (!code.trim()) {
+                    document.getElementById('status').textContent = 'Error: No code to compile';
+                    document.getElementById('status').className = 'status error';
+                    return false;
+                }
+                emu.reset();
+                emu.parse(code);
+
+                if (emu.instructions.length === 0) {
+                    document.getElementById('status').textContent = 'Warning: No executable instructions found';
+                    document.getElementById('status').className = 'status error';
+                    return false;
+                }
+
+                document.getElementById('status').textContent = 'Compiled successfully! ' + emu.instructions.length + ' instructions ready.';
+                document.getElementById('status').className = 'status success';
+                updateDisplay();
+                return true;
+            } catch (e) {
+                document.getElementById('status').textContent = 'Compilation Error: ' + e.message;
+                document.getElementById('status').className = 'status error';
+                return false;
+            }
+        }
+
         // Run code
         function runCode() {
-            const code = document.getElementById('code-editor').value;
-            emu.parse(code);
+            if (!compileCode()) return; // Compile first, abort if errors
             emu.run();
             updateDisplay();
             document.getElementById('status').textContent = 'Execution complete';
