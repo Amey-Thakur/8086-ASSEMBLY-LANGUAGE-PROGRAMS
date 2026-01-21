@@ -1384,30 +1384,34 @@ MSG DB 'Hello, World!', 0DH, 0AH, '$'
                 el.className = 'flag' + (emu.flags[flag] ? ' set' : '');
             }
             // Output
-            document.getElementById('output').textContent = emu.output || '(No output)';
-        }
-
-        // Theme toggle
-        function toggleTheme() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', newTheme);
-            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '🌙' : '☀️';
-            localStorage.setItem('8086-theme', newTheme);
-        }
-
-        // Load saved theme
-        (function () {
-            const savedTheme = localStorage.getItem('8086-theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            if (document.getElementById('theme-icon')) {
-                document.getElementById('theme-icon').textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+            const outputEl = document.getElementById('output');
+            const wasScrolledToBottom = outputEl.scrollHeight - outputEl.scrollTop <= outputEl.clientHeight + 50; // Check if near bottom
+            outputEl.textContent = emu.output || '(No output)';
+            if (wasScrolledToBottom || emu.output) {
+                outputEl.scrollTop = outputEl.scrollHeight;
             }
-        })();
 
-        // Initialize
-        initProgramList();
+            // Theme toggle
+            function toggleTheme() {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', newTheme);
+                document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '🌙' : '☀️';
+                localStorage.setItem('8086-theme', newTheme);
+            }
+
+            // Load saved theme
+            (function () {
+                const savedTheme = localStorage.getItem('8086-theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                if (document.getElementById('theme-icon')) {
+                    document.getElementById('theme-icon').textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+                }
+            })();
+
+            // Initialize
+            initProgramList();
     </script>
 </body>
 
