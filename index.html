@@ -560,6 +560,7 @@ END</textarea>
                 this.pc = 0;
                 this.instructions = [];
                 this.running = false;
+                this.errors = []; // Compilation errors
             }
 
             // Get 8-bit register value
@@ -711,7 +712,18 @@ END</textarea>
                         continue;
                     }
 
-                    codeLines.push(line);
+                    // Validate instruction opcode
+                    const validOpcodes = ['MOV', 'ADD', 'SUB', 'MUL', 'DIV', 'INC', 'DEC', 'AND', 'OR', 'XOR', 'NOT',
+                        'SHL', 'SAL', 'SHR', 'SAR', 'ROL', 'ROR', 'CMP', 'JMP', 'JZ', 'JE', 'JNZ', 'JNE', 'JC', 'JB',
+                        'JNC', 'JNB', 'JAE', 'JG', 'JGE', 'JL', 'JLE', 'JA', 'JBE', 'LOOP', 'LOOPZ', 'LOOPNZ',
+                        'LEA', 'PUSH', 'POP', 'XCHG', 'INT', 'RET', 'HLT', 'NOP', 'CALL', 'NEG', 'CBW', 'CWD',
+                        'MOVSB', 'MOVSW', 'STOSB', 'STOSW', 'LODSB', 'LODSW', 'REP', 'CLC', 'STC', 'CMC', 'CLD', 'STD'];
+                    const opcode = line.split(/[\s,]+/)[0].toUpperCase();
+                    if (!validOpcodes.includes(opcode)) {
+                        this.errors.push({ line: i + 1, instruction: line, message: `Unknown instruction: ${opcode}` });
+                    }
+
+                    codeLines.push({ instruction: line, lineNo: i + 1 });
                 }
 
                 this.instructions = codeLines;
@@ -726,7 +738,8 @@ END</textarea>
                     return false;
                 }
 
-                const line = this.instructions[this.pc].toUpperCase();
+                const instr = this.instructions[this.pc];
+                const line = instr.instruction.toUpperCase();
                 const parts = line.split(/[\s,]+/).filter(p => p);
                 const op = parts[0];
 
@@ -1041,6 +1054,15 @@ END</textarea>
                 }
                 emu.reset();
                 emu.parse(code);
+
+                // Check for compilation errors
+                if (emu.errors.length > 0) {
+                    const firstError = emu.errors[0];
+                    document.getElementById('status').textContent =
+                        `Error on line ${firstError.line}: ${firstError.message}`;
+                    document.getElementById('status').className = 'status error';
+                    return false;
+                }
 
                 if (emu.instructions.length === 0) {
                     document.getElementById('status').textContent = 'Warning: No executable instructions found';
