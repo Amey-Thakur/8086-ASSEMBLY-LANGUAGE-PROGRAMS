@@ -152,33 +152,37 @@ As a computer engineer, understanding the underlying hardware-software interface
 <!-- QUICK START -->
 ## Quick Start
 
-### Prerequisites
+### Option 1: Web Emulator (Recommended)
 
-> [!WARNING]
-> **Architectural Constraints & Safety**
-> 
-> These programs are designed for the **Intel 8086 (16-bit)** architecture. Executing them in modern 64-bit operating systems without proper emulation (e.g., DOSBox) may lead to system crashes or undefined behavior due to direct memory access and interrupt usage. Always use a sandboxed 16-bit environment.
+Run programs instantly in your browser without any installation.
 
-- **Operating System**: Windows 7, 8, 10, or 11 is required for native Emu8086 support.
-- **Emulator Software**: The **Emu8086** microprocessor emulator is required to assemble and execute the code.
-- **Alternative Environments**: For macOS or Linux users, a virtualization layer (e.g., Wine, VM) or DOSBox with an assembler (TASM/MASM) is necessary.
+1.  **Open the Live Demo**: [8086 Assembly Emulator](https://amey-thakur.github.io/8086-ASSEMBLY-LANGUAGE-PROGRAMS/)
+2.  **Select a Program**: Browse the sidebar library containing **161+ programs**.
+3.  **Run or Step**: fast-forward execution or debug line-by-line.
 
-### Installation & Deployment
+### Option 2: Local Development
+
+For a full native experience with hardware access (requires Windows).
+
+**Prerequisites**
+- **OS**: Windows 7/8/10/11
+- **Software**: **Emu8086** (Required for native execution)
+- **Linux/macOS**: Use DOSBox or Wine
+
+**Setup**
 
 1. **Clone the Repository**
-   Retrieve the comprehensive collection of programs using the following Git command:
    ```bash
    git clone https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS.git
    ```
 
 2. **Open in Emulator**
-   - Launch the **Emu8086** application.
-   - Select **Open** from the file menu and navigate to the `Source Code/` directory.
-   - Choose any `.asm` file (e.g., `Source Code/Arithmetic/addition_16bit_simple.asm`) to load the source code.
+   - Launch **Emu8086**.
+   - Open any `.asm` file from the `Source Code/` directory.
 
 3. **Assemble and Run**
-   - Click the **emulate** button on the toolbar to verify logic and compile the code.
-   - Use the **Run** or **Single Step** controls in the emulator window to execute the instructions and observe register state changes.
+   - Click **Emulate** to compile.
+   - Use **Run** or **Single Step** to execute.
 
 ---
 
