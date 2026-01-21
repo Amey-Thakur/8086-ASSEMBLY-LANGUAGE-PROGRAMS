@@ -539,11 +539,13 @@ class Emulator8086 {
 
     // Handle DOS/BIOS interrupts
     handleInterrupt(num) {
-        if (num === 0x21) { // DOS interrupt
+        if (num === 0x21) {
             const func = this.getReg8('AH');
             switch (func) {
                 case 0x01: // Read char with echo
-                    this.setReg8('AL', 65);
+                case 0x07: // Read char no echo
+                case 0x08: // Read char no echo
+                    this.waitInput(func === 0x01);
                     break;
                 case 0x02: // Display character
                     this.output += String.fromCharCode(this.getReg8('DL'));
@@ -553,34 +555,76 @@ class Emulator8086 {
                     let str = '';
                     for (let i = 0; i < 256; i++) {
                         const ch = this.memory[addr + i];
-                        if (ch === 36) break; // '$' terminator
+                        if (ch === 36) break; // '$' behavior
                         str += String.fromCharCode(ch);
                     }
                     this.output += str;
                     break;
                 case 0x4C: // Terminate
                     this.running = false;
+                    this.output += '\n[Program Terminated]';
                     break;
             }
-        } else if (num === 0x10) { // BIOS Video
-            // Simplified video handling
         } else if (num === 0x16) { // BIOS Keyboard
-            // Simulate key press
-            this.setReg8('AL', 13); // Enter key
+            const func = this.getReg8('AH');
+            if (func === 0x00 || func === 0x10) {
+                this.waitInput(false); // Wait for key
+            }
         }
     }
 
-    // Run all instructions
+    // Wait for user input
+    waitInput(echo) {
+        this.waiting = true;
+        this.echoInput = echo;
+        this.output += '_'; // Cursor hint
+        updateDisplay();
+        // Logic handled by global key listener
+    }
+
+    // Process input key
+    processInput(charCode) {
+        if (!this.waiting) return;
+
+        // Clear cursor hint
+        if (this.output.endsWith('_')) {
+            this.output = this.output.slice(0, -1);
+        }
+
+        this.setReg8('AL', charCode);
+        if (this.echoInput) {
+            this.output += String.fromCharCode(charCode);
+        }
+
+        this.waiting = false;
+        this.run(); // Resume execution
+    }
+
+    // Run execution loop (Async)
     run() {
         this.running = true;
-        let iterations = 0;
-        while (this.running && iterations < 10000) {
-            if (!this.step()) break;
-            iterations++;
-        }
-        if (iterations >= 10000) {
-            this.output += '\n[Execution limit reached]';
-        }
+
+        const executeChunk = () => {
+            if (!this.running || this.waiting) return;
+
+            // Execute 500 instructions per frame to keep UI responsive
+            let chunk = 2000;
+            while (this.running && !this.waiting && chunk > 0) {
+                if (!this.step()) {
+                    this.running = false;
+                    updateDisplay();
+                    return;
+                }
+                chunk--;
+            }
+
+            if (this.running && !this.waiting) {
+                requestAnimationFrame(executeChunk);
+            }
+            updateDisplay();
+        };
+
+        requestAnimationFrame(executeChunk);
     }
 }
 
@@ -1359,4 +1403,30 @@ if (editorInput && systemBus && footerChip) {
         }, 300);
     });
 }
+
+// ========================================
+// Emulator Input Handler
+// ========================================
+
+document.addEventListener('keydown', (e) => {
+    if (emu.waiting) {
+        e.preventDefault();
+
+        let charCode = 0;
+
+        if (e.key.length === 1) {
+            charCode = e.key.charCodeAt(0);
+        } else if (e.key === 'Enter') {
+            charCode = 13; // Carriage Return
+        } else if (e.key === 'Backspace') {
+            charCode = 8;
+        } else if (e.key === 'Escape') {
+            charCode = 27;
+        }
+
+        if (charCode > 0) {
+            emu.processInput(charCode);
+        }
+    }
+});
 
