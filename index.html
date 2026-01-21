@@ -314,16 +314,51 @@
         }
 
         .editor-header {
-            padding: 10px 15px;
+            padding: 8px 15px;
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border);
             font-size: 13px;
             color: var(--text-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 40px;
+        }
+
+        .editor-container {
+            display: flex;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-editor);
+        }
+
+        .line-numbers {
+            width: 40px;
+            background: var(--bg-primary);
+            color: var(--text-dim);
+            text-align: right;
+            padding: 15px 5px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            border-right: 1px solid var(--border);
+            user-select: none;
+            overflow: hidden;
+        }
+
+        .line-number {
+            color: var(--text-dim);
+        }
+
+        .line-number.active {
+            color: var(--accent);
+            background: rgba(88, 166, 255, 0.1);
         }
 
         #code-editor {
             flex: 1;
-            background: var(--bg-editor);
+            background: transparent;
             border: none;
             padding: 15px;
             font-family: 'Consolas', 'Monaco', monospace;
@@ -331,10 +366,24 @@
             color: var(--text);
             resize: none;
             line-height: 1.5;
+            white-space: pre;
+            overflow: auto;
+            tab-size: 4;
         }
 
         #code-editor:focus {
             outline: none;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 11px;
+            height: 24px;
         }
 
         .right-panel {
@@ -462,23 +511,33 @@
             <div id="program-list"></div>
         </div>
         <div class="editor-panel">
-            <div class="editor-header">📝 Code Editor — <span id="current-file">hello_world_dos.asm</span></div>
-            <textarea id="code-editor" spellcheck="false">; 8086 Assembly - Hello World
+            <div class="editor-header">
+                <div>📝 Code Editor — <span id="current-file">hello_world_dos.asm</span></div>
+                <div class="editor-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="copyCode()" title="Copy to Clipboard">📋
+                        Copy</button>
+                    <button class="btn btn-secondary btn-sm" onclick="downloadCode()" title="Download .asm file">💾
+                        Download</button>
+                </div>
+            </div>
+            <div class="editor-container">
+                <div class="line-numbers" id="line-numbers"></div>
+                <textarea id="code-editor" spellcheck="false" oninput="updateLineNumbers()" onscroll="syncScroll()">; 8086 Assembly - Hello World
 ; Click a program from the sidebar to load it
 
 ORG 100H
 
 START:
-    MOV AH, 09H          ; DOS: display string
-    LEA DX, MSG          ; Load address of string
-    INT 21H              ; Execute interrupt
-    
-    MOV AH, 4CH          ; DOS: terminate program
-    INT 21H              ; Execute
+    MOV AH, 09H         ; DOS: display string
+    LEA DX, MSG         ; Load address of string
+    INT 21H             ; Execute interrupt
+
+    MOV AH, 4CH         ; DOS: terminate program
+    INT 21H             ; Execute
 
 MSG DB 'Hello, World!', 0DH, 0AH, '$'
-
-END</textarea>
+</textarea>
+            </div>
         </div>
         <div class="right-panel">
             <div class="panel-section">
@@ -1162,6 +1221,61 @@ END</textarea>
             document.getElementById('status').textContent = 'Ready';
             document.getElementById('status').className = 'status';
         }
+
+        // Update line numbers and highlight active line
+        function updateLineNumbers(activeLineIndex) {
+            const editor = document.getElementById('code-editor');
+            const gutter = document.getElementById('line-numbers');
+            if (!editor || !gutter) return;
+
+            const lineCount = editor.value.split('\n').length;
+            let html = '';
+            for (let i = 0; i < lineCount; i++) {
+                const isActive = (i === activeLineIndex) ? ' active' : '';
+                html += `<div class="line-number${isActive}">${i + 1}</div>`;
+            }
+            gutter.innerHTML = html;
+        }
+
+        // Sync scroll
+        function syncScroll() {
+            const editor = document.getElementById('code-editor');
+            const gutter = document.getElementById('line-numbers');
+            if (editor && gutter) {
+                gutter.scrollTop = editor.scrollTop;
+            }
+        }
+
+        // Copy code
+        function copyCode() {
+            const code = document.getElementById('code-editor').value;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.querySelector('button[title="Copy to Clipboard"]');
+                if (btn) {
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '✅ Copied!';
+                    setTimeout(() => btn.innerHTML = originalText, 2000);
+                }
+            });
+        }
+
+        // Download code
+        function downloadCode() {
+            const code = document.getElementById('code-editor').value;
+            const filename = document.getElementById('current-file').textContent || 'program.asm';
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize with default content
+        updateLineNumbers();
 
         // Update display
         function updateDisplay() {
