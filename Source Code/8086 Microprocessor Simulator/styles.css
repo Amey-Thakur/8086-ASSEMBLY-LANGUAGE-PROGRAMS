@@ -727,3 +727,337 @@ a[href*="github"]:hover .icon {
     border-radius: 2px;
     transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+/* Intelligent Tooltip */
+.tooltip {
+    position: fixed;
+    z-index: 10000;
+    max-width: 320px;
+    min-width: 260px;
+    background: linear-gradient(145deg, rgba(22, 27, 34, 0.95) 0%, rgba(13, 17, 23, 0.98) 100%);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(88, 166, 255, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px) scale(0.96);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    font-size: 12px;
+    overflow: hidden;
+}
+
+.tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.tooltip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    background: rgba(88, 166, 255, 0.08);
+    border-bottom: 1px solid var(--border);
+}
+
+.tooltip-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tooltip-value {
+    font-family: 'Consolas', monospace;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--bg-primary);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.tooltip-section {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+}
+
+.tooltip-section:last-child {
+    border-bottom: none;
+}
+
+.tooltip-section-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tooltip-values {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.tooltip-value-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.tooltip-value-label {
+    font-size: 9px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+}
+
+.tooltip-value-data {
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+    color: var(--text);
+}
+
+.tooltip-context {
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.tooltip-context ul {
+    margin: 0;
+    padding-left: 16px;
+}
+
+.tooltip-context li {
+    margin-bottom: 4px;
+}
+
+.tooltip-context code {
+    background: var(--bg-primary);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-family: 'Consolas', monospace;
+    font-size: 11px;
+    color: var(--accent);
+}
+
+.tooltip-description {
+    color: var(--text-dim);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.tooltip-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.tooltip-status.set {
+    background: rgba(63, 185, 80, 0.2);
+    color: var(--success);
+}
+
+.tooltip-status.clear {
+    background: rgba(139, 148, 158, 0.2);
+    color: var(--text-dim);
+}
+
+/* Register hover effect - Blue Glow */
+.register {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.register:hover {
+    background: rgba(88, 166, 255, 0.15);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(88, 166, 255, 0.4), inset 0 0 8px rgba(88, 166, 255, 0.1);
+    transform: translateY(-1px);
+}
+
+.register:hover .register-value {
+    color: #fff;
+    text-shadow: 0 0 8px rgba(88, 166, 255, 0.6);
+}
+
+/* Flag hover effect - Blue Glow */
+.flag {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.flag:hover {
+    background: rgba(88, 166, 255, 0.25);
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+    color: #fff;
+}
+
+/* Scholarly Tooltip - Clean Design */
+.tooltip {
+    position: fixed;
+    z-index: 10000;
+    max-width: 300px;
+    min-width: 240px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(88, 166, 255, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: all 0.15s ease;
+    pointer-events: none;
+    font-size: 12px;
+    overflow: hidden;
+}
+
+.tooltip.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.tooltip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: rgba(88, 166, 255, 0.1);
+    border-bottom: 1px solid var(--border);
+}
+
+.tooltip-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--accent);
+}
+
+.tooltip-value {
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+    color: var(--text);
+    background: var(--bg-primary);
+    padding: 3px 6px;
+    border-radius: 4px;
+}
+
+.tooltip-section {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.tooltip-section:last-child {
+    border-bottom: none;
+}
+
+.tooltip-section-title {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+}
+
+.tooltip-section-title .icon {
+    width: 12px;
+    height: 12px;
+    opacity: 0.7;
+}
+
+.tooltip-values {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tooltip-value-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.tooltip-value-label {
+    font-size: 9px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.tooltip-value-data {
+    font-family: 'Consolas', monospace;
+    font-size: 11px;
+    color: var(--text);
+}
+
+.tooltip-context {
+    color: var(--text);
+    line-height: 1.4;
+    font-size: 11px;
+}
+
+.tooltip-context ul {
+    margin: 0;
+    padding-left: 14px;
+}
+
+.tooltip-context li {
+    margin-bottom: 3px;
+}
+
+.tooltip-context code {
+    background: var(--bg-primary);
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-family: 'Consolas', monospace;
+    font-size: 10px;
+    color: var(--accent);
+}
+
+.tooltip-description {
+    color: var(--text-dim);
+    font-size: 10px;
+    line-height: 1.4;
+    font-style: italic;
+}
+
+.tooltip-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.tooltip-status.set {
+    background: rgba(63, 185, 80, 0.2);
+    color: var(--success);
+}
+
+.tooltip-status.clear {
+    background: rgba(139, 148, 158, 0.15);
+    color: var(--text-dim);
+}
