@@ -1311,6 +1311,7 @@ MSG DB 'Hello, World!', 0DH, 0AH, '$'
         // Reset emulator
         function resetEmulator() {
             emu.reset();
+            userScrolledOutput = false; // Reset scroll tracking for fresh output
             updateDisplay();
             document.getElementById('status').textContent = 'Ready';
             document.getElementById('status').className = 'status';
@@ -1371,6 +1372,9 @@ MSG DB 'Hello, World!', 0DH, 0AH, '$'
         // Initialize with default content
         updateLineNumbers();
 
+        // Track whether user has manually scrolled up in the output console
+        let userScrolledOutput = false;
+
         // Update display
         function updateDisplay() {
             // Registers
@@ -1383,14 +1387,43 @@ MSG DB 'Hello, World!', 0DH, 0AH, '$'
                 const el = document.getElementById('flag-' + flag.toLowerCase());
                 el.className = 'flag' + (emu.flags[flag] ? ' set' : '');
             }
-            // Output
+            // Output - with proper auto-scroll like CMD behavior
             const outputEl = document.getElementById('output');
-            const isAtBottom = outputEl.scrollHeight - outputEl.scrollTop <= outputEl.clientHeight + 20; // 20px threshold
+            const previousScrollHeight = outputEl.scrollHeight;
             outputEl.textContent = emu.output || '(No output)';
-            if (isAtBottom) {
+
+            // Auto-scroll to bottom only if user hasn't manually scrolled up
+            // This mimics CMD behavior: auto-scroll by default, but respect user's scroll position
+            if (!userScrolledOutput) {
                 outputEl.scrollTop = outputEl.scrollHeight;
             }
         }
+
+        // Initialize output scroll tracking after DOM is ready
+        (function initOutputScrollTracking() {
+            const outputEl = document.getElementById('output');
+            if (!outputEl) return;
+
+            // Track user scroll interactions on the output console
+            outputEl.addEventListener('scroll', function () {
+                // Check if user is at the bottom (within 20px threshold)
+                const isAtBottom = outputEl.scrollHeight - outputEl.scrollTop <= outputEl.clientHeight + 20;
+
+                // If user scrolls to bottom, resume auto-scroll
+                // If user scrolls up, pause auto-scroll
+                userScrolledOutput = !isAtBottom;
+            });
+
+            // Handle mousewheel scroll - detect when user actively scrolls up
+            outputEl.addEventListener('wheel', function (e) {
+                // If scrolling up and not already at top, user is manually scrolling
+                if (e.deltaY < 0 && outputEl.scrollTop > 0) {
+                    userScrolledOutput = true;
+                }
+                // If scrolling down toward bottom, check if we're at bottom after scroll
+                // This is handled by the 'scroll' event listener above
+            });
+        })();
 
         // Theme toggle
         function toggleTheme() {
