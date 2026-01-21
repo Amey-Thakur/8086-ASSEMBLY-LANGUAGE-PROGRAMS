@@ -392,6 +392,8 @@
             border-left: 1px solid var(--border);
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+            /* Constrain children to panel height */
         }
 
         .panel-section {
@@ -452,6 +454,10 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            min-height: 0;
+            /* Critical: allows flex item to shrink below content size */
+            overflow: hidden;
+            /* Constrain children */
         }
 
         #output {
@@ -461,8 +467,14 @@
             font-family: monospace;
             font-size: 13px;
             overflow-y: auto;
+            /* Enable vertical scrolling */
+            overflow-x: hidden;
+            /* Hide horizontal overflow */
             white-space: pre-wrap;
-            min-height: 150px;
+            min-height: 0;
+            /* Allow shrinking in flex context */
+            max-height: 100%;
+            /* Don't exceed parent height */
         }
 
         .status {
