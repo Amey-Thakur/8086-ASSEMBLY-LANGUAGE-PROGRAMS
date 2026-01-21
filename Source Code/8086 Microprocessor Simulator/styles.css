@@ -82,6 +82,7 @@ body {
 .header-logo {
     font-size: 28px;
     line-height: 1;
+    color: var(--accent);
 }
 
 .header-title {
@@ -93,12 +94,19 @@ body {
 .header h1 {
     font-size: 19px;
     font-weight: 700;
-    background: linear-gradient(90deg, #58a6ff 0%, #bc8cff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
     color: #58a6ff;
     letter-spacing: -0.3px;
+    animation: title-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes title-glow {
+    from {
+        text-shadow: 0 0 2px rgba(88, 166, 255, 0.2);
+    }
+
+    to {
+        text-shadow: 0 0 8px rgba(88, 166, 255, 0.5);
+    }
 }
 
 .header .subtitle {
@@ -638,4 +646,84 @@ button[onclick="resetEmulator()"]:hover .icon {
 
 a[href*="github"]:hover .icon {
     animation: wave 1s ease infinite;
+}
+
+/* Loading Screen */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-primary);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+}
+
+#loading-overlay.loaded {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.icon-xxl {
+    width: 64px;
+    height: 64px;
+    color: var(--accent);
+}
+
+.pulse-icon {
+    animation: pulse-slow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-slow {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+.loading-text {
+    font-size: 14px;
+    color: var(--text-dim);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-top: 10px;
+}
+
+
+
+/* Progress Bar */
+.progress-container {
+    width: 200px;
+    height: 4px;
+    background: #30363d;
+    border-radius: 2px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
 }

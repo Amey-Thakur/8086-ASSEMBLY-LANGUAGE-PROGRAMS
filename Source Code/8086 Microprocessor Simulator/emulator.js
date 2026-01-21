@@ -872,3 +872,30 @@ function toggleTheme() {
 
 // Initialize
 initProgramList();
+
+// ========================================
+// Loading Screen Logic
+// ========================================
+
+window.addEventListener('load', function () {
+    // Animate progress bar
+    const bar = document.querySelector('.progress-bar');
+    if (bar) {
+        // slight delay to ensure transition works
+        setTimeout(() => {
+            bar.style.width = '100%';
+        }, 100);
+    }
+
+    // Minimum display time for branding (1.5 seconds)
+    setTimeout(function () {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.classList.add('loaded');
+            // Remove from DOM after transition completion to clean up
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 800); // Match transition duration
+        }
+    }, 1600); // 100ms delay + 1.5s transition
+});
