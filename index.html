@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>8086 Assembly Emulator | Amey Thakur</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖥️</text></svg>">
     <style>
         :root {
             --bg-primary: #0d1117;
@@ -17,6 +19,19 @@
             --success: #3fb950;
             --error: #f85149;
             --warning: #d29922;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-editor: #ffffff;
+            --border: #d0d7de;
+            --text: #1f2328;
+            --text-dim: #656d76;
+            --accent: #0969da;
+            --success: #1a7f37;
+            --error: #cf222e;
+            --warning: #9a6700;
         }
 
         * {
@@ -164,6 +179,38 @@
         .btn-ghost:hover {
             color: var(--text);
             background: var(--bg-primary);
+        }
+
+        .theme-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-primary);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            transform: rotate(15deg);
+        }
+
+        [data-theme="light"] .btn:hover {
+            background: #e6e9ec;
+        }
+
+        [data-theme="light"] .header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, #eaeef2 100%);
+        }
+
+        [data-theme="light"] .header h1 {
+            color: #1f2328;
         }
 
         .main {
@@ -382,6 +429,9 @@
                 target="_blank">
                 ⭐ GitHub
             </a>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                <span id="theme-icon">🌙</span>
+            </button>
         </div>
     </div>
     <div class="main">
@@ -1003,6 +1053,25 @@ END</textarea>
             // Output
             document.getElementById('output').textContent = emu.output || '(No output)';
         }
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            document.getElementById('theme-icon').textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            localStorage.setItem('8086-theme', newTheme);
+        }
+
+        // Load saved theme
+        (function () {
+            const savedTheme = localStorage.getItem('8086-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            if (document.getElementById('theme-icon')) {
+                document.getElementById('theme-icon').textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+            }
+        })();
 
         // Initialize
         initProgramList();
