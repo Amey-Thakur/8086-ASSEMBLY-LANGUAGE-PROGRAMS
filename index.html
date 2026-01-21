@@ -215,7 +215,28 @@
 
         .main {
             display: flex;
-            height: calc(100vh - 60px);
+            height: calc(100vh - 90px);
+        }
+
+        .footer {
+            height: 30px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .footer a {
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-left: 4px;
+        }
+
+        .footer a:hover {
+            color: var(--accent);
         }
 
         .sidebar {
@@ -513,6 +534,9 @@ END</textarea>
             </div>
             <div class="status" id="status">Ready. Select a program or write your own code.</div>
         </div>
+    </div>
+    <div class="footer">
+        Created by &nbsp;<a href="https://github.com/Amey-Thakur" target="_blank">Amey Thakur</a>
     </div>
 
     <script>
