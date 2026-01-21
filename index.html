@@ -678,6 +678,7 @@ END</textarea>
                 }
 
                 // Execute one instruction
+                // Execute one instruction
                 step() {
                     if (this.pc >= this.instructions.length) {
                         this.running = false;
@@ -691,59 +692,172 @@ END</textarea>
                     const op = parts[0];
 
                     try {
-                        // ... (Switch case for opcodes remains mostly the same, just referencing this.labels) ...
-                        // Since the switch case is huge, I will use a clever trick to avoid rewriting it all if possible,
-                        // but for robustness I should probably include the switch block or ensure the previous tool didn't cut it off.
-                        // The previous view showed the whole switch. I will just execute it.
-
-                        // Re-implementing the switch for clarity and context integration
                         switch (op) {
-                            case 'MOV': this.setValue(parts[1], this.getValue(parts[2])); break;
+                            case 'MOV':
+                                this.setValue(parts[1], this.getValue(parts[2]));
+                                break;
+
                             case 'ADD':
-                                const add = this.getValue(parts[1]) + this.getValue(parts[2]);
-                                this.setValue(parts[1], add); this.updateFlags(add);
+                                const addResult = this.getValue(parts[1]) + this.getValue(parts[2]);
+                                this.setValue(parts[1], addResult);
+                                this.updateFlags(addResult);
                                 break;
+
                             case 'SUB':
-                                const sub = this.getValue(parts[1]) - this.getValue(parts[2]);
-                                this.setValue(parts[1], sub); this.updateFlags(sub); this.flags.CF = sub < 0 ? 1 : 0;
+                                const subResult = this.getValue(parts[1]) - this.getValue(parts[2]);
+                                this.setValue(parts[1], subResult);
+                                this.updateFlags(subResult);
+                                this.flags.CF = subResult < 0 ? 1 : 0;
                                 break;
+
                             case 'MUL':
-                                this.regs.AX = (this.regs.AX & 0xFF) * this.getValue(parts[1]);
+                                const mulVal = this.getValue(parts[1]);
+                                this.regs.AX = (this.regs.AX & 0xFF) * mulVal;
                                 this.updateFlags(this.regs.AX);
                                 break;
+
                             case 'DIV':
-                                const div = this.getValue(parts[1]);
-                                if (div !== 0) { this.setReg8('AL', Math.floor(this.regs.AX / div)); this.setReg8('AH', this.regs.AX % div); }
+                                const divVal = this.getValue(parts[1]);
+                                if (divVal !== 0) {
+                                    const quotient = Math.floor(this.regs.AX / divVal);
+                                    const remainder = this.regs.AX % divVal;
+                                    this.setReg8('AL', quotient);
+                                    this.setReg8('AH', remainder);
+                                }
                                 break;
+
                             case 'INC':
-                                let inc = this.getValue(parts[1]) + 1;
-                                this.setValue(parts[1], inc); this.updateFlags(inc);
+                                this.setValue(parts[1], this.getValue(parts[1]) + 1);
+                                this.updateFlags(this.getValue(parts[1]));
                                 break;
+
                             case 'DEC':
-                                let dec = this.getValue(parts[1]) - 1;
-                                this.setValue(parts[1], dec); this.updateFlags(dec);
+                                this.setValue(parts[1], this.getValue(parts[1]) - 1);
+                                this.updateFlags(this.getValue(parts[1]));
                                 break;
-                            case 'AND': this.setValue(parts[1], this.getValue(parts[1]) & this.getValue(parts[2])); this.updateFlags(this.getValue(parts[1])); break;
-                            case 'OR': this.setValue(parts[1], this.getValue(parts[1]) | this.getValue(parts[2])); this.updateFlags(this.getValue(parts[1])); break;
-                            case 'XOR': this.setValue(parts[1], this.getValue(parts[1]) ^ this.getValue(parts[2])); this.updateFlags(this.getValue(parts[1])); break;
-                            case 'NOT': this.setValue(parts[1], ~this.getValue(parts[1])); break;
+
+                            case 'AND':
+                                const andResult = this.getValue(parts[1]) & this.getValue(parts[2]);
+                                this.setValue(parts[1], andResult);
+                                this.updateFlags(andResult);
+                                break;
+
+                            case 'OR':
+                                const orResult = this.getValue(parts[1]) | this.getValue(parts[2]);
+                                this.setValue(parts[1], orResult);
+                                this.updateFlags(orResult);
+                                break;
+
+                            case 'XOR':
+                                const xorResult = this.getValue(parts[1]) ^ this.getValue(parts[2]);
+                                this.setValue(parts[1], xorResult);
+                                this.updateFlags(xorResult);
+                                break;
+
+                            case 'NOT':
+                                this.setValue(parts[1], ~this.getValue(parts[1]) & 0xFFFF);
+                                break;
+
+                            case 'SHL':
+                            case 'SAL':
+                                const shlResult = this.getValue(parts[1]) << this.getValue(parts[2]);
+                                this.setValue(parts[1], shlResult);
+                                this.updateFlags(shlResult);
+                                break;
+
+                            case 'SHR':
+                                const shrResult = this.getValue(parts[1]) >>> this.getValue(parts[2]);
+                                this.setValue(parts[1], shrResult);
+                                this.updateFlags(shrResult);
+                                break;
+
                             case 'CMP':
-                                const cmp = this.getValue(parts[1]) - this.getValue(parts[2]);
-                                this.updateFlags(cmp); this.flags.CF = cmp < 0 ? 1 : 0;
+                                const cmpResult = this.getValue(parts[1]) - this.getValue(parts[2]);
+                                this.updateFlags(cmpResult);
+                                this.flags.CF = cmpResult < 0 ? 1 : 0;
                                 break;
-                            case 'JMP': if (this.labels[parts[1]] !== undefined) this.pc = this.labels[parts[1]] - 1; break;
-                            case 'JZ': case 'JE': if (this.flags.ZF && this.labels[parts[1]] !== undefined) this.pc = this.labels[parts[1]] - 1; break;
-                            case 'JNZ': case 'JNE': if (!this.flags.ZF && this.labels[parts[1]] !== undefined) this.pc = this.labels[parts[1]] - 1; break;
-                            case 'JC': case 'JB': if (this.flags.CF && this.labels[parts[1]] !== undefined) this.pc = this.labels[parts[1]] - 1; break;
-                            case 'JNC': case 'JNB': case 'JAE': if (!this.flags.CF && this.labels[parts[1]] !== undefined) this.pc = this.labels[parts[1]] - 1; break;
+
+                            case 'JMP':
+                                if (this.labels[parts[1]] !== undefined) {
+                                    this.pc = this.labels[parts[1]] - 1;
+                                }
+                                break;
+
+                            case 'JZ':
+                            case 'JE':
+                                if (this.flags.ZF && this.labels[parts[1]] !== undefined) {
+                                    this.pc = this.labels[parts[1]] - 1;
+                                }
+                                break;
+
+                            case 'JNZ':
+                            case 'JNE':
+                                if (!this.flags.ZF && this.labels[parts[1]] !== undefined) {
+                                    this.pc = this.labels[parts[1]] - 1;
+                                }
+                                break;
+
+                            case 'JC':
+                            case 'JB':
+                                if (this.flags.CF && this.labels[parts[1]] !== undefined) {
+                                    this.pc = this.labels[parts[1]] - 1;
+                                }
+                                break;
+
+                            case 'JNC':
+                            case 'JNB':
+                            case 'JAE':
+                                if (!this.flags.CF && this.labels[parts[1]] !== undefined) {
+                                    this.pc = this.labels[parts[1]] - 1;
+                                }
+                                break;
+
                             case 'LOOP':
                                 this.regs.CX--;
-                                if (this.regs.CX > 0 && this.labels[parts[1]] !== undefined) this.pc = this.labels[parts[1]] - 1;
+                                if (this.regs.CX > 0 && this.labels[parts[1]] !== undefined) {
+                                    this.pc = this.labels[parts[1]] - 1;
+                                }
                                 break;
-                            case 'LEA': if (this.dataLabels[parts[2]] !== undefined) this.setValue(parts[1], this.dataLabels[parts[2]]); break;
-                            case 'INT': this.handleInterrupt(this.getValue(parts[1])); break;
-                            case 'RET': case 'HLT': this.running = false; return false;
-                            case 'NOP': break;
+
+                            case 'LEA':
+                                if (this.dataLabels[parts[2]] !== undefined) {
+                                    this.setValue(parts[1], this.dataLabels[parts[2]]);
+                                }
+                                break;
+
+                            case 'PUSH':
+                                this.regs.SP -= 2;
+                                const pushVal = this.getValue(parts[1]);
+                                this.memory[this.regs.SP] = pushVal & 0xFF;
+                                this.memory[this.regs.SP + 1] = (pushVal >> 8) & 0xFF;
+                                break;
+
+                            case 'POP':
+                                const popVal = this.memory[this.regs.SP] | (this.memory[this.regs.SP + 1] << 8);
+                                this.setValue(parts[1], popVal);
+                                this.regs.SP += 2;
+                                break;
+
+                            case 'XCHG':
+                                const temp = this.getValue(parts[1]);
+                                this.setValue(parts[1], this.getValue(parts[2]));
+                                this.setValue(parts[2], temp);
+                                break;
+
+                            case 'INT':
+                                this.handleInterrupt(this.getValue(parts[1]));
+                                break;
+
+                            case 'RET':
+                            case 'HLT':
+                                this.running = false;
+                                return false;
+
+                            case 'NOP':
+                                break;
+
+                            default:
+                                break;
                         }
                     } catch (e) {
                         this.output += '\n[Error: ' + e.message + ']';
@@ -751,56 +865,6 @@ END</textarea>
 
                     this.pc++;
                     return true;
-                }
-
-                // ... (keep reset, getReg8, setReg8, getValue, setValue, updateFlags, handleInterrupt, run as is) ...
-
-
-                // Handle DOS/BIOS interrupts
-                handleInterrupt(num) {
-                    if (num === 0x21) { // DOS interrupt
-                        const func = this.getReg8('AH');
-                        switch (func) {
-                            case 0x01: // Read char with echo
-                                // Simulate input 'A'
-                                this.setReg8('AL', 65);
-                                break;
-                            case 0x02: // Display character
-                                this.output += String.fromCharCode(this.getReg8('DL'));
-                                break;
-                            case 0x09: // Display string
-                                const addr = this.regs.DX;
-                                let str = '';
-                                for (let i = 0; i < 256; i++) {
-                                    const ch = this.memory[addr + i];
-                                    if (ch === 36) break; // '$' terminator
-                                    str += String.fromCharCode(ch);
-                                }
-                                this.output += str;
-                                break;
-                            case 0x4C: // Terminate
-                                this.running = false;
-                                break;
-                        }
-                    } else if (num === 0x10) { // BIOS Video
-                        // Simplified video handling
-                    } else if (num === 0x16) { // BIOS Keyboard
-                        // Simulate key press
-                        this.setReg8('AL', 13); // Enter key
-                    }
-                }
-
-                // Run all instructions
-                run() {
-                    this.running = true;
-                    let iterations = 0;
-                    while (this.running && iterations < 10000) {
-                        if (!this.step()) break;
-                        iterations++;
-                    }
-                    if (iterations >= 10000) {
-                        this.output += '\n[Execution limit reached]';
-                    }
                 }
             }
 
