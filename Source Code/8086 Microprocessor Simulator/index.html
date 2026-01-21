@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8086 Assembly Emulator</title>
+    <meta name="description"
+        content="Interactive Intel 8086 Microprocessor Simulator - Run and debug 8086 assembly programs in your browser">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-left">
+            <span class="header-logo"><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M9 2v2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2h-4V2H9zm0 2h6v2H9V4zM5 8h14v10H5V8zm2 2v2h2v-2H7zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2zm-8 4v2h2v-2H7zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2z" />
+                </svg></span>
+            <div class="header-title">
+                <h1>8086 Assembly Emulator</h1>
+                <p class="subtitle">Interactive Intel 8086 Microprocessor Simulator</p>
+            </div>
+        </div>
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="compileCode()"><svg class="icon" viewBox="0 0 24 24"
+                    fill="currentColor">
+                    <path
+                        d="M12 15.5A3.5 3.5 0 0115.5 12 3.5 3.5 0 0112 8.5 3.5 3.5 0 018.5 12 3.5 3.5 0 0112 15.5m7.43-2.53c.04-.32.07-.64.07-.97 0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0014 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1 0 .33.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66z" />
+                </svg> Compile</button>
+            <button class="btn btn-run" onclick="runCode()"><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z" />
+                </svg> Run</button>
+            <button class="btn btn-step" onclick="stepCode()"><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                </svg> Step</button>
+            <button class="btn btn-danger" onclick="resetEmulator()"><svg class="icon" viewBox="0 0 24 24"
+                    fill="currentColor">
+                    <path
+                        d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+                </svg> Reset</button>
+            <div class="toolbar-divider"></div>
+            <a href="https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS" class="btn btn-ghost"
+                target="_blank">
+                <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                </svg> GitHub
+            </a>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                <span id="theme-icon"><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" />
+                    </svg></span>
+            </button>
+        </div>
+    </div>
+    <div class="main">
+        <div class="sidebar">
+            <h3><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+                </svg> Program Library (161)</h3>
+            <div id="program-list"></div>
+        </div>
+        <div class="editor-panel">
+            <div class="editor-header">
+                <div><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M14.17 5L19 9.83V19H5V5h9.17M15 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V9l-6-6zM7 15h10v2H7v-2zm0-4h10v2H7v-2zm0-4h7v2H7V7z" />
+                    </svg> Code Editor — <span id="current-file">hello_world_dos.asm</span></div>
+                <div class="editor-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="copyCode()" title="Copy to Clipboard"><svg
+                            class="icon icon-sm" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+                        </svg>
+                        Copy</button>
+                    <button class="btn btn-secondary btn-sm" onclick="downloadCode()" title="Download .asm file"><svg
+                            class="icon icon-sm" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                        </svg>
+                        Download</button>
+                    <button class="btn btn-secondary btn-sm" onclick="shareCode()" title="Share this program"><svg
+                            class="icon icon-sm" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z" />
+                        </svg>
+                        Share</button>
+                </div>
+            </div>
+            <div class="editor-container">
+                <div class="line-numbers" id="line-numbers"></div>
+                <textarea id="code-editor" spellcheck="false" oninput="updateLineNumbers()" onscroll="syncScroll()">; 8086 Assembly - Hello World
+; Click a program from the sidebar to load it
+
+ORG 100H
+
+START:
+    MOV AH, 09H         ; DOS: display string
+    LEA DX, MSG         ; Load address of string
+    INT 21H             ; Execute interrupt
+
+    MOV AH, 4CH         ; DOS: terminate program
+    INT 21H             ; Execute
+
+MSG DB 'Hello, World!', 0DH, 0AH, '$'
+</textarea>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="panel-section">
+                <h4><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
+                    </svg> Registers</h4>
+                <div class="registers">
+                    <div class="register">
+                        <div class="register-name">AX</div>
+                        <div class="register-value" id="reg-ax">0000</div>
+                    </div>
+                    <div class="register">
+                        <div class="register-name">BX</div>
+                        <div class="register-value" id="reg-bx">0000</div>
+                    </div>
+                    <div class="register">
+                        <div class="register-name">CX</div>
+                        <div class="register-value" id="reg-cx">0000</div>
+                    </div>
+                    <div class="register">
+                        <div class="register-name">DX</div>
+                        <div class="register-value" id="reg-dx">0000</div>
+                    </div>
+                    <div class="register">
+                        <div class="register-name">SI</div>
+                        <div class="register-value" id="reg-si">0000</div>
+                    </div>
+                    <div class="register">
+                        <div class="register-name">DI</div>
+                        <div class="register-value" id="reg-di">0000</div>
+                    </div>
+                    <div class="register">
+                        <div class="register-name">SP</div>
+                        <div class="register-value" id="reg-sp">FFFE</div>
+                    </div>
+                    <div class="register">
+                        <div class="register-name">BP</div>
+                        <div class="register-value" id="reg-bp">0000</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-section">
+                <h4><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14 6l-1-2H5v17h2v-7h5l1 2h7V6h-6zm4 8h-4l-1-2H7V6h5l1 2h5v6z" />
+                    </svg> Flags</h4>
+                <div class="flags">
+                    <span class="flag" id="flag-cf">CF</span>
+                    <span class="flag" id="flag-zf">ZF</span>
+                    <span class="flag" id="flag-sf">SF</span>
+                    <span class="flag" id="flag-of">OF</span>
+                    <span class="flag" id="flag-pf">PF</span>
+                    <span class="flag" id="flag-af">AF</span>
+                </div>
+            </div>
+            <div class="panel-section output-section">
+                <h4><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10zm-2-1h-6v-2h6v2zM7.5 17l-1.41-1.41L8.67 13l-2.59-2.59L7.5 9l4 4-4 4z" />
+                    </svg> Output Console</h4>
+                <div id="output"></div>
+            </div>
+            <div class="status" id="status">Ready. Select a program or write your own code.</div>
+        </div>
+    </div>
+    <div class="footer">
+        Created by &nbsp;<a href="https://github.com/Amey-Thakur" target="_blank">Amey Thakur</a>&nbsp; © 2021
+    </div>
+
+    <!-- Load JavaScript files -->
+    <script src="programs.js"></script>
+    <script src="emulator.js"></script>
+</body>
+
+</html>
