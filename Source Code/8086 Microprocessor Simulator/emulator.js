@@ -1,16 +1,33 @@
 /*
- * 8086 Assembly Emulator - Core Engine
- * Created by Amey Thakur
- * https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
- * 
- * This file contains the 8086 emulator class, UI functions, and initialization code.
- * Requires: programs.js (must be loaded before this file)
- */
+============================================================================
+PROJECT: 8086 MICROPROCESSOR SIMULATOR - CORE ENGINE
+============================================================================
+AUTHOR:      Amey Thakur
+GITHUB:      https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+PROFILE:     https://github.com/Amey-Thakur
+LICENSE:     MIT License
+CREATED:     2021
+
+DESCRIPTION:
+The core emulation engine responsible for parsing, compiling, and executing
+8086 assembly instructions. Features a cycle-accurate state machine,
+16-bit register file simulation, memory segmentation model, and partial
+support for DOS interrupts (INT 21h).
+
+DEPENDENCIES:
+- programs.js: Library of pre-written assembly programs.
+============================================================================
+*/
 
 // ========================================
 // 8086 Emulator Core Class
 // ========================================
 
+/**
+ * Represents the 8086 Microprocessor state and execution logic.
+ * Manages registers, flags, memory, and instruction cycle.
+ * @class
+ */
 class Emulator8086 {
     constructor() {
         this.reset();
@@ -1218,4 +1235,128 @@ emu.step = function () {
 
     return result;
 };
+
+
+// ========================================
+// Debug Info Bar
+// ========================================
+
+const debugBar = document.getElementById('debug-bar');
+const debugInstruction = document.getElementById('debug-instruction');
+const debugExplanation = document.getElementById('debug-explanation');
+
+function updateDebugBar(instruction, explanation) {
+    if (!debugBar) return;
+
+    // Show bar
+    debugBar.classList.add('visible');
+
+    // Update content
+    debugInstruction.textContent = instruction;
+    debugExplanation.textContent = explanation;
+}
+
+function hideDebugBar() {
+    if (debugBar) {
+        debugBar.classList.remove('visible');
+    }
+}
+
+// Clear log/Hide bar
+const originalReset = resetEmulator;
+resetEmulator = function () {
+    originalReset();
+    hideDebugBar();
+};
+
+// Explain instruction in plain English
+function explainInstruction(instruction) {
+    const parts = instruction.replace(/,/g, ' ').split(/\s+/).filter(p => p);
+    const op = parts[0];
+    const dest = parts[1];
+    const src = parts[2];
+
+    switch (op) {
+        case 'MOV':
+            return `Copy value from ${src} to ${dest}.`;
+        case 'ADD':
+            return `Add ${src} to ${dest} and store result in ${dest}.`;
+        case 'SUB':
+            return `Subtract ${src} from ${dest} and store result in ${dest}.`;
+        case 'INC':
+            return `Increment (add 1 to) ${dest}.`;
+        case 'DEC':
+            return `Decrement (subtract 1 from) ${dest}.`;
+        case 'MUL':
+            return `Multiply AX by ${dest}.`;
+        case 'DIV':
+            return `Divide AX by ${dest}.`;
+        case 'JMP':
+            return `Jump unconditionally to label ${dest}.`;
+        case 'JZ':
+        case 'JE':
+            return `Jump to ${dest} if Zero Flag is SET.`;
+        case 'JNZ':
+        case 'JNE':
+            return `Jump to ${dest} if Zero Flag is CLEAR.`;
+        case 'CMP':
+            return `Compare ${dest} with ${src} (affects flags).`;
+        case 'INT':
+            if (dest === '21H') return 'Call DOS interrupt (Function depending on AH).';
+            return `Trigger software interrupt ${dest}.`;
+        case 'LEA':
+            return `Load effective address of ${src} into ${dest}.`;
+        case 'PUSH':
+            return `Push ${dest} onto the stack.`;
+        case 'POP':
+            return `Pop top of stack into ${dest}.`;
+        case 'RET':
+            return 'Return from procedure.';
+        case 'HLT':
+            return 'Halt execution.';
+        default:
+            return `Execute ${op} operation.`;
+    }
+}
+
+// Update step function to log execution
+const stepForLog = emu.step;
+emu.step = function () {
+    const instr = this.instructions[this.pc];
+    const result = stepForLog.apply(this, arguments);
+
+    if (instr) {
+        const explanation = explainInstruction(instr.instruction);
+        updateDebugBar(instr.instruction, explanation);
+    }
+
+    return result;
+};
+
+
+// ========================================
+// Footer System Bus Animation
+// ========================================
+
+const editorInput = document.getElementById('code-editor');
+const systemBus = document.getElementById('system-bus');
+const footerChip = document.querySelector('.footer-chip');
+let busTimeout;
+
+if (editorInput && systemBus && footerChip) {
+    editorInput.addEventListener('input', () => {
+        // Activate bus
+        systemBus.classList.add('active');
+        footerChip.classList.add('processing');
+
+        // Reset timeout
+        clearTimeout(busTimeout);
+
+        // Deactivate after pause in typing
+        busTimeout = setTimeout(() => {
+            systemBus.classList.remove('active');
+            footerChip.classList.remove('processing');
+        }, 300);
+    });
+}
 
