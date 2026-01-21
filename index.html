@@ -53,59 +53,117 @@
         }
 
         .header {
-            background: var(--bg-secondary);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, #1c2128 100%);
             border-bottom: 1px solid var(--border);
-            padding: 15px 20px;
+            padding: 0 24px;
+            height: 60px;
             display: flex;
             align-items: center;
-            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-logo {
+            font-size: 28px;
+            line-height: 1;
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
 
         .header h1 {
-            font-size: 20px;
-            color: var(--accent);
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.3px;
         }
 
         .header .subtitle {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-dim);
+            font-weight: 400;
         }
 
         .toolbar {
             display: flex;
-            gap: 10px;
-            margin-left: auto;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--border);
+            margin: 0 8px;
         }
 
         .btn {
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 6px;
             border: 1px solid var(--border);
-            background: var(--bg-secondary);
+            background: var(--bg-primary);
             color: var(--text);
             cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
         }
 
         .btn:hover {
             border-color: var(--accent);
+            background: #21262d;
+            transform: translateY(-1px);
         }
 
         .btn-primary {
-            background: var(--success);
-            border-color: var(--success);
+            background: linear-gradient(135deg, var(--success) 0%, #2ea043 100%);
+            border-color: transparent;
             color: #fff;
+            box-shadow: 0 2px 8px rgba(63, 185, 80, 0.3);
         }
 
         .btn-primary:hover {
-            opacity: 0.9;
+            box-shadow: 0 4px 12px rgba(63, 185, 80, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-primary);
+            border-color: var(--border);
         }
 
         .btn-danger {
-            background: var(--error);
-            border-color: var(--error);
+            background: linear-gradient(135deg, var(--error) 0%, #da3633 100%);
+            border-color: transparent;
             color: #fff;
+            box-shadow: 0 2px 8px rgba(248, 81, 73, 0.3);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 4px 12px rgba(248, 81, 73, 0.4);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border-color: transparent;
+            color: var(--text-dim);
+        }
+
+        .btn-ghost:hover {
+            color: var(--text);
+            background: var(--bg-primary);
         }
 
         .main {
@@ -308,16 +366,22 @@
 
 <body>
     <div class="header">
-        <div>
-            <h1>🖥️ 8086 Assembly Emulator</h1>
-            <p class="subtitle">Interactive Intel 8086 Microprocessor Simulator</p>
+        <div class="header-left">
+            <span class="header-logo">🖥️</span>
+            <div class="header-title">
+                <h1>8086 Assembly Emulator</h1>
+                <p class="subtitle">Interactive Intel 8086 Microprocessor Simulator</p>
+            </div>
         </div>
         <div class="toolbar">
             <button class="btn btn-primary" onclick="runCode()">▶ Run</button>
-            <button class="btn" onclick="stepCode()">⏭ Step</button>
+            <button class="btn btn-secondary" onclick="stepCode()">⏭ Step</button>
             <button class="btn btn-danger" onclick="resetEmulator()">⟳ Reset</button>
-            <a href="https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS" class="btn"
-                target="_blank">GitHub</a>
+            <div class="toolbar-divider"></div>
+            <a href="https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS" class="btn btn-ghost"
+                target="_blank">
+                ⭐ GitHub
+            </a>
         </div>
     </div>
     <div class="main">
