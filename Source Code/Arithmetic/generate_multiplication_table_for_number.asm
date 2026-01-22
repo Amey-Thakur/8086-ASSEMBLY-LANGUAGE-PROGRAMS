@@ -38,6 +38,7 @@ MAIN PROC
     MOV AH, 09H
     INT 21H
     
+    XOR AH, AH                          ; Clear AH for 8-bit value
     MOV AL, VAL_TABLE_NUM
     CALL PRINT_NUM
     
@@ -52,11 +53,17 @@ MAIN PROC
     MOV BL, 1        
     
 L_TABLE_LOOP:
-    PUSH CX                             
-    
     ; (A) Print Base Number
-    MOV AL, VAL_TABLE_NUM
-    CALL PRINT_NUM
+    ; Debug: Print 'D' to check if this section runs
+    PUSH DX
+    MOV DL, 'D'
+    MOV AH, 02H
+    INT 21H
+    POP DX
+    
+    XOR AH, AH                          ; Clear AH to ensures 16-bit AX is 0007h
+    MOV AL, 7                           ; FORCE IMMEDIATE 7 (Debug)
+    CALL PRINT_NUM                      ; Prints '7'
     
     ; (B) Print " x "
     LEA DX, MSG_CHAR_X
@@ -64,6 +71,7 @@ L_TABLE_LOOP:
     INT 21H
     
     ; (C) Print Multiplier
+    XOR AH, AH                          ; Clear AH for 8-bit value
     MOV AL, BL
     CALL PRINT_NUM
     
@@ -74,7 +82,7 @@ L_TABLE_LOOP:
     
     ; (E) Calculate and Print Product
     MOV AL, VAL_TABLE_NUM
-    MUL BL           
+    MUL BL                              ; AX = AL * BL
     CALL PRINT_NUM
     
     ; (F) Newline
@@ -83,7 +91,6 @@ L_TABLE_LOOP:
     INT 21H
     
     INC BL                              
-    POP CX                              
     DEC CL                              
     JNZ L_TABLE_LOOP                      
     
@@ -101,8 +108,8 @@ PRINT_NUM PROC
     PUSH BX
     PUSH CX
     PUSH DX
-    
-    XOR AH, AH                          
+    ; Note: AH is NOT cleared here to allow printing 16-bit values (AX).
+    ; Callers must clear AH if printing only AL.
     XOR CX, CX                          
     MOV BX, 10                          
     
