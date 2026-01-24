@@ -18,6 +18,12 @@
                 "@type": "Organization",
                 "name": "Terna Engineering College"
             }
+        },
+        {
+            "@type": "Person",
+            "givenName": "Mega",
+            "familyName": "Satish",
+            "id": "https://orcid.org/0000-0002-1844-9557"
         }
     ],
     "dateReleased": "2021-08-12",
