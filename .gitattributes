@@ -27,3 +27,6 @@ LICENSE text eol=lf
 # Improve diff handling
 *.md text diff=markdown
 *.asm text diff=asm
+*.js linguist-vendored linguist-detectable=false
+*.css linguist-vendored linguist-detectable=false
+*.html linguist-vendored linguist-detectable=false
