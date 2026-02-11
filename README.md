@@ -731,6 +731,8 @@ This repository represents a comprehensive collection of 8086 assembly programs 
 
 ### Acknowledgments
 
+Grateful acknowledgment to [**Mega Satish**](https://github.com/msatmod) for her exceptional collaboration and scholarly partnership during the curation and documentation of this assembly language archive. Her constant support, technical clarity, and dedication to precision were instrumental in organizing these assembly language programs into a comprehensive academic resource. Learning alongside her was a transformative experience; her thoughtful approach to low-level architecture and encouragement turned complex challenges into meaningful learning moments. This work reflects the growth and insights gained from our side-by-side academic journey. Thank you, Mega, for everything you shared and taught along the way.
+
 Grateful acknowledgment to the faculty members of the **Department of Computer Engineering** at Terna Engineering College for their guidance and instruction in Microprocessors. Their clear teaching and continued support helped develop a strong understanding of low-level system architecture and 16-bit CISC operations.
 
 Special thanks to the mentors and peers whose encouragement, discussions, and support contributed meaningfully to this learning journey.
@@ -761,4 +763,3 @@ Special thanks to the mentors and peers whose encouragement, discussions, and su
   *Semester-wise curriculum, laboratories, projects, and academic notes.*
 
 </div>
-
