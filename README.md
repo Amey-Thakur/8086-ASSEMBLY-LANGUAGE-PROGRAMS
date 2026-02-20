@@ -199,6 +199,13 @@ For a full native experience with hardware access (requires Windows).
    - Click **Emulate** to compile.
    - Use **Run** or **Single Step** to execute.
 
+> [!TIP]
+> **Integrated 8086 Assembly Microprocessor Emulator**
+>
+> Execute and debug 16-bit TASM/MASM assembly programs through a high-fidelity web-based simulation environment featuring real-time register monitoring, memory inspection, and step-by-step instruction analysis.
+>
+> [**Launch 8086 Assembly Emulator**](https://amey-thakur.github.io/8086-ASSEMBLY-LANGUAGE-PROGRAMS/)
+
 ---
 
 <!-- PROGRAM DETAILS -->
