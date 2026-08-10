@@ -1155,15 +1155,15 @@ Suggested progression for mastering 8086 assembly using this repository:
  
  The following table details the primary BIOS and DOS interrupt vectors utilized within this repository, indexed by their functional hexadecimal codes.
  
- | Interrupt Vector | Service Code (`AH`) | Operational Semantics | Implementation Syntax |
- |:---:|:---:|:---|:---|
- | **DOS API** (`INT 21h`) | `01h` | **Standard Input Read**: Reads a character from `STDIN` and echoes to `STDOUT`. | `MOV AH, 01h; INT 21h` |
- | **DOS API** (`INT 21h`) | `02h` | **Standard Output Write**: Writes a specific character (in `DL`) to `STDOUT`. | `MOV AH, 02h; MOV DL, 'A'; INT 21h` |
- | **DOS API** (`INT 21h`) | `09h` | **String Output**: Writes a `$`-terminated string (pointed to by `DX`) to `STDOUT`. | `MOV AH, 09h; LEA DX, MSG; INT 21h` |
- | **DOS API** (`INT 21h`) | `4Ch` | **Process Termination**: Safely terminates the current process and returns control to the OS. | `MOV AH, 4Ch; INT 21h` |
- | **BIOS Video** (`INT 10h`) | `00h` | **Video Mode Control**: Sets the video display mode (e.g., VGA `13h`) via register `AL`. | `MOV AH, 00h; MOV AL, 13h; INT 10h` |
- | **BIOS Video** (`INT 10h`) | `0Eh` | **Teletype Output**: Writes a character (in `AL`) to the active page in Teletype mode. | `MOV AH, 0Eh; MOV AL, 'X'; INT 10h` |
- | **BIOS Keyboard** (`INT 16h`) | `00h` | **Keystroke Retrieval**: Blocks execution until a key is pressed, returning the scan code. | `MOV AH, 00h; INT 16h` |
+| Interrupt Vector | Service Code (`AH`) | Operational Semantics | Implementation Syntax |
+|:---:|:---:|:---|:---|
+| **DOS API** (`INT 21h`) | `01h` | **Standard Input Read**: Reads a character from `STDIN` and echoes to `STDOUT`. | `MOV AH, 01h; INT 21h` |
+| **DOS API** (`INT 21h`) | `02h` | **Standard Output Write**: Writes a specific character (in `DL`) to `STDOUT`. | `MOV AH, 02h; MOV DL, 'A'; INT 21h` |
+| **DOS API** (`INT 21h`) | `09h` | **String Output**: Writes a `$`-terminated string (pointed to by `DX`) to `STDOUT`. | `MOV AH, 09h; LEA DX, MSG; INT 21h` |
+| **DOS API** (`INT 21h`) | `4Ch` | **Process Termination**: Safely terminates the current process and returns control to the OS. | `MOV AH, 4Ch; INT 21h` |
+| **BIOS Video** (`INT 10h`) | `00h` | **Video Mode Control**: Sets the video display mode (e.g., VGA `13h`) via register `AL`. | `MOV AH, 00h; MOV AL, 13h; INT 10h` |
+| **BIOS Video** (`INT 10h`) | `0Eh` | **Teletype Output**: Writes a character (in `AL`) to the active page in Teletype mode. | `MOV AH, 0Eh; MOV AL, 'X'; INT 10h` |
+| **BIOS Keyboard** (`INT 16h`) | `00h` | **Keystroke Retrieval**: Blocks execution until a key is pressed, returning the scan code. | `MOV AH, 00h; INT 16h` |
 
 ---
 
@@ -1172,12 +1172,12 @@ Suggested progression for mastering 8086 assembly using this repository:
  
  A structured guide to diagnosing and resolving non-deterministic behaviors and assembler errors.
  
- | Error Condition | Root Cause Analysis | Resolution Strategy |
- |:---|:---|:---|
- | **Operand Size Mismatch** | **Type Incompatibility**: Attempting to operate on disparate data widths (e.g., `MOV AX, BL`) without casting. | Ensure operand bit-width parity. Use explicit type matching, e.g., `MOV AX, BX` (16-bit) or `MOV AL, BL` (8-bit). |
- | **Unresolved Symbol** | **Declaration Void**: Referencing a label or variable identifier not defined within the accessible `DATA` or `CODE` scope. | Verify symbol definitions. Instantiate variables using appropriate directives (`DB`, `DW`) prior to instruction reference. |
- | **Non-Terminating Loop** | **Control Logic Failure**: The Loop Counter register (`CX`) fails to converge to zero, or is unwittingly mutated. | Validate `LOOP` logic. Ensure strict monotonicity of `CX` decrement and avoid side-effect mutations within the iterative body. |
- | **String Termination Fault**| **Buffer Overrun**: The string output routine (`INT 21h/09h`) continues reading memory past the intended buffer. | Enforce string termination. Append the DOS-standard `$` delimiter to all string definitions to signal End-of-String. |
+| Error Condition | Root Cause Analysis | Resolution Strategy |
+|:---|:---|:---|
+| **Operand Size Mismatch** | **Type Incompatibility**: Attempting to operate on disparate data widths (e.g., `MOV AX, BL`) without casting. | Ensure operand bit-width parity. Use explicit type matching, e.g., `MOV AX, BX` (16-bit) or `MOV AL, BL` (8-bit). |
+| **Unresolved Symbol** | **Declaration Void**: Referencing a label or variable identifier not defined within the accessible `DATA` or `CODE` scope. | Verify symbol definitions. Instantiate variables using appropriate directives (`DB`, `DW`) prior to instruction reference. |
+| **Non-Terminating Loop** | **Control Logic Failure**: The Loop Counter register (`CX`) fails to converge to zero, or is unwittingly mutated. | Validate `LOOP` logic. Ensure strict monotonicity of `CX` decrement and avoid side-effect mutations within the iterative body. |
+| **String Termination Fault**| **Buffer Overrun**: The string output routine (`INT 21h/09h`) continues reading memory past the intended buffer. | Enforce string termination. Append the DOS-standard `$` delimiter to all string definitions to signal End-of-String. |
 
 ---
 
@@ -1306,3 +1306,4 @@ Special thanks to the mentors and peers whose encouragement, discussions, and su
   *Semester-wise curriculum, laboratories, projects, and academic notes.*
 
 </div>
+
