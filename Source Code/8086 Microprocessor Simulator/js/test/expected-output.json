@@ -823,6 +823,54 @@
     "output": "One shifted left by each of 1, 3, 5, 7, 9:\n2\n8\n32\n128\n512\n",
     "finished": true
   },
+  "Signed Arithmetic/absolute_value.asm": {
+    "output": "-47 -> 47\n0 -> 0\n190 -> 190\n-1 -> 1\n-32768 has no positive counterpart in a word.\n",
+    "finished": true
+  },
+  "Signed Arithmetic/sign_extension_cbw_cwd.asm": {
+    "output": "Zero extended: 251\nSign extended: -5\nCWD on -1000 gave DX = FFFFH\n",
+    "finished": true
+  },
+  "Signed Arithmetic/signed_array_average.asm": {
+    "output": "Sum:     30\nAverage: 5 remainder 0\n",
+    "finished": true
+  },
+  "Signed Arithmetic/signed_byte_arithmetic.asm": {
+    "output": "Sum of the byte readings: 26\nThe first reading times nine: -72\n",
+    "finished": true
+  },
+  "Signed Arithmetic/signed_divide_idiv.asm": {
+    "output": "-17 / 5 = -3 remainder -2\n17 / -5 = -3 remainder 2\n-17 / -5 = 3 remainder -2\n",
+    "finished": true
+  },
+  "Signed Arithmetic/signed_minimum_and_maximum.asm": {
+    "output": "Lowest:  -80\nHighest: 45\n",
+    "finished": true
+  },
+  "Signed Arithmetic/signed_multiply_imul.asm": {
+    "output": "IMUL: -12 x 7 = -84\nMUL:  the same bits read unsigned = 65452\n",
+    "finished": true
+  },
+  "Signed Arithmetic/signed_overflow_detection.asm": {
+    "output": "30000 + 3000 gives -32536  (signed overflow)\n-30000 + -3000 gives 32536  (signed overflow)\n100 + 200 gives 300  (fits)\n",
+    "finished": true
+  },
+  "Signed Arithmetic/signed_range_check.asm": {
+    "output": "-35 is outside range\n-20 is within range\n0 is within range\n40 is within range\n55 is outside range\n",
+    "finished": true
+  },
+  "Signed Arithmetic/signed_sorting_by_value.asm": {
+    "output": "Before: 14 -30 7 -1 22 -18 \nAfter:  -30 -18 -1 7 14 22 \n",
+    "finished": true
+  },
+  "Signed Arithmetic/signed_versus_shift_division.asm": {
+    "output": "-7  IDIV by 2: -3   SAR by 1: -4\n-8  IDIV by 2: -4   SAR by 1: -4\n-9  IDIV by 2: -4   SAR by 1: -5\n7  IDIV by 2: 3   SAR by 1: 3\n",
+    "finished": true
+  },
+  "Signed Arithmetic/two_complement_representation.asm": {
+    "output": "  25 is stored as 0019H\n -25 is stored as FFE7H\nTheir sum is 0000H\n",
+    "finished": true
+  },
   "Simulation/fire_monitoring_system.asm": {
     "output": "\nSet Threshold for Room 1: 5\nSet Threshold for Room 2: \nCurrent Temperature: 0\n\u0007!!! ALARM ON !!! Threshold exceeded! \nPress '1' to reset system or any key to exit: 3",
     "finished": true
