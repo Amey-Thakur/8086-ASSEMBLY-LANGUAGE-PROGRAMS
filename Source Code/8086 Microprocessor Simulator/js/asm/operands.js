@@ -109,6 +109,26 @@ export function parseOperand(text, line = null) {
         return { kind: OPERAND.SYMBOL, name: token, width, override };
     }
 
+    // ---- an expression written without brackets: BUF+1, TABLE-2, 4+4 ---------
+    // A direct memory reference is allowed to carry a displacement, and that is
+    // the ordinary way to reach the second byte of a buffer. A name somewhere in
+    // the expression makes it a memory reference; with only numbers it is plain
+    // arithmetic and folds to an immediate.
+    if (/^[^\[\]]+[+-][^\[\]]+$/.test(token)) {
+        const expression = parseAddressExpression(token, line);
+
+        if (expression.base || expression.index) {
+            throw new SyntaxError8086(
+                `a register can only form an address inside brackets, as in "[${token}]"`,
+                line
+            );
+        }
+
+        return expression.symbol
+            ? { kind: OPERAND.MEMORY, ...expression, width, override }
+            : { kind: OPERAND.IMMEDIATE, value: expression.displacement & 0xFFFF, width };
+    }
+
     throw new SyntaxError8086(`cannot parse operand "${text}"`, line);
 }
 

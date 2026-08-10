@@ -204,6 +204,7 @@ export class Assembler {
                 index:       this.instructions.length,
                 line:        line.line,
                 mnemonic:    line.mnemonic,
+                prefix:      line.prefix ?? null,
                 rawOperands: line.operands,
                 operands:    null,          // filled in by pass two
                 source:      line.source

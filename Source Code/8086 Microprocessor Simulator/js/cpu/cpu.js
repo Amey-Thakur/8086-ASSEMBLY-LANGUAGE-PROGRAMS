@@ -82,6 +82,14 @@ export class CPU {
         this.consoleOutput     = '';
         this.pendingInput      = '';
 
+        // Set by INT 21h service 4Ch. Null until the program terminates through
+        // it, which distinguishes "exited with zero" from "never exited".
+        this.exitCode = null;
+
+        // Maintained by INT 10h service 02h. There is no addressable screen
+        // here, so this exists for the interface to display.
+        this.cursor = { row: 0, column: 0 };
+
         // Populated by CALL and unwound by RET, purely so the interface can show
         // a call stack. The processor itself keeps this information on the stack.
         this.callTrace = [];
@@ -273,6 +281,8 @@ export class CPU {
             halted:           this.halted,
             instructionCount: this.instructionCount,
             output:           this.consoleOutput,
+            exitCode:         this.exitCode,
+            cursor:           { ...this.cursor },
             callDepth:        this.callTrace.length,
             stack:            this.peekStack()
         };

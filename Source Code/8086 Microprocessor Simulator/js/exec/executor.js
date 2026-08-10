@@ -29,6 +29,8 @@ import { SYMBOL }                                   from '../asm/assembler.js';
 import { Shifter, SHIFT_OPERATIONS }                from '../cpu/shifter.js';
 import { ALU, DivideError }                         from '../cpu/alu.js';
 import { ExecutionError }                           from '../cpu/cpu.js';
+import { registerStringHandlers }                   from './strings.js';
+import { registerInterruptHandlers }                from './interrupts.js';
 
 /** Conditional jumps, mapped to a predicate over the flag register. Several
  *  mnemonics are synonyms, which is why the table is keyed by every spelling
@@ -517,6 +519,12 @@ export class Executor {
         // ---- machine control --------------------------------------------------
         this.define(['NOP'], () => { /* deliberately nothing */ });
         this.define(['HLT'], () => { cpu.halted = true; });
+
+        // ---- delegated groups -------------------------------------------------
+        // String handling and the DOS services are large enough to own their own
+        // files. They register into this same dispatch table.
+        registerStringHandlers(this);
+        registerInterruptHandlers(this);
     }
 
     /** True when the executor knows the mnemonic. Used by the editor to

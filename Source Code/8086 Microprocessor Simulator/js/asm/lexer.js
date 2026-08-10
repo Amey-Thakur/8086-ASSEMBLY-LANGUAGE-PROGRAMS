@@ -177,6 +177,10 @@ export function parseStringLiteral(text) {
 /** Directives that introduce a section rather than emit code or data. */
 const SECTION_DIRECTIVES = new Set(['.MODEL', '.STACK', '.DATA', '.CODE', '.386', '.8086']);
 
+/** Words that qualify the instruction that follows them instead of standing on
+ *  their own. They are stripped from the mnemonic and reported separately. */
+export const PREFIX_MNEMONICS = new Set(['REP', 'REPE', 'REPZ', 'REPNE', 'REPNZ', 'LOCK']);
+
 /**
  * Break source into logical lines.
  *
@@ -212,6 +216,26 @@ export function tokenize(source) {
             return;
         }
 
+        // REP and LOCK are prefix bytes on the real machine rather than
+        // instructions of their own, so they are lifted off here. Leaving them
+        // in place would make the assembler read "REP MOVSB" as an instruction
+        // REP taking an operand MOVSB, and then reject MOVSB as an undefined
+        // symbol.
+        let prefix = null;
+
+        for (;;) {
+            const breakAt = remainder.search(/\s/);
+
+            if (breakAt === -1) break;                    // nothing follows it
+
+            const word = remainder.slice(0, breakAt).toUpperCase();
+
+            if (!PREFIX_MNEMONICS.has(word)) break;
+
+            if (word !== 'LOCK') prefix = word;           // LOCK is a no-op here
+            remainder = remainder.slice(breakAt).trim();
+        }
+
         // Mnemonic is the first whitespace-delimited word. Directives beginning
         // with a dot are kept whole.
         const spaceAt  = remainder.search(/\s/);
@@ -222,6 +246,7 @@ export function tokenize(source) {
             line:      lineNumber,
             label,
             mnemonic,
+            prefix,
             operands:  rest === '' ? [] : splitOperands(rest),
             isSection: SECTION_DIRECTIVES.has(mnemonic),
             source:    rawText
