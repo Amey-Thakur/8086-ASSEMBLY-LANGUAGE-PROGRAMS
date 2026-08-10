@@ -98,7 +98,7 @@ export function parseOperand(text, line = null, context = null) {
     // ---- bracketed memory reference -----------------------------------------
     if (token.startsWith('[') && token.endsWith(']')) {
         const inner  = token.slice(1, -1).trim();
-        const memory = parseAddressExpression(inner, line);
+        const memory = parseAddressExpression(inner, line, context);
 
         return { kind: OPERAND.MEMORY, ...memory, width, override };
     }
@@ -110,7 +110,7 @@ export function parseOperand(text, line = null, context = null) {
     const indexed = token.match(/^([A-Za-z_@$?][A-Za-z0-9_@$?]*)\s*\[([^\]]+)\]$/);
 
     if (indexed) {
-        const memory = parseAddressExpression(indexed[2], line);
+        const memory = parseAddressExpression(indexed[2], line, context);
 
         if (memory.symbol) {
             throw new SyntaxError8086(`two symbols in "${token}"`, line);
@@ -180,17 +180,13 @@ export function parseOperand(text, line = null, context = null) {
 // Handles the contents of the brackets: any of a base register, an index
 // register, a symbol and a numeric displacement, combined with + or -.
 // -----------------------------------------------------------------------------
-export function parseAddressExpression(inner, line = null) {
+export function parseAddressExpression(inner, line = null, context = null) {
     if (inner === '') {
         throw new SyntaxError8086('empty address expression "[]"', line);
     }
 
     // Split into signed terms while keeping each sign attached to its term.
-    const terms = inner
-        .replace(/\s+/g, '')
-        .replace(/-/g, '+-')
-        .split('+')
-        .filter(term => term !== '');
+    const terms = splitTerms(inner.replace(/\s+/g, ''), inner, line);
 
     let base         = null;
     let index        = null;
@@ -237,10 +233,83 @@ export function parseAddressExpression(inner, line = null) {
             continue;
         }
 
+        // Anything left is a compound constant such as COUNT*2 or (LEN+1)/2.
+        // Splitting on + and - above already respected precedence, because *
+        // and / bind tighter, so whatever arrives here is a single product the
+        // expression evaluator can fold to a number.
+        if (context) {
+            const folded = foldConstant(body, context, inner, line);
+
+            displacement += negative ? -folded : folded;
+            continue;
+        }
+
         throw new SyntaxError8086(`cannot parse "${term}" inside "[${inner}]"`, line);
     }
 
     return { base, index, displacement, symbol };
+}
+
+/**
+ * Breaks bracket contents into signed terms, each sign kept with its term.
+ *
+ * The split only happens outside parentheses, so "(LEN+1)/2" stays whole and
+ * reaches the expression evaluator intact. A naive split on every + and - would
+ * have cut it into "(LEN" and "1)/2" and lost the grouping.
+ */
+function splitTerms(text, inner, line) {
+    const terms = [];
+
+    let depth = 0;
+    let start = 0;
+
+    for (let at = 0; at < text.length; at++) {
+        const character = text[at];
+
+        if (character === '(') { depth++; continue; }
+
+        if (character === ')') {
+            if (--depth < 0) {
+                throw new SyntaxError8086(`unbalanced ")" in "[${inner}]"`, line);
+            }
+            continue;
+        }
+
+        // A leading sign belongs to the first term, not between two of them.
+        if (depth === 0 && (character === '+' || character === '-') && at > start) {
+            terms.push(text.slice(start, at));
+            start = character === '-' ? at : at + 1;
+        }
+    }
+
+    if (depth !== 0) {
+        throw new SyntaxError8086(`unbalanced "(" in "[${inner}]"`, line);
+    }
+
+    if (start < text.length) terms.push(text.slice(start));
+
+    return terms.filter(term => term !== '' && term !== '+');
+}
+
+/**
+ * Folds one compound bracket term to a constant.
+ *
+ * Scaling an address is meaningless on the 8086 -- there is no scaled index
+ * mode until the 386 -- so a term that turns out to involve a label is refused
+ * with an explanation rather than folded into a wrong number.
+ */
+function foldConstant(body, context, inner, line) {
+    const { value, reference } = evaluateExpression(body, context);
+
+    if (reference !== null) {
+        throw new SyntaxError8086(
+            `"${body}" inside "[${inner}]" scales the address of ${reference}, ` +
+            `which the 8086 cannot do. Use OFFSET ${reference} in a register instead.`,
+            line
+        );
+    }
+
+    return value | 0;
 }
 
 // -----------------------------------------------------------------------------

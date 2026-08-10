@@ -13,6 +13,8 @@
 
 import { parseOperand, parseAddressExpression, effectiveAddress, segmentBaseOf, OPERAND }
     from '../asm/operands.js';
+import { ExpressionContext } from '../asm/expressions.js';
+import { SYMBOL } from '../asm/assembler.js';
 import { CPU } from '../cpu/cpu.js';
 
 let passed = 0;
@@ -136,6 +138,68 @@ console.log('\nEFFECTIVE ADDRESS  (computed against a live machine)');
     cpu.registers.set('BX', 0xFFFF);
     check('address arithmetic wraps at 16 bits',
           hex(effectiveAddress(cpu, parseOperand('[BX+2]'))), '0001');
+}
+
+// -----------------------------------------------------------------------------
+console.log('\nCONSTANT EXPRESSIONS INSIDE BRACKETS');
+//
+// MASM allows a folded constant where a displacement is expected, so
+// ARRAY[COUNT*2] addresses one past the end of a word array of COUNT entries.
+// Splitting the brackets on + and - leaves each product intact, so precedence
+// comes out right without the address parser having to know about it.
+// -----------------------------------------------------------------------------
+{
+    const context = new ExpressionContext({
+        COUNT: { kind: SYMBOL.CONSTANT, value: 6 },
+        LEN:   { kind: SYMBOL.CONSTANT, value: 9 },
+        ARRAY: { kind: SYMBOL.DATA, offset: 0x0050, width: 2, length: 4 }
+    });
+
+    check('COUNT*2 folds to a displacement',
+          parseAddressExpression('COUNT * 2', null, context),
+          { base: null, index: null, displacement: 12, symbol: null });
+
+    check('a product adds to a register term',
+          parseAddressExpression('BX + COUNT*2', null, context),
+          { base: 'BX', index: null, displacement: 12, symbol: null });
+
+    check('a negated product subtracts',
+          parseAddressExpression('SI - COUNT*2', null, context),
+          { base: null, index: 'SI', displacement: -12, symbol: null });
+
+    check('division folds too',
+          parseAddressExpression('(LEN+1)/2', null, context),
+          { base: null, index: null, displacement: 5, symbol: null });
+
+    check('ARRAY[COUNT*2] keeps the name and folds the brackets',
+          parseOperand('ARRAY[COUNT*2]', null, context),
+          { kind: OPERAND.MEMORY, base: null, index: null, displacement: 12,
+            symbol: 'ARRAY', width: null, override: null });
+
+    // Scaling an address is a 386 mode. Folding OFFSET ARRAY * 2 into a
+    // displacement would produce a plausible but meaningless number, so the
+    // assembler refuses and says what to do instead.
+    rejects('a scaled label is refused',
+            () => parseAddressExpression('ARRAY * 2', null, context),
+            'the 8086 cannot do');
+
+    // Without a symbol table there is nothing to fold against, and the older
+    // message is still the right one.
+    rejects('a product without a context is still rejected',
+            () => parseAddressExpression('COUNT * 2'),
+            'cannot parse');
+
+    check('a grouped constant survives beside a register',
+          parseAddressExpression('BX + (LEN+1)/2', null, context),
+          { base: 'BX', index: null, displacement: 5, symbol: null });
+
+    rejects('an unclosed group is reported',
+            () => parseAddressExpression('BX + (LEN+1', null, context),
+            'unbalanced "("');
+
+    rejects('a surplus close is reported',
+            () => parseAddressExpression('BX + LEN)', null, context),
+            'unbalanced ")"');
 }
 
 // -----------------------------------------------------------------------------

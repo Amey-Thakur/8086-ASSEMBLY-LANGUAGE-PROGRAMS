@@ -1199,16 +1199,64 @@
     "output": "Element found at 1-based index: 4_rd Position",
     "finished": true
   },
+  "Searching/binary_search_insertion_point.asm": {
+    "output": "Sorted: 5 12 19 26 33 40 \n1 would go at index 0\n19 would go at index 2\n30 would go at index 4\n50 would go at index 6\n",
+    "finished": true
+  },
   "Searching/character_occurrences_count.asm": {
     "output": "\nEnter string: 5\n\nEnter character to find: 3\nCharacter not found.",
+    "finished": true
+  },
+  "Searching/count_occurrences_by_bisection.asm": {
+    "output": "Sorted: 1 3 3 3 7 7 9 12 12 12 12 15 \n3 appears 3 times\n7 appears 2 times\n12 appears 4 times\n8 appears 0 times\n",
+    "finished": true
+  },
+  "Searching/exponential_search.asm": {
+    "output": "Sorted: 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 \nBracketed between index 4 and 8\nFound at index 5\n",
+    "finished": true
+  },
+  "Searching/find_duplicate_number.asm": {
+    "output": "The list: 3 1 6 4 5 6 2 8 7 \nThe repeated number is 6\nThe same answer from a tally: 6\n",
+    "finished": true
+  },
+  "Searching/find_first_and_last_occurrence.asm": {
+    "output": "Sorted:  2 4 8 8 8 8 11 15 15 20 \nFirst 8 at index 2\nLast 8 at index  5\nSo there are 4 of them\n",
+    "finished": true
+  },
+  "Searching/find_missing_number.asm": {
+    "output": "The list: 3 1 9 7 5 10 2 8 4 \nOne to ten should total 55\nThe list totals          49\nSo the missing number is 6\nThe same answer by exclusive or: 6\n",
+    "finished": true
+  },
+  "Searching/jump_search.asm": {
+    "output": "Sorted: 2 5 9 14 20 27 35 44 54 65 77 90 104 119 135 152 \nLooking for 77   at index 10   comparisons: 5\nLooking for 100   not present   comparisons: 8\n",
     "finished": true
   },
   "Searching/linear_search.asm": {
     "output": "Element located in array! (True/FFh in DL)",
     "finished": true
   },
+  "Searching/linear_search_all_matches.asm": {
+    "output": "The array: 7 3 7 9 7 2 5 7 \n7 is at indices 0 2 4 7    count: 4\n",
+    "finished": true
+  },
   "Searching/search_element_array.asm": {
     "output": "STATUS: ELEMENT FOUND!",
+    "finished": true
+  },
+  "Searching/search_in_sorted_matrix.asm": {
+    "output": "Looking for 6   at row 2, column 1   steps: 5\nLooking for 15   not present\n",
+    "finished": true
+  },
+  "Searching/search_rotated_sorted_array.asm": {
+    "output": "Rotated: 12 15 18 2 5 6 8 \nLooking for 5   at index 4\nLooking for 13   not present\n",
+    "finished": true
+  },
+  "Searching/sentinel_linear_search.asm": {
+    "output": "The array: 41 8 27 63 15 92 4 \nLooking for 63   found at index 3\nLooking for 50   not present\n",
+    "finished": true
+  },
+  "Searching/ternary_search.asm": {
+    "output": "Sorted: 4 9 15 22 30 39 49 60 72 85 99 114 130 147 165 184 \nTernary search: found at 10, comparisons 6\nBinary search:  found at 10, comparisons 4\n",
     "finished": true
   },
   "Shift and Rotate/arithmetic_shift_signed_divide.asm": {

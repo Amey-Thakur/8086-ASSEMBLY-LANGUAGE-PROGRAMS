@@ -13,7 +13,7 @@
 //              .asm file from the folder beside this one, so what the simulator
 //              runs is what the repository actually holds.
 //
-//              384 programs across 39 categories.
+//              396 programs across 39 categories.
 //
 // Authors:     Amey Thakur
 // Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
@@ -54,7 +54,7 @@ export const PROGRAMS = {
     'Port Programming': ['adc_read_and_scale.asm', 'buzzer_tone_pattern.asm', 'dac_ramp_and_triangle.asm', 'keypad_matrix_scan.asm', 'led_running_light.asm', 'port_word_versus_byte.asm', 'relay_control_bank.asm', 'seven_segment_display.asm', 'stepper_motor_full_step.asm', 'stepper_motor_half_step.asm', 'traffic_light_state_table.asm', 'water_level_controller.asm'],
     'Procedures': ['basic_procedure.asm', 'local_variables.asm', 'nested_procedures.asm', 'procedure_parameters.asm', 'recursive_factorial.asm'],
     'Recursion': ['binary_search_recursive.asm', 'factorial_recursive_frames.asm', 'fibonacci_recursive.asm', 'gcd_recursive.asm', 'mutual_recursion_even_odd.asm', 'power_recursive.asm', 'recursion_versus_iteration.asm', 'reverse_string_recursive.asm', 'stack_frame_anatomy.asm', 'sum_array_recursive.asm', 'sum_of_digits_recursive.asm', 'tower_of_hanoi.asm'],
-    'Searching': ['binary_search.asm', 'character_occurrences_count.asm', 'linear_search.asm', 'search_element_array.asm'],
+    'Searching': ['binary_search.asm', 'binary_search_insertion_point.asm', 'character_occurrences_count.asm', 'count_occurrences_by_bisection.asm', 'exponential_search.asm', 'find_duplicate_number.asm', 'find_first_and_last_occurrence.asm', 'find_missing_number.asm', 'jump_search.asm', 'linear_search.asm', 'linear_search_all_matches.asm', 'search_element_array.asm', 'search_in_sorted_matrix.asm', 'search_rotated_sorted_array.asm', 'sentinel_linear_search.asm', 'ternary_search.asm'],
     'Shift and Rotate': ['arithmetic_shift_signed_divide.asm', 'multiply_by_ten_using_shifts.asm', 'overflow_flag_on_single_shift.asm', 'pack_two_bytes_into_word.asm', 'rotate_left_no_carry.asm', 'rotate_right_through_carry.asm', 'rotate_through_carry_multiword_shift.asm', 'rotate_to_test_each_bit.asm', 'shift_left_to_multiply.asm', 'shift_right_to_divide_unsigned.asm', 'unpack_word_into_two_bytes.asm', 'variable_shift_count_in_cl.asm'],
     'Signed Arithmetic': ['absolute_value.asm', 'sign_extension_cbw_cwd.asm', 'signed_array_average.asm', 'signed_byte_arithmetic.asm', 'signed_divide_idiv.asm', 'signed_minimum_and_maximum.asm', 'signed_multiply_imul.asm', 'signed_overflow_detection.asm', 'signed_range_check.asm', 'signed_sorting_by_value.asm', 'signed_versus_shift_division.asm', 'two_complement_representation.asm'],
     'Simulation': ['fire_monitoring_system.asm', 'garment_defect.asm', 'water_level_controller.asm'],
@@ -67,7 +67,7 @@ export const PROGRAMS = {
 
 /** How many programs the library holds. Written out so that anything quoting
  *  the number reads it from here rather than repeating it. */
-export const PROGRAM_COUNT = 384;
+export const PROGRAM_COUNT = 396;
 
 /** How many categories they are grouped into. */
 export const CATEGORY_COUNT = 39;
