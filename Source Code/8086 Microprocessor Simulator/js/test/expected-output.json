@@ -263,12 +263,60 @@
     "output": "",
     "finished": true
   },
+  "Data Structures/balanced_parentheses.asm": {
+    "output": "First:  { a[i] = (b + c) * d; }  balanced\nSecond: { a[i) = (b + c] * d; }  mismatched at position 5\nThird:  (a + b  ended with brackets still open\n",
+    "finished": true
+  },
+  "Data Structures/binary_tree_in_array.asm": {
+    "output": "Root:      50\nIn order:  20 30 40 50 60 70 80 \nPre order: 50 30 20 40 70 60 80 \nDepth:     3\n",
+    "finished": true
+  },
+  "Data Structures/circular_queue.asm": {
+    "output": "added   10   holding: 10 \nadded   20   holding: 10 20 \nadded   30   holding: 10 20 30 \nadded   40   holding: 10 20 30 40 \nadded   50   holding: 10 20 30 40 50 \nthe queue is full, so 60 was refused\nremoved 10   holding: 20 30 40 50 \nremoved 20   holding: 30 40 50 \nadded   60   holding: 30 40 50 60 \nadded   70   holding: 30 40 50 60 70 \nremoved 30   holding: 40 50 60 70 \nremoved 40   holding: 50 60 70 \nremoved 50   holding: 60 70 \nremoved 60   holding: 70 \nremoved 70   holding: \nthe queue is empty\n",
+    "finished": true
+  },
+  "Data Structures/deque_double_ended.asm": {
+    "output": "push back  30   holding: 30 \npush back  40   holding: 30 40 \npush front 20   holding: 20 30 40 \npush front 10   holding: 10 20 30 40 \npop back   40   holding: 10 20 30 \npop front  10   holding: 20 30 \n",
+    "finished": true
+  },
+  "Data Structures/evaluate_postfix.asm": {
+    "output": "Postfix:  53+82-*\nValue:    48\n",
+    "finished": true
+  },
+  "Data Structures/hash_table_linear_probing.asm": {
+    "output": "stored 27 at slot 5, after 0 probes\nstored 18 at slot 7, after 0 probes\nstored 29 at slot 8, after 1 probes\nstored 40 at slot 9, after 2 probes\nstored 5 at slot 6, after 1 probes\nstored 16 at slot 10, after 5 probes\n29 was found at slot 8\n99 is not in the table\n",
+    "finished": true
+  },
+  "Data Structures/infix_to_postfix.asm": {
+    "output": "Infix:   a+b*c-d/e\nPostfix: abc*+de/-\n",
+    "finished": true
+  },
+  "Data Structures/linked_list_in_memory.asm": {
+    "output": "The list:          10 -> 20 -> 40 -> Nodes: 3\nAfter inserting:   10 -> 20 -> 30 -> 40 -> Nodes: 4\n",
+    "finished": true
+  },
+  "Data Structures/priority_queue_by_insertion.asm": {
+    "output": "arrives 5   waiting: 5 \narrives 1   waiting: 1 5 \narrives 9   waiting: 1 5 9 \narrives 3   waiting: 1 3 5 9 \nserving 1   waiting: 3 5 9 \nserving 3   waiting: 5 9 \nserving 5   waiting: 9 \nserving 9   waiting: \nnobody is waiting\n",
+    "finished": true
+  },
   "Data Structures/queue.asm": {
     "output": "\nEnqueued Value: A\nEnqueued Value: A\nEnqueued Value: A\nEnqueued Value: A\nEnqueued Value: A\nStatus: Queue is FULL!\nStatus: Queue is FULL!\nDequeued Value: A\nDequeued Value: A\nDequeued Value: A",
     "finished": true
   },
+  "Data Structures/set_union_and_intersection.asm": {
+    "output": "A:            1 3 5 7 12 \nB:            2 7 9 12 \nA or B:       1 2 3 5 7 9 12 \nA and B:      7 12 \nIn A only:    1 3 5 \n",
+    "finished": true
+  },
   "Data Structures/stack_array.asm": {
     "output": "\nPushed To Stack: 1\nPushed To Stack: 2\nPopped From Stack: \u0000\nPopped From Stack: 2\nStatus: Stack Underflow!",
+    "finished": true
+  },
+  "Data Structures/stack_using_pointer.asm": {
+    "output": "push 11   free slots: 7\npush 22   free slots: 6\npush 33   free slots: 5\npop  33   free slots: 6\npop  22   free slots: 7\npop  11   free slots: 8\nthe stack is empty\n",
+    "finished": true
+  },
+  "Data Structures/stack_with_minimum.asm": {
+    "output": "push 40   smallest now: 40\npush 15   smallest now: 15\npush 70   smallest now: 15\npush 8   smallest now: 8\npush 22   smallest now: 8\npop  22   smallest now: 8\npop  8   smallest now: 15\npop  70   smallest now: 15\npop  15   smallest now: 40\npop  40   the stack is empty\n",
     "finished": true
   },
   "Data Transfer/in_out_port_transfer.asm": {
