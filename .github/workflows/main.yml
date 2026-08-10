@@ -21,8 +21,40 @@ jobs:
       - name: Prepare Deployment Directory
         run: |
           mkdir public
+
+          # The redirect that sends a visitor on to the simulator.
           cp index.html public/
+
+          # The personalised not-found page. GitHub Pages only honours a
+          # 404.html at the root of the published site, and this workflow
+          # decides what that root contains, so it has to be copied in
+          # explicitly. Leaving it out is why a wrong URL used to fall through
+          # to GitHub's own not-found page.
+          cp 404.html public/
+
+          # The simulator and all 525 programs.
           cp -r "Source Code" public/
+
+      - name: Verify The Site Has What It Needs
+        run: |
+          # A deployment that silently omits a file is the failure this whole
+          # step exists to prevent, so the artifact is checked before it is
+          # uploaded rather than afterwards in a browser.
+          for required in "public/index.html" "public/404.html" \
+                          "public/Source Code/8086 Microprocessor Simulator/index.html"; do
+            if [ ! -f "$required" ]; then
+              echo "missing from the deployment: $required"
+              exit 1
+            fi
+          done
+
+          programs=$(find "public/Source Code" -name '*.asm' -not -path '*8086 Microprocessor Simulator*' | wc -l)
+          echo "programs to publish: $programs"
+
+          if [ "$programs" -lt 500 ]; then
+            echo "far fewer programs than expected; the copy is probably incomplete"
+            exit 1
+          fi
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
