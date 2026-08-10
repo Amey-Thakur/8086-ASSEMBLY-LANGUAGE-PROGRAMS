@@ -33,6 +33,11 @@ import { PortSpace, FileStore, Clock } from '../exec/devices.js';
 
 /** Where the assembler places code and data by default. Chosen so the layout
  *  matches what a small .COM style program under DOS would see. */
+/** The text screen the BIOS services describe: eighty columns by twenty five
+ *  rows, which is mode 3 and what every DOS program assumes. */
+export const SCREEN_COLUMNS = 80;
+export const SCREEN_ROWS    = 25;
+
 export const DEFAULT_CODE_SEGMENT = 0x0700;
 export const DEFAULT_DATA_SEGMENT = 0x0800;
 export const DEFAULT_STACK_SEGMENT = 0x0900;
@@ -255,13 +260,43 @@ export class CPU {
         this.consoleOutput += text;
     }
 
+    /**
+     * Write one character to the console and move the cursor as it would move.
+     *
+     * The cursor is tracked even though there is no addressable screen here,
+     * because INT 10h service 03h reports it and a program that positions text
+     * relative to where it just printed would otherwise be told the wrong
+     * column. Carriage return and line feed are emitted by DOS as a pair, so
+     * the pair collapses into one newline for the transcript while still
+     * moving the cursor the way each one does.
+     */
     writeCharacter(code) {
-        // Carriage return and line feed are emitted by DOS as a pair; collapse
-        // the pair into one newline so the transcript reads naturally.
-        if (code === 0x0D) return;
-        if (code === 0x0A) { this.consoleOutput += '\n'; return; }
+        if (code === 0x0D) {                     // return to the left margin
+            this.cursor.column = 0;
+            return;
+        }
+
+        if (code === 0x0A) {                     // down one line
+            this.consoleOutput += '\n';
+            this.cursor.column = 0;
+            if (this.cursor.row < SCREEN_ROWS - 1) this.cursor.row++;
+            return;
+        }
+
+        if (code === 0x08) {                     // backspace
+            if (this.cursor.column > 0) this.cursor.column--;
+            this.consoleOutput += String.fromCharCode(code);
+            return;
+        }
 
         this.consoleOutput += String.fromCharCode(code);
+
+        // Past the right hand edge the cursor wraps to the next line, exactly
+        // as the teletype service does on real hardware.
+        if (++this.cursor.column < SCREEN_COLUMNS) return;
+
+        this.cursor.column = 0;
+        if (this.cursor.row < SCREEN_ROWS - 1) this.cursor.row++;
     }
 
     // -------------------------------------------------------------------------

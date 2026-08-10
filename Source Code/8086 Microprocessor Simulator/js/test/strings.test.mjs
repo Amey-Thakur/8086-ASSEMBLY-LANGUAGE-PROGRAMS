@@ -485,5 +485,84 @@ expectState('@DATA survives DS being pointed elsewhere',
             { BX: 'A000', CX: '0800' });
 
 // -----------------------------------------------------------------------------
+console.log('\nTHE CURSOR');
+//
+// There is no addressable screen here, but INT 10h service 03h reports where
+// the cursor is, and a program that positions text relative to what it just
+// printed depends on that answer being right.
+// -----------------------------------------------------------------------------
+{
+    const state = run(`.CODE
+                       MOV AH,02h
+                       MOV BH,0
+                       MOV DH,5
+                       MOV DL,20
+                       INT 10h
+                       MOV AH,0Eh
+                       MOV AL,'A'
+                       INT 10h
+                       INT 10h
+                       INT 10h
+                       MOV AH,03h
+                       INT 10h
+                       HLT`);
+
+    check('printing advances the column',
+          [state.cpu.registers.get('DH'), state.cpu.registers.get('DL')], [5, 23]);
+}
+
+{
+    const state = run(`.CODE
+                       MOV AH,02h
+                       MOV DH,3
+                       MOV DL,40
+                       INT 10h
+                       MOV AH,02h
+                       MOV DL,0Dh
+                       INT 21h
+                       MOV AH,03h
+                       INT 10h
+                       HLT`);
+
+    check('a carriage return returns to the margin',
+          [state.cpu.registers.get('DH'), state.cpu.registers.get('DL')], [3, 0]);
+}
+
+{
+    const state = run(`.CODE
+                       MOV AH,02h
+                       MOV DH,3
+                       MOV DL,40
+                       INT 10h
+                       MOV AH,02h
+                       MOV DL,0Ah
+                       INT 21h
+                       MOV AH,03h
+                       INT 10h
+                       HLT`);
+
+    check('a line feed moves down and to the margin',
+          [state.cpu.registers.get('DH'), state.cpu.registers.get('DL')], [4, 0]);
+}
+
+{
+    // Eighty columns, so the eighty first character wraps to the next line.
+    const state = run(`.CODE
+                       MOV AH,02h
+                       MOV DH,2
+                       MOV DL,79
+                       INT 10h
+                       MOV AH,0Eh
+                       MOV AL,'X'
+                       INT 10h
+                       MOV AH,03h
+                       INT 10h
+                       HLT`);
+
+    check('the cursor wraps past the right hand edge',
+          [state.cpu.registers.get('DH'), state.cpu.registers.get('DL')], [3, 0]);
+}
+
+// -----------------------------------------------------------------------------
 console.log(`\n${passed} passed, ${failed} failed\n`);
 process.exit(failed === 0 ? 0 : 1);

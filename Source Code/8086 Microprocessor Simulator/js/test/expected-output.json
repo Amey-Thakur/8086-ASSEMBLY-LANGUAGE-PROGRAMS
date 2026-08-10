@@ -87,6 +87,54 @@
     "output": "",
     "finished": true
   },
+  "BIOS Services/bios_boot_and_system.asm": {
+    "output": "Asking INT 15h to wait, which returns at once here.\nThe carry flag came back clear, so the call succeeded.\nINT 19h would restart the machine. It is shown but not\nreached, because the program exits first.\n",
+    "finished": true
+  },
+  "BIOS Services/bios_character_with_attribute.asm": {
+    "output": "A bar drawn with service 09h:\nÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ\nEach block was one call with a count of ten.\n",
+    "finished": true
+  },
+  "BIOS Services/bios_clear_screen.asm": {
+    "output": "The screen was cleared and the cursor went home.\n",
+    "finished": true
+  },
+  "BIOS Services/bios_cursor_control.asm": {
+    "output": "placed at row 5 column 20The cursor is now at row 5, column 45\n",
+    "finished": true
+  },
+  "BIOS Services/bios_keyboard_status.asm": {
+    "output": "Counting until a key is pressed.\nReached 1 before a key arrived.\n",
+    "finished": true
+  },
+  "BIOS Services/bios_keyboard_wait.asm": {
+    "output": "Press a key: \nASCII code: 53\nScan code:  0\n",
+    "finished": true
+  },
+  "BIOS Services/bios_scan_code_table.asm": {
+    "output": "Press four keys.\nkey   ascii  scan\n5      53    0\n(none)    13    28\n3      51    0\n(none)    13    28\n",
+    "finished": true
+  },
+  "BIOS Services/bios_shift_key_state.asm": {
+    "output": "Keyboard state:\n  right shift  off\n  left shift   off\n  control      off\n  alt          off\n  scroll lock  off\n  num lock     off\n  caps lock    off\n  insert       off\n",
+    "finished": true
+  },
+  "BIOS Services/bios_teletype_output.asm": {
+    "output": "Written by the BIOS, one character at a time.\n",
+    "finished": true
+  },
+  "BIOS Services/bios_timer_ticks.asm": {
+    "output": "Ticks since midnight: 32616\nThat is 34200 seconds, or 09:30:00\n",
+    "finished": true
+  },
+  "BIOS Services/bios_versus_dos_output.asm": {
+    "output": "Printed through DOS service 09h.\nPrinted through BIOS service 0Eh.\nBoth reached the screen. The difference is what\neach one depends on.\n",
+    "finished": true
+  },
+  "BIOS Services/bios_video_mode_query.asm": {
+    "output": "Video mode:   3\nColumns:      80\nActive page:  0\nThis is a text mode, so characters can be written.\n",
+    "finished": true
+  },
   "Bit Manipulation/check_power_of_two.asm": {
     "output": "The value is a power of two.\n",
     "finished": true
