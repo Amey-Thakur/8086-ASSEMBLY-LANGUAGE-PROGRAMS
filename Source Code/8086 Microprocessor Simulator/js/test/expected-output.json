@@ -567,6 +567,54 @@
     "output": "",
     "finished": true
   },
+  "Loops/countdown_versus_countup.asm": {
+    "output": "Counting up:   1 2 3 4 5 \nCounting down: 5 4 3 2 1 \n",
+    "finished": true
+  },
+  "Loops/loop_counted_with_cx.asm": {
+    "output": "Pass number 1\nPass number 2\nPass number 3\nPass number 4\nPass number 5\n",
+    "finished": true
+  },
+  "Loops/loop_over_two_arrays.asm": {
+    "output": "Order total: 196\n",
+    "finished": true
+  },
+  "Loops/loop_skipping_elements.asm": {
+    "output": "Sum of the even values: 70\nHow many were even: 3\n",
+    "finished": true
+  },
+  "Loops/loop_unrolling.asm": {
+    "output": "Rolled total:   180\nUnrolled total: 180\n",
+    "finished": true
+  },
+  "Loops/loop_walking_an_array.asm": {
+    "output": "Total: 99\n",
+    "finished": true
+  },
+  "Loops/loop_with_computed_step.asm": {
+    "output": "Every third element: 1 4 7 \n",
+    "finished": true
+  },
+  "Loops/loop_with_early_exit.asm": {
+    "output": "A reading exceeded the limit: 71\nReadings examined before stopping: 4\n",
+    "finished": true
+  },
+  "Loops/loope_repeat_while_equal.asm": {
+    "output": "Leading spaces: 5\n",
+    "finished": true
+  },
+  "Loops/loopne_search_until_found.asm": {
+    "output": "Found at position 3\n",
+    "finished": true
+  },
+  "Loops/nested_loops_multiplication_table.asm": {
+    "output": "1  2  3  4  \n2  4  6  8  \n3  6  9  12  \n4  8  12  16  \n",
+    "finished": true
+  },
+  "Loops/post_test_loop.asm": {
+    "output": "Halving 1000 until it reaches zero:\n500 250 125 62 31 15 7 3 1 0 \nPasses: 10\n",
+    "finished": true
+  },
   "Macros/conditional_macros.asm": {
     "output": "Status: Value is zero!",
     "finished": true
