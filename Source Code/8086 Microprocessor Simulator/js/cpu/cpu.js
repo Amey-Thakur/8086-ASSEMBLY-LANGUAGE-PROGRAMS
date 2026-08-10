@@ -29,7 +29,7 @@
 import { Memory }                    from './memory.js';
 import { RegisterFile }              from './registers.js';
 import { Flags }                     from './flags.js';
-import { PortSpace, FileStore, Clock } from '../exec/devices.js';
+import { PortSpace, FileStore, Clock, PixelPlane } from '../exec/devices.js';
 
 /** Where the assembler places code and data by default. Chosen so the layout
  *  matches what a small .COM style program under DOS would see. */
@@ -68,9 +68,13 @@ export class CPU {
         // The world outside the processor. Kept on the machine rather than in
         // the interrupt handlers so a program's effect on it survives a step
         // and can be shown while execution is paused.
-        this.ports = new PortSpace();
-        this.files = new FileStore();
-        this.clock = new Clock();
+        this.ports  = new PortSpace();
+        this.files  = new FileStore();
+        this.clock  = new Clock();
+
+        // The graphics screen. A program in a graphics mode plots pixels and
+        // reads them back, and both need somewhere to live.
+        this.pixels = new PixelPlane();
 
         this.reset();
     }
@@ -86,6 +90,7 @@ export class CPU {
         this.ports.reset();
         this.files.reset();
         this.clock.reset();
+        this.pixels.reset();
 
         this.registers.set('CS', DEFAULT_CODE_SEGMENT);
         this.registers.set('DS', DEFAULT_DATA_SEGMENT);

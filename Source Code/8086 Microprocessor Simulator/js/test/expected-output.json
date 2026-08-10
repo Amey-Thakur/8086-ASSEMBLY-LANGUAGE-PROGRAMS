@@ -763,8 +763,20 @@
     "output": "Testing Zero Flag (ZF)...\nZF is SET (Result is Zero).\nZF is SET (Result is Zero).\n",
     "finished": true
   },
+  "Graphics/bitmap_sprite_drawing.asm": {
+    "output": "A sprite held as eight bytes of bits\nThe shape, as the bits read:\n...##...\n..####..\n.######.\n##.##.##\n...##...\n...##...\n...##...\n...##...\n\nPixels set in the bitmap: 26\nPixels plotted on screen:  26\nThe two agree, so every set bit reached the screen.\nEight bytes describe a sixty-four pixel shape, which is why bitmaps were stored this way.\n",
+    "finished": true
+  },
+  "Graphics/bresenham_line_algorithm.asm": {
+    "output": "Bresenham from 20,20 to 120,60 in mode 13h\ndx = 100, dy = 40\nPixels plotted: 101\nExpected dx plus one: 101\nLine ended at 120,60\nNo multiplication and no division: only an error term that is adjusted by whole numbers.\n",
+    "finished": true
+  },
   "Graphics/colored_text.asm": {
     "output": "",
+    "finished": true
+  },
+  "Graphics/colour_attribute_table.asm": {
+    "output": "The sixteen colours, written straight into video memory\nEach cell is two bytes: the character, then its attribute.\nThe attribute is background in the high nibble and foreground in the low one.\n\nCells written: 54\nThey were placed on rows 3 to 6, starting at column 4.\nWriting memory needs no interrupt at all, which is why every game did it this way.\n",
     "finished": true
   },
   "Graphics/draw_line.asm": {
@@ -777,6 +789,26 @@
   },
   "Graphics/draw_rectangle.asm": {
     "output": "",
+    "finished": true
+  },
+  "Graphics/screen_clear_and_scroll.asm": {
+    "output": "Service 06h, in the order this program used it:\n\n1. Wrote 12 numbered lines, to have something to move.\n2. Scrolled the whole screen up 3 lines.\n3. Scrolled only rows 5 to 10 up 1 line.\n4. Cleared everything with a scroll of zero lines.\n\nWhich is why nothing above this appears: step four erased it. The report is printed afterwards for that reason.\n\nVideo mode reported by service 0Fh: 3, columns: 80\n",
+    "finished": true
+  },
+  "Graphics/text_mode_bar_chart.asm": {
+    "output": "A bar chart scaled to forty columns\nLargest value: 48\nEach block stands for one unit of the scaled length.\n\n34  ############################\n17  ##############\n48  ########################################\n 5  ####\n29  ########################\n41  ##################################\n",
+    "finished": true
+  },
+  "Graphics/text_mode_box_drawing.asm": {
+    "output": "A box built out of characters\n\n    +--------------------+\n    |                    |\n    |                    |\n    |        8086        |\n    |                    |\n    |                    |\n    +--------------------+\n\nInterior 20 by 5, indented 4, caption centred on the middle row.\n",
+    "finished": true
+  },
+  "Graphics/vertical_histogram_with_axis.asm": {
+    "output": "A vertical histogram, drawn row by row from the top\n\n         ##             \n         ##    ##       \n   ##    ##    ##       \n   ##    ##    ##    ## \n   ##    ## ## ##    ## \n   ##    ## ## ## ## ## \n## ##    ## ## ## ## ## \n## ## ## ## ## ## ## ## \n## ## ## ## ## ## ## ## \n------------------------\n 3  7  2  9  5  8  4  6 \n\nA column cannot be drawn downwards without moving the cursor, so the whole picture is emitted in reading order instead.\n",
+    "finished": true
+  },
+  "Graphics/vga_mode_13h_pixels.asm": {
+    "output": "Mode 13h: 320 by 200 pixels, 256 colours\nPlotted 340 pixels: a diagonal, a horizontal run and a box outline.\nReading the pixel at 60,50 back gave colour 4  which is what was written there.\nText mode restored, so the screen is usable again.\n",
     "finished": true
   },
   "Input Output/display_binary.asm": {

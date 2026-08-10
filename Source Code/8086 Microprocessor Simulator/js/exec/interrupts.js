@@ -345,8 +345,33 @@ const VIDEO_SERVICES = {
         cpu.cursor = { row: cpu.registers.get('DH'), column: cpu.registers.get('DL') };
     },
 
-    // 00h  set video mode. Accepted and ignored.
-    0x00() { /* text only */ },
+    // 00h  set video mode.
+    //
+    // Setting a mode clears the screen on real hardware, so the pixel plane is
+    // cleared too. The transcript is left alone: a program that draws and then
+    // returns to text mode still has its report to print.
+    0x00(cpu) {
+        cpu.pixels.setMode(cpu.registers.get('AL') & 0x7F);
+    },
+
+    // 0Ch  write a pixel: colour in AL, column in CX, row in DX.
+    //
+    // A coordinate outside the current mode is discarded rather than wrapped,
+    // because a wrapped pixel appears somewhere unrelated and hides the mistake.
+    0x0C(cpu) {
+        cpu.pixels.plot(cpu.registers.get('CX'),
+                        cpu.registers.get('DX'),
+                        cpu.registers.get('AL'));
+    },
+
+    // 0Dh  read a pixel back, returning the colour in AL.
+    //
+    // This is what lets a drawing routine be checked rather than trusted, so it
+    // has to read the plane the plotting wrote to.
+    0x0D(cpu) {
+        cpu.registers.set('AL', cpu.pixels.read(cpu.registers.get('CX'),
+                                                cpu.registers.get('DX')));
+    },
 
     // 06h  scroll a window. Used to clear the screen, which is honoured by
     // starting the transcript again rather than by moving anything.
@@ -366,10 +391,11 @@ const VIDEO_SERVICES = {
         cpu.registers.set('CX', 0x0607);      // an ordinary underline cursor
     },
 
-    // 0Fh  report the video mode: eighty column colour text, page zero.
+    // 0Fh  report the video mode currently set, its width in columns, and the
+    // display page. Reporting a fixed answer would contradict service 00h.
     0x0F(cpu) {
-        cpu.registers.set('AL', 0x03);
-        cpu.registers.set('AH', 80);
+        cpu.registers.set('AL', cpu.pixels.mode);
+        cpu.registers.set('AH', cpu.pixels.isGraphics ? 80 : cpu.pixels.width);
         cpu.registers.set('BH', 0);
     }
 };

@@ -13,7 +13,7 @@
 //              .asm file from the folder beside this one, so what the simulator
 //              runs is what the repository actually holds.
 //
-//              441 programs across 39 categories.
+//              449 programs across 39 categories.
 //
 // Authors:     Amey Thakur
 // Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
@@ -40,7 +40,7 @@ export const PROGRAMS = {
     'External Devices': ['keyboard.asm', 'led_display_test.asm', 'mouse.asm', 'robot.asm', 'stepper_motor.asm', 'thermometer.asm', 'timer.asm', 'traffic_lights.asm', 'traffic_lights_advanced.asm'],
     'File Operations': ['append_to_file.asm', 'copy_file_contents.asm', 'create_file.asm', 'delete_file.asm', 'file_error_handling.asm', 'file_random_access_records.asm', 'file_size_by_seek.asm', 'open_existing_file.asm', 'read_file.asm', 'read_file_in_chunks.asm', 'rename_and_delete_file.asm', 'write_file.asm'],
     'Flags': ['carry_flag.asm', 'overflow_flag.asm', 'parity_flag.asm', 'sign_flag.asm', 'zero_flag.asm'],
-    'Graphics': ['colored_text.asm', 'draw_line.asm', 'draw_pixel.asm', 'draw_rectangle.asm'],
+    'Graphics': ['bitmap_sprite_drawing.asm', 'bresenham_line_algorithm.asm', 'colored_text.asm', 'colour_attribute_table.asm', 'draw_line.asm', 'draw_pixel.asm', 'draw_rectangle.asm', 'screen_clear_and_scroll.asm', 'text_mode_bar_chart.asm', 'text_mode_box_drawing.asm', 'vertical_histogram_with_axis.asm', 'vga_mode_13h_pixels.asm'],
     'Input Output': ['display_binary.asm', 'display_decimal.asm', 'display_hex.asm', 'read_number.asm'],
     'Interrupts': ['bios_cursor_position.asm', 'bios_keyboard.asm', 'bios_system_time.asm', 'bios_video_mode.asm', 'dos_display_char.asm', 'dos_display_string.asm', 'dos_read_char.asm', 'dos_read_string.asm'],
     'Introduction': ['data_definition_demo.asm', 'display_characters.asm', 'display_string_direct.asm', 'display_system_time.asm', 'hello_world_dos.asm', 'hello_world_interrupt.asm', 'hello_world_procedure.asm', 'hello_world_procedure_advanced.asm', 'hello_world_string.asm', 'hello_world_vga.asm', 'keyboard_wait_input.asm', 'mov_instruction_demo.asm', 'print_alphabets.asm', 'procedure_demo.asm', 'procedure_multiplication.asm'],
@@ -67,7 +67,7 @@ export const PROGRAMS = {
 
 /** How many programs the library holds. Written out so that anything quoting
  *  the number reads it from here rather than repeating it. */
-export const PROGRAM_COUNT = 441;
+export const PROGRAM_COUNT = 449;
 
 /** How many categories they are grouped into. */
 export const CATEGORY_COUNT = 39;

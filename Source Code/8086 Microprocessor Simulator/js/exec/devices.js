@@ -247,6 +247,133 @@ export class FileStore {
 }
 
 // -----------------------------------------------------------------------------
+// PIXELS
+//
+// The BIOS can plot a single pixel and read one back, and a program in a
+// graphics mode does nothing else. Without somewhere to keep them, a plot goes
+// nowhere and a read returns whatever happened to be in AL, which looks like the
+// program is wrong when it is not.
+//
+// One byte per pixel, which is exactly right for mode 13h and generous for the
+// modes with fewer colours. The plane is allocated once at the largest size any
+// supported mode needs rather than reallocated on every mode change.
+// -----------------------------------------------------------------------------
+
+/** The graphics modes, and how many pixels each one addresses. */
+export const VIDEO_MODES = {
+    0x04: { width: 320, height: 200, graphics: true  },
+    0x05: { width: 320, height: 200, graphics: true  },
+    0x06: { width: 640, height: 200, graphics: true  },
+    0x0D: { width: 320, height: 200, graphics: true  },
+    0x0E: { width: 640, height: 200, graphics: true  },
+    0x10: { width: 640, height: 350, graphics: true  },
+    0x12: { width: 640, height: 480, graphics: true  },
+    0x13: { width: 320, height: 200, graphics: true  },
+
+    0x00: { width: 40, height: 25, graphics: false },
+    0x01: { width: 40, height: 25, graphics: false },
+    0x02: { width: 80, height: 25, graphics: false },
+    0x03: { width: 80, height: 25, graphics: false },
+    0x07: { width: 80, height: 25, graphics: false }
+};
+
+const WIDEST  = 640;
+const TALLEST = 480;
+
+export class PixelPlane {
+
+    constructor() {
+        this.data = new Uint8Array(WIDEST * TALLEST);
+        this.reset();
+    }
+
+    reset() {
+        this.data.fill(0);
+
+        this.mode    = 0x03;          // Eighty column colour text, as DOS leaves it
+        this.width   = 80;
+        this.height  = 25;
+        this.written = 0;             // How many pixels the program has plotted
+    }
+
+    /**
+     * Service 00h: set the video mode.
+     *
+     * Changing mode clears the screen on real hardware, so the plane is cleared
+     * too. An unrecognised mode is accepted and treated as text, because
+     * refusing it would stop a program that merely asked for something exotic.
+     */
+    setMode(mode) {
+        const known = VIDEO_MODES[mode] ?? { width: 80, height: 25, graphics: false };
+
+        this.mode    = mode;
+        this.width   = known.width;
+        this.height  = known.height;
+        this.graphics = known.graphics === true;
+
+        this.data.fill(0);
+        this.written = 0;
+    }
+
+    /** True when the current mode can hold pixels at all. */
+    get isGraphics() {
+        return VIDEO_MODES[this.mode]?.graphics === true;
+    }
+
+    /**
+     * Service 0Ch: write one pixel.
+     *
+     * A coordinate outside the mode is discarded rather than wrapped. Wrapping
+     * would put a stray pixel somewhere unrelated and make a clipping mistake
+     * very hard to see.
+     */
+    plot(column, row, colour) {
+        if (column >= this.width || row >= this.height) return false;
+
+        this.data[(row * WIDEST) + column] = colour & 0xFF;
+        this.written++;
+        return true;
+    }
+
+    /** Service 0Dh: read one pixel. Outside the mode reads as zero. */
+    read(column, row) {
+        if (column >= this.width || row >= this.height) return 0;
+
+        return this.data[(row * WIDEST) + column];
+    }
+
+    /**
+     * What the interface needs to draw the graphics panel: the bounding box of
+     * everything plotted, so a small drawing is not shown as a speck in a corner
+     * of an otherwise empty 320 by 200 field.
+     */
+    snapshot() {
+        if (this.written === 0) return null;
+
+        let left = this.width, right = -1, top = this.height, bottom = -1;
+
+        for (let row = 0; row < this.height; row++) {
+            for (let column = 0; column < this.width; column++) {
+                if (this.data[(row * WIDEST) + column] === 0) continue;
+
+                if (column < left)   left   = column;
+                if (column > right)  right  = column;
+                if (row    < top)    top    = row;
+                if (row    > bottom) bottom = row;
+            }
+        }
+
+        return {
+            mode:   this.mode,
+            width:  this.width,
+            height: this.height,
+            plotted: this.written,
+            bounds: right < 0 ? null : { left, top, right, bottom }
+        };
+    }
+}
+
+// -----------------------------------------------------------------------------
 // CLOCK
 //
 // Fixed rather than live. A program that prints the time should print the same
