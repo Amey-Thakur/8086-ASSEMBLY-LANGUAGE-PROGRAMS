@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // Script Name: expressions.js
-// Module:      Assembler, 3 of 5
+// Module:      Assembler, 2 of 5
 // Stack:       JavaScript (ES2020), depends on lexer.js
 // Description: Evaluates the constant expressions assembly source is allowed to
 //              write wherever a number is expected. Three places need this and
@@ -161,6 +161,16 @@ function accept(state, ...texts) {
     const token = peek(state);
 
     if (token && token.type === 'operator' && texts.includes(token.text)) {
+        // A name may be both an operator and a symbol the program defined.
+        // LENGTH and SIZE are the usual casualties, because they are the
+        // obvious names for a constant holding how long something is. A
+        // program that defined one meant its own, so the definition wins and
+        // the operator is only recognised when nothing of that name exists.
+        if (ADDRESS_OPERATORS.has(token.text) &&
+            Object.hasOwn(state.context.symbols, token.text)) {
+            return null;
+        }
+
         state.position++;
         return token.text;
     }
@@ -284,6 +294,12 @@ function parsePrimary(state) {
 
     if (token.type === 'here')    return state.context.location;
     if (token.type === 'literal') return readLiteral(token.text);
+
+    // An operator name the program has also defined as a symbol reaches here
+    // because accept() declined it. Read it as the symbol it was declared to be.
+    if (token.type === 'operator' && Object.hasOwn(state.context.symbols, token.text)) {
+        return readName(state, token.text);
+    }
 
     if (token.type !== 'word') {
         throw new SyntaxError8086(`"${token.text}" cannot start a value`);

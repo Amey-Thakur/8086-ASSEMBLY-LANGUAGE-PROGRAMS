@@ -915,6 +915,54 @@
     "output": "Registers Swapped using Stack Mechanics.",
     "finished": true
   },
+  "String Instructions/cmpsb_compare_strings.asm": {
+    "output": "The first and third are identical.\nThe first and second differ at position 7\n",
+    "finished": true
+  },
+  "String Instructions/count_character_occurrences.asm": {
+    "output": "The letter 's' appears 6 times\n",
+    "finished": true
+  },
+  "String Instructions/lodsb_process_each_byte.asm": {
+    "output": "Input:  amey thakur 2022\nUpper:  AMEY THAKUR 2022\n",
+    "finished": true
+  },
+  "String Instructions/movsb_copy_a_string.asm": {
+    "output": "Source: Amey Thakur\nCopy:   Amey Thakur\n",
+    "finished": true
+  },
+  "String Instructions/movsw_copy_words.asm": {
+    "output": "The copied array: 100 200 300 400 500 600 \n",
+    "finished": true
+  },
+  "String Instructions/overlapping_copy_with_direction.asm": {
+    "output": "Before:  ABCDE \nShifted: *ABCDE\n",
+    "finished": true
+  },
+  "String Instructions/palindrome_with_string_instructions.asm": {
+    "output": "MALAYALAM is a palindrome.\n",
+    "finished": true
+  },
+  "String Instructions/reverse_string_with_pointers.asm": {
+    "output": "Before: ASSEMBLY\nAfter:  YLBMESSA\n",
+    "finished": true
+  },
+  "String Instructions/scasb_find_a_character.asm": {
+    "output": "Found at position 5\n",
+    "finished": true
+  },
+  "String Instructions/segment_override_on_source.asm": {
+    "output": "Copied through an override: Overridden!\n",
+    "finished": true
+  },
+  "String Instructions/stosb_fill_a_buffer.asm": {
+    "output": "Filled with dots: ....................\n",
+    "finished": true
+  },
+  "String Instructions/string_length_with_scasb.asm": {
+    "output": "The string is 34 characters long\n",
+    "finished": true
+  },
   "String Operations/palindrome_check.asm": {
     "output": "String is a Palindrome",
     "finished": true
