@@ -27,18 +27,14 @@
 <!-- AUTHORS -->
 <div align="center">
 
-  ## Authors
+  ## Author
 
   **Terna Engineering College | Computer Engineering | Batch of 2022**
 
-| <a href="https://github.com/Amey-Thakur"><img src="https://github.com/Amey-Thakur.png" width="150" height="150" alt="Amey Thakur"></a><br>[**Amey Thakur**](https://github.com/Amey-Thakur)<br><br>[![ORCID](https://img.shields.io/badge/ORCID-0000--0001--5644--1575-green.svg)](https://orcid.org/0000-0001-5644-1575) | <a href="https://github.com/msatmod"><img src="Mega/Mega.png" width="150" height="150" alt="Mega Satish"></a><br>[**Mega Satish**](https://github.com/msatmod)<br><br>[![ORCID](https://img.shields.io/badge/ORCID-0000--0002--1844--9557-green.svg)](https://orcid.org/0000-0002-1844-9557) |
-| :---: | :---: |
+| <a href="https://github.com/Amey-Thakur"><img src="https://github.com/Amey-Thakur.png" width="150" height="150" alt="Amey Thakur"></a><br>[**Amey Thakur**](https://github.com/Amey-Thakur)<br><br>[![ORCID](https://img.shields.io/badge/ORCID-0000--0001--5644--1575-green.svg)](https://orcid.org/0000-0001-5644-1575) |
+| :---: |
 
 </div>
-
-> [!IMPORTANT]
-> ### 🤝🏻 Special Acknowledgement
-> *Special thanks to **[Mega Satish](https://github.com/msatmod)** for her meaningful contributions, guidance, and support that helped shape this work.*
 
 ---
 
@@ -99,8 +95,10 @@ As a computer engineer, understanding the underlying hardware-software interface
 
 - **Architecture** → Intel 8086 (16-bit)
 - **Assembler** → MASM / TASM Syntax Compatibility
-- **Emulator** → Emu8086
+- **Emulator** → Emu8086 (native) · 8086 Microprocessor Simulator (browser)
 - **Language** → Assembly (ASM)
+- **Simulator** → JavaScript (ES2020 Modules), no dependencies and no build step
+- **Verification** → 599 conformance tests, run with `npm test`
 
 ---
 
@@ -140,7 +138,19 @@ As a computer engineer, understanding the underlying hardware-software interface
 │   ├── Sorting/                             # Bubble, Selection, Insertion (5)
 │   ├── Stack Operations/                    # String Reverse, Swap, Push/Pop (3)
 │   ├── String Operations/                   # Length, Reverse, Palindrome (5)
-│   └── Utilities/                           # Delays, Password, Sound, Clear (5)
+│   ├── Utilities/                           # Delays, Password, Sound, Clear (5)
+│   │
+│   └── 8086 Microprocessor Simulator/       # Web Simulator (No Dependencies)
+│       ├── css/                             # Tokens, Layout, Components (3)
+│       ├── js/
+│       │   ├── cpu/                         # Memory, Registers, Flags, Shifter, ALU, CPU (6)
+│       │   ├── asm/                         # Lexer, Macros, Expressions, Operands, Assembler (5)
+│       │   ├── exec/                        # Executor, Devices, Strings, Interrupts (4)
+│       │   ├── ui/                          # Highlight, Editor, Inspector, Library, Console, App (6)
+│       │   └── test/                        # Conformance Suites (9)
+│       ├── index.html                       # Simulator Entry Point
+│       ├── package.json                     # Test Runner Configuration
+│       └── programs.js                      # Program Library Index
 │
 ├── .gitattributes                           # Git Configuration
 ├── .gitignore                               # Git Ignore Rules
@@ -167,13 +177,41 @@ As a computer engineer, understanding the underlying hardware-software interface
 > 
 > These programs are designed for the **Intel 8086 (16-bit)** architecture. Executing them in modern 64-bit operating systems without proper emulation (e.g., DOSBox) may lead to system crashes or undefined behavior due to direct memory access and interrupt usage. Always use a sandboxed 16-bit environment.
 
-### Option 1: Web Emulator (Recommended)
+### Option 1: Web Simulator (Recommended)
 
 Run programs instantly in your browser without any installation.
 
 1.  **Open the Live Demo**: [8086 Assembly Emulator](https://amey-thakur.github.io/8086-ASSEMBLY-LANGUAGE-PROGRAMS/)
-2.  **Select a Program**: Browse the sidebar library containing **161+ programs**.
-3.  **Run or Step**: Fast-forward execution or debug line-by-line.
+2.  **Select a Program**: Browse the sidebar library containing all **161 programs**.
+3.  **Run or Step**: Run to completion, or step one instruction at a time and watch the registers, flags, stack and memory change.
+
+Every program in this repository assembles and runs in the simulator. The
+simulator loads the real `.asm` files from the folders beside it rather than
+copies, so what runs is what the repository holds.
+
+**What it implements**
+
+| Layer | Coverage |
+|:------|:---------|
+| **Instructions** | The full 8086 set: arithmetic with all nine flags, BCD adjustment, shifts and rotates through carry, string operations with `REP`, `CALL`/`RET`, and port `IN`/`OUT` |
+| **Assembler** | Two passes with forward references, `MACRO` with `LOCAL`, conditional assembly, constant expressions including `$`, `OFFSET`, `SEG`, `DUP` and jump tables |
+| **Services** | `INT 21h` for console, buffered input, files and the clock; `INT 10h`, `16h`, `1Ah`, `15h` and `20h` |
+| **Verification** | 599 tests across nine suites, including one that assembles and runs all 161 programs |
+
+**Running the tests**
+
+```bash
+cd "Source Code/8086 Microprocessor Simulator" && npm test
+```
+
+**Serving it locally**
+
+The simulator fetches the `.asm` files, which a browser will not do for a page
+opened straight from disk. Serve the repository folder instead:
+
+```bash
+npx http-server . -p 8080
+```
 
 ### Option 2: Local Development
 
@@ -202,7 +240,7 @@ For a full native experience with hardware access (requires Windows).
 > [!TIP]
 > **Integrated 8086 Assembly Microprocessor Emulator**
 >
-> Execute and debug 16-bit TASM/MASM assembly programs through a high-fidelity web-based simulation environment featuring real-time register monitoring, memory inspection, and step-by-step instruction analysis.
+> Assemble and debug 16-bit TASM/MASM assembly in the browser, with the registers, the nine flags, the stack, memory and the device ports all visible while the program runs, and single stepping through the source line by line.
 >
 > [**Launch 8086 Assembly Emulator**](https://amey-thakur.github.io/8086-ASSEMBLY-LANGUAGE-PROGRAMS/)
 
@@ -737,8 +775,6 @@ This repository represents a comprehensive collection of 8086 assembly programs 
 **Connect:** [GitHub](https://github.com/Amey-Thakur) &nbsp;·&nbsp; [LinkedIn](https://www.linkedin.com/in/amey-thakur) &nbsp;·&nbsp; [ORCID](https://orcid.org/0000-0001-5644-1575)
 
 ### Acknowledgments
-
-Grateful acknowledgment to [**Mega Satish**](https://github.com/msatmod) for her exceptional collaboration and scholarly partnership during the curation and documentation of this assembly language archive. Her constant support, technical clarity, and dedication to precision were instrumental in organizing these assembly language programs into a comprehensive academic resource. Learning alongside her was a transformative experience; her thoughtful approach to low-level architecture and encouragement turned complex challenges into meaningful learning moments. This work reflects the growth and insights gained from our side-by-side academic journey. Thank you, Mega, for everything you shared and taught along the way.
 
 Grateful acknowledgment to the faculty members of the **Department of Computer Engineering** at Terna Engineering College for their guidance and instruction in Microprocessors. Their clear teaching and continued support helped develop a strong understanding of low-level system architecture and 16-bit CISC operations.
 

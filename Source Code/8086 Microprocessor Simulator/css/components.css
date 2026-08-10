@@ -1,0 +1,703 @@
+/* -----------------------------------------------------------------------------
+   Stylesheet:  components.css
+   Module:      Stylesheet, 3 of 3
+   Stack:       CSS, no framework
+   Description: The parts the shell is filled with: buttons, the editor, the
+                register and flag readouts, the console, the program library and
+                the diagnostics list.
+
+                One rule runs through all of it. Anything the processor produced
+                is set in a monospaced face with tabular figures, so a column of
+                values stays a column and a digit changing does not move the one
+                beside it. Everything else, being labels and controls, is set in
+                the interface face.
+
+   Authors:     Amey Thakur
+   Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+   License:     CC BY 4.0
+----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+   BUTTONS
+----------------------------------------------------------------------------- */
+.button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    height: 30px;
+    padding: 0 var(--space-3);
+
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+
+    font-size: var(--size-sm);
+    font-weight: 500;
+    white-space: nowrap;
+
+    transition: background var(--transition), border-color var(--transition),
+                color var(--transition);
+}
+
+.button:hover:not(:disabled) {
+    background: var(--surface-sunken);
+    border-color: var(--ink-faint);
+}
+
+.button:active:not(:disabled) {
+    /* A single pixel of travel. Enough to feel, not enough to notice. */
+    transform: translateY(1px);
+}
+
+.button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.button--primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+}
+
+.button--primary:hover:not(:disabled) {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.button--quiet {
+    border-color: transparent;
+    background: transparent;
+    color: var(--ink-muted);
+}
+
+.button--quiet:hover:not(:disabled) {
+    background: var(--surface-sunken);
+    border-color: var(--rule);
+    color: var(--ink);
+}
+
+.button--icon {
+    width: 30px;
+    padding: 0;
+    justify-content: center;
+}
+
+.button__icon {
+    width: 14px;
+    height: 14px;
+    fill: currentColor;
+}
+
+/* -----------------------------------------------------------------------------
+   THE EDITOR
+
+   A textarea over a gutter. The two scroll together, which is the whole trick:
+   the gutter is not scrollable itself, it is moved by the same amount the
+   textarea reports.
+----------------------------------------------------------------------------- */
+.editor {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+
+    background: var(--surface-sunken);
+    font-family: var(--font-mono);
+    font-size: var(--size-base);
+    line-height: var(--line-code);
+}
+
+.editor__gutter {
+    flex: none;
+    width: 52px;
+    padding: var(--space-3) var(--space-2) var(--space-3) 0;
+
+    border-right: 1px solid var(--rule);
+    background: var(--surface);
+
+    overflow: hidden;
+    text-align: right;
+    color: var(--ink-faint);
+    user-select: none;
+}
+
+.editor__line {
+    position: relative;
+    padding-right: var(--space-2);
+    font-variant-numeric: tabular-nums;
+}
+
+/* The instruction about to be executed. */
+.editor__line--current {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* A line the assembler complained about. */
+.editor__line--error {
+    background: var(--error-soft);
+    color: var(--error);
+    font-weight: 600;
+}
+
+/* ---- the two stacked layers ------------------------------------------------
+   The colouring is drawn underneath and the text area sits exactly on top of
+   it with its own text made transparent. Every property that affects where a
+   glyph lands has to match between them, which is why the font, the padding,
+   the line height, the tab size and the wrapping are all declared on the pair
+   rather than on either one.
+--------------------------------------------------------------------------- */
+.editor__surface {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.editor__painted,
+.editor__input {
+    position: absolute;
+    inset: 0;
+
+    margin: 0;
+    padding: var(--space-3) var(--space-4);
+    border: 0;
+
+    font-family: var(--font-mono);
+    font-size: var(--size-base);
+    line-height: var(--line-code);
+    letter-spacing: 0;
+    tab-size: 4;
+
+    white-space: pre;
+    word-break: normal;
+    overflow-wrap: normal;
+}
+
+.editor__painted {
+    background: transparent;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+    color: var(--ink);
+}
+
+.editor__input {
+    /* The glyphs come from the layer beneath; only the caret and the selection
+       belong to the text area itself. */
+    background: transparent;
+    color: transparent;
+    caret-color: var(--ink);
+
+    resize: none;
+    overflow: auto;
+}
+
+.editor__input::selection {
+    /* A translucent selection lets the coloured text stay readable through it. */
+    background: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.editor__input:focus {
+    outline: none;
+}
+
+.editor__input::placeholder {
+    color: var(--ink-faint);
+}
+
+/* ---- the categories --------------------------------------------------------
+   Comments are also set back and labels are also in bold, so the distinction
+   survives for anyone who does not see the colours apart.
+--------------------------------------------------------------------------- */
+.tok--comment   { color: var(--code-comment); font-style: italic; }
+.tok--directive { color: var(--code-directive); }
+.tok--mnemonic  { color: var(--code-mnemonic); font-weight: 600; }
+.tok--register  { color: var(--code-register); }
+.tok--number    { color: var(--code-number); }
+.tok--string    { color: var(--code-string); }
+.tok--label     { color: var(--code-label); font-weight: 600; }
+
+/* The file name and the actions above the editor. */
+.editor__filename {
+    font-family: var(--font-mono);
+    font-size: var(--size-sm);
+    color: var(--ink);
+}
+
+.editor__origin {
+    font-size: var(--size-xs);
+    color: var(--ink-faint);
+}
+
+/* -----------------------------------------------------------------------------
+   DIAGNOSTICS
+
+   Sits under the editor and takes only the room it needs. When a program
+   assembles cleanly it is not there at all.
+----------------------------------------------------------------------------- */
+.diagnostics {
+    flex: none;
+    max-height: 30%;
+    overflow-y: auto;
+
+    border-top: 1px solid var(--rule);
+    background: var(--surface);
+}
+
+.diagnostics__head {
+    position: sticky;
+    top: 0;
+
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    padding: var(--space-2) var(--space-4);
+
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface);
+}
+
+.diagnostics__item {
+    display: flex;
+    gap: var(--space-3);
+
+    padding: 6px var(--space-4);
+
+    border-bottom: 1px solid var(--rule);
+    font-size: var(--size-sm);
+    cursor: pointer;
+}
+
+.diagnostics__item:last-child { border-bottom: 0; }
+.diagnostics__item:hover      { background: var(--surface-sunken); }
+
+.diagnostics__line {
+    flex: none;
+    width: 46px;
+
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--error);
+    text-align: right;
+}
+
+/* -----------------------------------------------------------------------------
+   THE MACHINE STATE
+
+   Registers and flags. Both are grids of small cells, because a fixed grid is
+   what lets the eye return to the same place each step.
+----------------------------------------------------------------------------- */
+.section {
+    border-bottom: 1px solid var(--rule);
+}
+
+.section__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+
+    padding: var(--space-3) var(--space-4) var(--space-2);
+}
+
+.section__body {
+    padding: 0 var(--space-4) var(--space-4);
+}
+
+.registers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+
+    /* The gap shows the panel through, which draws the rules between cells
+       without a border on each one. */
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.register {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2);
+
+    padding: 6px var(--space-3);
+    background: var(--surface);
+
+    transition: background var(--transition);
+}
+
+.register__name {
+    font-family: var(--font-mono);
+    font-size: var(--size-xs);
+    font-weight: 600;
+    color: var(--ink-muted);
+}
+
+.register__value {
+    font-family: var(--font-mono);
+    font-size: var(--size-base);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+}
+
+/* Written by the instruction that just ran. Fades on the next step. */
+.register--changed {
+    background: var(--changed-soft);
+}
+
+.register--changed .register__value {
+    color: var(--changed);
+    font-weight: 600;
+}
+
+/* ---- flags ---------------------------------------------------------------- */
+.flags {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
+    gap: var(--space-2);
+}
+
+.flag {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+
+    padding: 5px 2px;
+
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+
+    transition: background var(--transition), border-color var(--transition);
+}
+
+.flag__name {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--ink-muted);
+}
+
+.flag__value {
+    font-family: var(--font-mono);
+    font-size: var(--size-md);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+}
+
+.flag--set {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+}
+
+.flag--set .flag__name,
+.flag--set .flag__value {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+/* Carry and overflow are not like the others. Both mean the result did not fit
+   in the destination, which is the one flag state a reader most needs to
+   notice, so they are marked in amber rather than in the informational blue.
+   The value is still shown as a digit, so nothing depends on seeing the hue. */
+.flag--set[data-flag="CF"],
+.flag--set[data-flag="OF"] {
+    background: var(--warn-soft);
+    border-color: var(--warn);
+}
+
+.flag--set[data-flag="CF"] .flag__name,
+.flag--set[data-flag="CF"] .flag__value,
+.flag--set[data-flag="OF"] .flag__name,
+.flag--set[data-flag="OF"] .flag__value {
+    color: var(--warn);
+}
+
+/* Zero is the flag a comparison is usually written to produce, so a match
+   reads in green: the branch that was being tested for will be taken. */
+.flag--set[data-flag="ZF"] {
+    background: var(--ok-soft);
+    border-color: var(--ok);
+}
+
+.flag--set[data-flag="ZF"] .flag__name,
+.flag--set[data-flag="ZF"] .flag__value {
+    color: var(--ok);
+}
+
+/* The program counter is not a general register, so it gets the full width
+   rather than being paired with whatever happens to follow it. */
+.register--wide {
+    grid-column: 1 / -1;
+}
+
+/* -----------------------------------------------------------------------------
+   TABLES  (the stack, memory, ports and files)
+----------------------------------------------------------------------------- */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+
+    font-family: var(--font-mono);
+    font-size: var(--size-sm);
+    font-variant-numeric: tabular-nums;
+}
+
+.table th {
+    position: sticky;
+    top: 0;
+
+    padding: 4px var(--space-3);
+
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface);
+
+    font-family: var(--font-ui);
+    font-size: var(--size-xs);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    text-align: left;
+}
+
+.table td {
+    padding: 3px var(--space-3);
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+}
+
+.table tr:last-child td { border-bottom: 0; }
+
+.table__address { color: var(--ink-faint); }
+
+/* Where SP is pointing. */
+.table tr[data-top="true"] {
+    background: var(--accent-soft);
+}
+
+.table tr[data-top="true"] td {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.table__empty {
+    padding: var(--space-4);
+    font-family: var(--font-ui);
+    font-size: var(--size-sm);
+    color: var(--ink-faint);
+    text-align: center;
+}
+
+/* -----------------------------------------------------------------------------
+   THE CONSOLE
+
+   What the program printed, and what it will read if it asks for input.
+----------------------------------------------------------------------------- */
+.console {
+    display: flex;
+    flex-direction: column;
+    min-height: 140px;
+    flex: 1 1 auto;
+}
+
+.console__output {
+    flex: 1 1 auto;
+    min-height: 96px;
+    padding: var(--space-3);
+    overflow: auto;
+
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: var(--surface-sunken);
+
+    font-family: var(--font-mono);
+    font-size: var(--size-base);
+    line-height: var(--line-code);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.console__output:empty::after {
+    content: "The program has printed nothing yet.";
+    color: var(--ink-faint);
+    font-family: var(--font-ui);
+    font-size: var(--size-sm);
+}
+
+.console__input {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+}
+
+.field {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 30px;
+    padding: 0 var(--space-3);
+
+    border: 1px solid var(--rule-strong);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+
+    font-family: var(--font-mono);
+    font-size: var(--size-sm);
+}
+
+.field:focus {
+    border-color: var(--accent);
+    outline: 1px solid var(--accent);
+    outline-offset: -2px;
+}
+
+/* -----------------------------------------------------------------------------
+   THE PROGRAM LIBRARY
+----------------------------------------------------------------------------- */
+.library__search {
+    flex: none;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--rule);
+}
+
+.library__group {
+    border-bottom: 1px solid var(--rule);
+}
+
+.library__groupname {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+
+    width: 100%;
+    padding: var(--space-2) var(--space-4);
+
+    background: var(--surface-sunken);
+    text-align: left;
+}
+
+.library__count {
+    font-family: var(--font-mono);
+    font-size: var(--size-xs);
+    color: var(--ink-faint);
+}
+
+.library__item {
+    display: block;
+    width: 100%;
+    padding: 5px var(--space-4) 5px var(--space-5);
+
+    font-family: var(--font-mono);
+    font-size: var(--size-sm);
+    color: var(--ink-muted);
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    transition: background var(--transition), color var(--transition);
+}
+
+.library__item:hover {
+    background: var(--surface-sunken);
+    color: var(--ink);
+}
+
+.library__item[aria-current="true"] {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+    box-shadow: inset 2px 0 0 var(--accent);
+}
+
+/* -----------------------------------------------------------------------------
+   STATE INDICATOR
+
+   One dot and one word, in the status bar. The colour carries the meaning and
+   the word repeats it, because colour alone is not a message everyone receives.
+----------------------------------------------------------------------------- */
+.state {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+
+.state__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+}
+
+.state[data-state="ready"]   { color: var(--ink-muted); }
+.state[data-state="running"] { color: var(--warn); }
+.state[data-state="halted"]  { color: var(--ok); }
+.state[data-state="error"]   { color: var(--error); }
+
+.state[data-state="running"] .state__dot { background: var(--warn); }
+.state[data-state="halted"]  .state__dot { background: var(--ok); }
+.state[data-state="error"]   .state__dot { background: var(--error); }
+
+/* A quiet pulse while the machine is actually executing. */
+.state[data-state="running"] .state__dot {
+    animation: state-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes state-pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.35; }
+}
+
+/* -----------------------------------------------------------------------------
+   NOTICE
+
+   The one-line message under the toolbar: what happened, in words.
+----------------------------------------------------------------------------- */
+.notice {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+
+    padding: var(--space-2) var(--space-4);
+
+    border-bottom: 1px solid var(--rule);
+    font-size: var(--size-sm);
+}
+
+.notice[hidden] { display: none; }
+
+.notice--info  { background: var(--accent-soft); color: var(--accent); }
+.notice--ok    { background: var(--ok-soft);     color: var(--ok); }
+.notice--warn  { background: var(--warn-soft);   color: var(--warn); }
+.notice--error { background: var(--error-soft);  color: var(--error); }
+
+/* -----------------------------------------------------------------------------
+   TOUCH
+
+   Where the pointer is coarse, every target grows to a size a finger can hit
+   without aiming. Hover styling is dropped, because there is no hover.
+----------------------------------------------------------------------------- */
+@media (pointer: coarse) {
+    .button        { height: 36px; padding: 0 var(--space-4); }
+    .button--icon  { width: 36px; }
+    .field         { height: 36px; }
+    .library__item { padding-top: 9px; padding-bottom: 9px; }
+    .flag          { padding: 8px 2px; }
+    .register      { padding: 9px var(--space-3); }
+
+    .button:active:not(:disabled) { transform: none; }
+}

@@ -1,0 +1,570 @@
+// -----------------------------------------------------------------------------
+// Script Name: app.js
+// Module:      Interface, 6 of 6
+// Stack:       JavaScript (ES2020), no framework
+// Description: The controller. Owns the machine, drives assemble, run, step and
+//              reset, and keeps every panel showing the same state.
+//
+//              The important decision here is how a program is run. Calling the
+//              executor until the program stops would freeze the page for as
+//              long as that took, and some of these programs never stop at all.
+//              So a run is executed in slices, one slice per animation frame,
+//              with the panels redrawn between them. A traffic light controller
+//              can therefore run indefinitely while the interface stays
+//              responsive and the Stop button still works.
+//
+//              Everything else follows from keeping one machine and one program
+//              in this object and rendering from them, so there is exactly one
+//              answer to what the processor currently holds.
+//
+// Authors:     Amey Thakur
+// Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+// License:     CC BY 4.0
+// -----------------------------------------------------------------------------
+
+'use strict';
+
+import { CPU }       from '../cpu/cpu.js';
+import { Assembler } from '../asm/assembler.js';
+import { Executor }  from '../exec/executor.js';
+
+import { Editor }    from './editor.js';
+import { Inspector } from './inspector.js';
+import { Library }   from './library.js';
+import { Console }   from './console.js';
+
+/** Instructions executed per animation frame while running. Chosen so a frame
+ *  stays inside its budget on a modest laptop, and a delay loop still finishes
+ *  in a few seconds rather than a few minutes. */
+const SLICE = 250_000;
+
+/** Where the theme choice is kept between visits. */
+const THEME_KEY = '8086-simulator-theme';
+
+/** The program shown before anything has been chosen. */
+const WELCOME = `; 8086 Assembly Language
+; Choose a program from the library, or write your own here.
+
+.MODEL SMALL
+.STACK 100H
+
+.DATA
+    MESSAGE DB 'Hello from the 8086.', 0DH, 0AH, '$'
+
+.CODE
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
+
+    MOV AH, 09H            ; print the string at DS:DX
+    LEA DX, MESSAGE
+    INT 21H
+
+    MOV AH, 4CH            ; return to DOS
+    INT 21H
+MAIN ENDP
+END MAIN
+`;
+
+// -----------------------------------------------------------------------------
+// APPLICATION
+// -----------------------------------------------------------------------------
+export class Application {
+
+    constructor() {
+        this.element = query('.app');
+
+        this.cpu      = new CPU();
+        this.program  = null;
+        this.executor = null;
+
+        this.running  = false;
+        this.frame    = null;
+
+        this.buildPanels();
+        this.bindControls();
+        this.restoreTheme();
+
+        this.editor.value = WELCOME;
+        this.reset('Ready. Assemble the program, then run it or step through it.');
+    }
+
+    // -------------------------------------------------------------------------
+    // SET UP
+    // -------------------------------------------------------------------------
+
+    buildPanels() {
+        this.editor = new Editor(query('#source'), query('#gutter'), query('#painted'));
+
+        this.inspector = new Inspector({
+            registers: query('#registers'),
+            flags:     query('#flags'),
+            stack:     query('#stack'),
+            memory:    query('#memory'),
+            devices:   query('#devices')
+        });
+
+        this.console = new Console(query('#output'), query('#input'));
+        this.library = new Library(query('#library-list'), query('#library-search'));
+
+        // Editing invalidates whatever was assembled: the instructions in hand
+        // no longer correspond to the text on screen.
+        this.editor.onChange = () => {
+            if (!this.program) return;
+
+            this.program = null;
+            this.executor = null;
+            this.editor.setCurrentLine(null);
+            this.setState('ready', 'The program has changed. Assemble it again.');
+        };
+
+        this.library.onOpen = result => this.loadProgram(result);
+
+        query('#library-total').textContent = `${this.library.count} programs`;
+    }
+
+    bindControls() {
+        on('#action-assemble', () => this.assemble());
+        on('#action-run',      () => this.toggleRun());
+        on('#action-step',     () => this.step());
+        on('#action-reset',    () => { this.reset('Machine reset.'); });
+        on('#action-theme',    () => this.toggleTheme());
+        on('#action-copy',     () => this.copySource());
+        on('#action-download', () => this.downloadSource());
+
+        // The library drawer, on screens too narrow to keep it open.
+        on('#action-library', () => this.toggleLibrary());
+        on('.drawer-scrim',   () => this.toggleLibrary(false));
+
+        // The tab bar, on screens that show one panel at a time.
+        for (const tab of document.querySelectorAll('.viewtabs__tab')) {
+            tab.addEventListener('click', () => this.showView(tab.dataset.view));
+        }
+
+        // The memory window follows whatever offset is typed above it.
+        query('#memory-offset').addEventListener('change', event => {
+            const offset = parseInt(event.target.value.replace(/[^0-9a-f]/gi, ''), 16);
+
+            this.inspector.setMemoryBase(Number.isNaN(offset) ? 0 : offset);
+            this.render(false);
+        });
+
+        // Clicking a diagnostic puts the caret on the line it names.
+        query('#diagnostics-list').addEventListener('click', event => {
+            const item = event.target.closest('.diagnostics__item');
+
+            if (item?.dataset.line) this.editor.revealLine(Number(item.dataset.line));
+        });
+
+        document.addEventListener('keydown', event => this.handleShortcut(event));
+    }
+
+    /**
+     * The four shortcuts worth having, on the keys a debugger uses.
+     *
+     * They are ignored while a text field has focus unless a modifier is held,
+     * so typing F5 into the input queue does not start the program.
+     */
+    handleShortcut(event) {
+        const typing = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName);
+
+        if (event.key === 'F5' || (event.ctrlKey && event.key === 'Enter')) {
+            event.preventDefault();
+            this.toggleRun();
+            return;
+        }
+
+        if (event.key === 'F10') {
+            event.preventDefault();
+            this.step();
+            return;
+        }
+
+        if (event.ctrlKey && event.key.toLowerCase() === 'b') {
+            event.preventDefault();
+            this.assemble();
+            return;
+        }
+
+        if (event.key === 'Escape' && !typing) {
+            this.stop('Stopped.');
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // LOADING
+    // -------------------------------------------------------------------------
+
+    loadProgram({ file, source, error }) {
+        if (error) {
+            this.setNotice('error', error);
+            return;
+        }
+
+        this.stop();
+        this.editor.value = source;
+
+        query('#filename').textContent = file;
+
+        this.reset(`Loaded ${file}.`);
+        this.assemble();
+        this.toggleLibrary(false);
+    }
+
+    // -------------------------------------------------------------------------
+    // ASSEMBLING
+    // -------------------------------------------------------------------------
+
+    assemble() {
+        this.stop();
+
+        const result = new Assembler().assemble(this.editor.value);
+
+        this.showDiagnostics(result.diagnostics);
+
+        if (!result.ok) {
+            this.program = null;
+            this.editor.setErrorLines(result.diagnostics.map(item => item.line));
+            this.setState('error',
+                `${result.diagnostics.length} ` +
+                `${result.diagnostics.length === 1 ? 'problem' : 'problems'} found. ` +
+                `Nothing was run.`);
+            return false;
+        }
+
+        this.program = result;
+        this.editor.setErrorLines([]);
+        this.loadIntoMachine();
+
+        this.setState('ready',
+            `Assembled: ${result.instructions.length} instructions, ` +
+            `${result.data.length} bytes of data.`);
+
+        this.render(false);
+        return true;
+    }
+
+    /** Put the assembled program into a freshly reset machine. */
+    loadIntoMachine() {
+        this.cpu.reset();
+        this.cpu.memory.load(this.cpu.registers.get('DS') << 4, this.program.data);
+        this.cpu.registers.set('IP', this.program.entryPoint);
+        this.cpu.pendingInput = this.console.pendingInput;
+
+        this.executor = new Executor(this.cpu, this.program);
+        this.inspector.forget();
+        this.console.clear();
+    }
+
+    showDiagnostics(diagnostics) {
+        const panel = query('#diagnostics');
+        const list  = query('#diagnostics-list');
+
+        if (diagnostics.length === 0) {
+            panel.hidden = true;
+            list.replaceChildren();
+            return;
+        }
+
+        panel.hidden = false;
+        query('#diagnostics-count').textContent =
+            `${diagnostics.length} ${diagnostics.length === 1 ? 'problem' : 'problems'}`;
+
+        list.innerHTML = diagnostics.map(item => `
+            <div class="diagnostics__item" data-line="${item.line ?? ''}">
+                <span class="diagnostics__line">${item.line ? `line ${item.line}` : ''}</span>
+                <span>${escapeText(item.message)}</span>
+            </div>`).join('');
+    }
+
+    // -------------------------------------------------------------------------
+    // RUNNING
+    // -------------------------------------------------------------------------
+
+    toggleRun() {
+        if (this.running) { this.stop('Stopped by hand.'); return; }
+        if (!this.ensureAssembled()) return;
+
+        // Starting again after the program finished means starting again.
+        if (this.cpu.halted) this.loadIntoMachine();
+
+        this.cpu.pendingInput = this.console.pendingInput;
+
+        this.running = true;
+        this.setRunLabel(true);
+        this.setState('running', 'Running.');
+        this.tick();
+    }
+
+    /**
+     * Execute one slice, draw, and ask for the next frame.
+     *
+     * Handing control back between slices is what keeps the page alive. It also
+     * means the console fills in as the program prints rather than all at once
+     * when it ends, which is how a terminal behaves.
+     */
+    tick() {
+        if (!this.running) return;
+
+        let outcome;
+
+        try {
+            outcome = this.executor.run(SLICE);
+        } catch (error) {
+            this.failed(error);
+            return;
+        }
+
+        this.render();
+
+        if (outcome.reason === 'halted') {
+            this.finished();
+            return;
+        }
+
+        this.frame = requestAnimationFrame(() => this.tick());
+    }
+
+    step() {
+        if (!this.ensureAssembled()) return;
+
+        this.stop();
+
+        if (this.cpu.halted) {
+            this.loadIntoMachine();
+            this.render(false);
+            this.setState('ready', 'Started again from the beginning.');
+            return;
+        }
+
+        this.cpu.pendingInput = this.console.pendingInput;
+
+        try {
+            const continues = this.executor.step();
+
+            this.render();
+
+            if (!continues) { this.finished(); return; }
+
+            const instruction = this.program.instructions[this.cpu.registers.get('IP')];
+
+            this.setState('ready', instruction
+                ? `Next: ${instruction.source.trim()}`
+                : 'At the end of the program.');
+
+        } catch (error) {
+            this.failed(error);
+        }
+    }
+
+    stop(message = null) {
+        this.running = false;
+
+        if (this.frame !== null) {
+            cancelAnimationFrame(this.frame);
+            this.frame = null;
+        }
+
+        this.setRunLabel(false);
+
+        if (message) this.setState('ready', message);
+    }
+
+    reset(message = 'Machine reset.') {
+        this.stop();
+
+        if (this.program) this.loadIntoMachine();
+        else              this.cpu.reset();
+
+        this.console.clear();
+        this.editor.setCurrentLine(null);
+        this.inspector.forget();
+        this.render(false);
+        this.setState('ready', message);
+    }
+
+    finished() {
+        this.stop();
+        this.render(false);
+        this.editor.setCurrentLine(null);
+
+        const code = this.cpu.exitCode;
+
+        this.setState('halted', code === null
+            ? `Finished after ${this.cpu.instructionCount.toLocaleString('en-US')} instructions.`
+            : `Finished with exit code ${code}, after ` +
+              `${this.cpu.instructionCount.toLocaleString('en-US')} instructions.`);
+    }
+
+    failed(error) {
+        this.stop();
+        this.render(false);
+
+        if (error.line) this.editor.setErrorLines([error.line]);
+
+        this.setState('error', error.line
+            ? `Line ${error.line}: ${error.message}`
+            : error.message);
+    }
+
+    /** Assemble first if that has not happened, and say so if it cannot. */
+    ensureAssembled() {
+        if (this.program) return true;
+
+        return this.assemble();
+    }
+
+    // -------------------------------------------------------------------------
+    // DRAWING
+    // -------------------------------------------------------------------------
+
+    render(compare = true) {
+        const snapshot = this.cpu.snapshot();
+
+        this.inspector.update(snapshot, this.cpu.memory, compare);
+        this.console.write(snapshot.output);
+
+        const instruction = this.program?.instructions[this.cpu.registers.get('IP')];
+
+        this.editor.setCurrentLine(this.cpu.halted ? null : (instruction?.line ?? null));
+
+        query('#count').textContent =
+            `${snapshot.instructionCount.toLocaleString('en-US')} executed`;
+        query('#queued').textContent = this.console.describeInput();
+    }
+
+    setState(state, message) {
+        const indicator = query('#state');
+
+        indicator.dataset.state = state;
+        query('#state-text').textContent = {
+            ready: 'Ready', running: 'Running', halted: 'Finished', error: 'Error'
+        }[state] ?? state;
+
+        this.setNotice(state === 'ready' ? 'info' : state === 'halted' ? 'ok' : state, message);
+    }
+
+    setNotice(kind, message) {
+        const notice = query('#notice');
+
+        if (!message) { notice.hidden = true; return; }
+
+        notice.hidden    = false;
+        notice.className = `notice notice--${kind === 'running' ? 'warn' : kind}`;
+        notice.textContent = message;
+    }
+
+    setRunLabel(running) {
+        query('#action-run-label').textContent = running ? 'Stop' : 'Run';
+        query('#action-run').classList.toggle('button--primary', !running);
+    }
+
+    // -------------------------------------------------------------------------
+    // LAYOUT AND THEME
+    // -------------------------------------------------------------------------
+
+    /** Which single panel is shown, on a screen too narrow for all of them. */
+    showView(view) {
+        this.element.dataset.view = view;
+
+        for (const tab of document.querySelectorAll('.viewtabs__tab')) {
+            tab.setAttribute('aria-selected', String(tab.dataset.view === view));
+        }
+    }
+
+    toggleLibrary(force = null) {
+        const open = force ?? this.element.dataset.library !== 'open';
+
+        this.element.dataset.library = open ? 'open' : 'closed';
+        query('#action-library').setAttribute('aria-expanded', String(open));
+    }
+
+    restoreTheme() {
+        const stored = readStored(THEME_KEY);
+        const dark   = stored
+            ? stored === 'dark'
+            : window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+
+        this.applyTheme(dark ? 'dark' : 'light');
+    }
+
+    toggleTheme() {
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+
+        this.applyTheme(next);
+        writeStored(THEME_KEY, next);
+    }
+
+    applyTheme(theme) {
+        document.documentElement.dataset.theme = theme;
+
+        query('#action-theme').setAttribute(
+            'aria-label',
+            theme === 'dark' ? 'Switch to the light theme' : 'Switch to the dark theme'
+        );
+    }
+
+    // -------------------------------------------------------------------------
+    // THE SOURCE, OUT OF THE PAGE
+    // -------------------------------------------------------------------------
+
+    async copySource() {
+        try {
+            await navigator.clipboard.writeText(this.editor.value);
+            this.setNotice('ok', 'The program was copied to the clipboard.');
+        } catch {
+            this.setNotice('warn', 'This browser would not give access to the clipboard.');
+        }
+    }
+
+    downloadSource() {
+        const name = query('#filename').textContent.trim() || 'program.asm';
+        const blob = new Blob([this.editor.value], { type: 'text/plain;charset=utf-8' });
+        const url  = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+
+        link.href     = url;
+        link.download = name.endsWith('.asm') ? name : `${name}.asm`;
+        link.click();
+
+        URL.revokeObjectURL(url);
+    }
+}
+
+// -----------------------------------------------------------------------------
+// SMALL HELPERS
+// -----------------------------------------------------------------------------
+
+function query(selector) {
+    const element = document.querySelector(selector);
+
+    if (!element) throw new Error(`the page is missing "${selector}"`);
+    return element;
+}
+
+function on(selector, handler) {
+    document.querySelector(selector)?.addEventListener('click', handler);
+}
+
+/** Storage is unavailable in a private window in some browsers, and a theme
+ *  preference is not worth an exception. */
+function readStored(key) {
+    try { return localStorage.getItem(key); } catch { return null; }
+}
+
+function writeStored(key, value) {
+    try { localStorage.setItem(key, value); } catch { /* nothing to do */ }
+}
+
+function escapeText(text) {
+    return String(text).replace(/[&<>"']/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[character]);
+}
+
+// -----------------------------------------------------------------------------
+// START
+// -----------------------------------------------------------------------------
+document.addEventListener('DOMContentLoaded', () => {
+    window.simulator = new Application();
+});

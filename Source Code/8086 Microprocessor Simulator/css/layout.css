@@ -1,0 +1,392 @@
+/* -----------------------------------------------------------------------------
+   Stylesheet:  layout.css
+   Module:      Stylesheet, 2 of 3
+   Stack:       CSS Grid and Flexbox, no framework
+   Description: The shell: a toolbar, three working panels and a status bar, and
+                how those rearrange as the screen narrows.
+
+                Three arrangements, chosen by what will actually fit rather than
+                by device names:
+
+                  1200px and wider   library, editor and inspector side by side
+                  768 to 1199px      editor and inspector, library as a drawer
+                  below 768px        one panel at a time, chosen by a tab bar
+
+                The whole application is exactly the height of the viewport and
+                never scrolls as a page. Only the inside of a panel scrolls,
+                which is what keeps the toolbar and the machine state in view
+                while a program is being read.
+
+   Authors:     Amey Thakur
+   Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+   License:     CC BY 4.0
+----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+   SHELL
+----------------------------------------------------------------------------- */
+.app {
+    display: grid;
+    grid-template-rows: var(--toolbar-height) minmax(0, 1fr) var(--status-height);
+
+    /* Fall back to vh where the dynamic unit is not supported, so that older
+       mobile browsers still get a full height application. */
+    height: 100vh;
+    height: 100dvh;
+}
+
+.app__body {
+    display: grid;
+    grid-template-columns: var(--library-width) minmax(0, 1fr) var(--inspector-width);
+    min-height: 0;                       /* lets the children scroll, not the grid */
+}
+
+/* -----------------------------------------------------------------------------
+   PANELS
+
+   Every panel is a column with a fixed head and a scrolling body. Setting
+   min-height to zero on both is what makes the body scroll instead of the
+   panel growing past the viewport.
+----------------------------------------------------------------------------- */
+.panel {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    background: var(--surface);
+}
+
+.panel--library   { border-right: 1px solid var(--rule); }
+.panel--inspector { border-left:  1px solid var(--rule); }
+
+.panel--editor {
+    background: var(--surface-sunken);
+}
+
+.panel__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+
+    flex: none;
+    height: 38px;
+    padding: 0 var(--space-4);
+
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface);
+}
+
+.panel__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+/* A panel body that must not scroll on its own, because a child does. */
+.panel__body--fixed {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* -----------------------------------------------------------------------------
+   TOOLBAR
+----------------------------------------------------------------------------- */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+
+    padding: 0 var(--space-4);
+
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface);
+
+    /* The title yields before the controls do. Without this the toolbar would
+       push the whole grid wider than the screen on a phone, and everything
+       below it would sit half off the edge. */
+    overflow: hidden;
+}
+
+.toolbar__identity {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.toolbar__title {
+    font-size: var(--size-md);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toolbar__subtitle {
+    font-size: var(--size-xs);
+    color: var(--ink-muted);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toolbar__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    flex: none;      /* the controls keep their size; the title gives way */
+}
+
+.toolbar__actions--end {
+    margin-left: auto;
+}
+
+.toolbar__divider {
+    width: 1px;
+    height: 22px;
+    background: var(--rule);
+}
+
+/* -----------------------------------------------------------------------------
+   STATUS BAR
+----------------------------------------------------------------------------- */
+.status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+
+    padding: 0 var(--space-4);
+
+    border-top: 1px solid var(--rule);
+    background: var(--surface);
+
+    font-size: var(--size-xs);
+    color: var(--ink-muted);
+}
+
+.status__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    white-space: nowrap;
+}
+
+.status__item--end {
+    margin-left: auto;
+}
+
+/* -----------------------------------------------------------------------------
+   THE TAB BAR
+
+   Only ever visible on a narrow screen, where the three panels take turns.
+----------------------------------------------------------------------------- */
+.viewtabs {
+    display: none;
+    flex: none;
+
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface);
+}
+
+.viewtabs__tab {
+    flex: 1 1 0;
+    padding: var(--space-3) var(--space-2);
+
+    border-bottom: 2px solid transparent;
+
+    font-size: var(--size-sm);
+    font-weight: 500;
+    color: var(--ink-muted);
+
+    transition: color var(--transition), border-color var(--transition);
+}
+
+.viewtabs__tab[aria-selected="true"] {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+/* -----------------------------------------------------------------------------
+   TABLET
+
+   The library becomes a drawer over the page. It is the panel a reader
+   consults occasionally rather than watches, so it is the one that goes.
+----------------------------------------------------------------------------- */
+@media (max-width: 1199px) {
+    .app__body {
+        grid-template-columns: minmax(0, 1fr) var(--inspector-width);
+    }
+
+    .panel--library {
+        position: fixed;
+        top: var(--toolbar-height);
+        bottom: var(--status-height);
+        left: 0;
+        z-index: 20;
+
+        width: var(--library-width);
+
+        border-right: 1px solid var(--rule);
+        box-shadow: 1px 0 0 var(--rule);
+
+        transform: translateX(-100%);
+        transition: transform 160ms ease;
+    }
+
+    .app[data-library="open"] .panel--library {
+        transform: translateX(0);
+    }
+
+    .drawer-scrim {
+        position: fixed;
+        inset: var(--toolbar-height) 0 var(--status-height) 0;
+        z-index: 19;
+
+        background: rgb(0 0 0 / 28%);
+
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 160ms ease;
+    }
+
+    .app[data-library="open"] .drawer-scrim {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+/* The library toggle has nothing to do on a wide screen, where the library is
+   already open. The selector is qualified so that it beats the .button rule in
+   the stylesheet that loads after this one. */
+@media (min-width: 1200px) {
+    .toolbar .toolbar__library-toggle {
+        display: none;
+    }
+}
+
+/* -----------------------------------------------------------------------------
+   NARROW SCREENS
+
+   One panel at a time. Hiding with display none rather than moving off screen
+   keeps the hidden panels out of the tab order.
+----------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+    :root {
+        --toolbar-height: 48px;
+        --inspector-width: 100%;
+    }
+
+    .app {
+        grid-template-rows: var(--toolbar-height) auto minmax(0, 1fr) var(--status-height);
+    }
+
+    .viewtabs {
+        display: flex;
+    }
+
+    .app__body {
+        display: block;
+        position: relative;
+        min-height: 0;
+        height: 100%;
+    }
+
+    /* Only the two panels that take turns are hidden. The library is left
+       alone: it is positioned over the page and slid out of sight, and hiding
+       it here would mean the drawer could never open. */
+    .app__body > .panel--editor,
+    .app__body > .panel--inspector {
+        display: none;
+        height: 100%;
+    }
+
+    .app[data-view="editor"]    .panel--editor,
+    .app[data-view="inspector"] .panel--inspector {
+        display: flex;
+    }
+
+    .panel--inspector {
+        border-left: 0;
+    }
+
+    .panel--library {
+        top: calc(var(--toolbar-height) + 41px);
+        width: min(300px, 86vw);
+    }
+
+    .drawer-scrim {
+        inset: calc(var(--toolbar-height) + 41px) 0 var(--status-height) 0;
+    }
+
+    /* The subtitle is the first thing to go when width is short. */
+    .toolbar__subtitle {
+        display: none;
+    }
+
+    .toolbar__title {
+        font-size: var(--size-base);
+    }
+
+    /* The controls become their icons. Every one of them already carries a
+       title and a label, so nothing is lost but the words, and Run keeps its
+       word because Run and Stop are the same shape. */
+    .toolbar .button__text {
+        display: none;
+    }
+
+    .toolbar .button {
+        padding: 0 var(--space-2);
+    }
+
+    /* The repository link is one tap away from anywhere else; the room it
+       takes is better spent on the controls. */
+    .toolbar #link-github {
+        display: none;
+    }
+
+    /* Only the count and the state are worth the room in the status bar. */
+    .status__item--optional {
+        display: none;
+    }
+}
+
+/* -----------------------------------------------------------------------------
+   PRINT
+
+   A program and its result, on paper, with the chrome removed. Worth getting
+   right: a lab report is the one thing anyone would print from here.
+----------------------------------------------------------------------------- */
+@media print {
+    .toolbar,
+    .status,
+    .viewtabs,
+    .panel--library,
+    .drawer-scrim,
+    .editor__gutter {
+        display: none !important;
+    }
+
+    body { overflow: visible; }
+
+    .app,
+    .app__body {
+        display: block;
+        height: auto;
+    }
+
+    .panel {
+        break-inside: avoid;
+        border: 1px solid #999;
+        margin-bottom: 12pt;
+    }
+}

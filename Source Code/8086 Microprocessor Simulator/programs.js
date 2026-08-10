@@ -1,12 +1,25 @@
-/*
- * 8086 Assembly Emulator - Program Library
- * Created by Amey Thakur
- * https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
- * 
- * All 161 assembly language programs organized by category
- */
+// -----------------------------------------------------------------------------
+// Script Name: programs.js
+// Module:      Program Library
+// Stack:       JavaScript (ES2020), no dependencies
+// Description: The catalogue of every assembly program in this repository,
+//              grouped by the folder it lives in.
+//
+//              This is an index, not a copy. The interface fetches the real
+//              .asm file from the folder beside this one, so what the simulator
+//              runs is what the repository actually holds, and editing a
+//              program changes what runs with nothing to regenerate.
+//
+// Authors:     Amey Thakur
+// Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+// License:     CC BY 4.0
+// -----------------------------------------------------------------------------
 
-const programs = {
+'use strict';
+
+/** Category name to the files it contains, in the order they appear on disk. */
+export const PROGRAMS = {
+
     'Addressing Modes': ['comprehensive_8086_addressing_modes_reference.asm'],
     'Arithmetic': ['add_array_of_bytes_from_memory.asm', 'addition_16bit_packed_bcd.asm', 'addition_16bit_simple.asm', 'addition_16bit_with_carry_detection.asm', 'addition_8bit_with_user_input.asm', 'calculate_sum_of_first_n_natural_numbers.asm', 'count_set_bits_in_16bit_binary.asm', 'decimal_adjust_after_addition_demo.asm', 'division_16bit_dividend_by_8bit_divisor.asm', 'generate_multiplication_table_for_number.asm', 'multiplication_8bit_unsigned.asm', 'signed_addition_and_subtraction_demo.asm', 'subtraction_8bit_with_user_input.asm', 'swap_two_numbers_using_registers.asm'],
     'Array Operations': ['calculate_sum_of_array_elements.asm', 'copy_block_of_data_between_arrays.asm', 'count_odd_and_even_numbers_in_array.asm', 'delete_element_from_array_by_index.asm', 'find_maximum_element_in_array.asm', 'find_minimum_element_in_array.asm', 'insert_element_into_array_at_index.asm'],

@@ -1,256 +1,282 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <!--
-    ============================================================================
+    =============================================================================
     PROJECT: 8086 MICROPROCESSOR SIMULATOR
-    ============================================================================
+    =============================================================================
     AUTHOR:      Amey Thakur
     GITHUB:      https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
     PROFILE:     https://github.com/Amey-Thakur
-    LICENSE:     MIT License
+    LICENSE:     CC BY 4.0
     CREATED:     2021
-    
-    DESCRIPTION: 
-    A comprehensive, web-based simulation of the Intel 8086 microprocessor. 
-    This application provides an interactive environment for writing, compiling, 
-    and executing 8086 assembly language programs. It features a cycle-accurate
-    execution model, real-time register/flag visualization, and an intelligent
-    debugging interface with execution tracing.
-    
+
+    DESCRIPTION:
+    An Intel 8086 simulator that assembles and executes real 8086 assembly in
+    the browser. Every one of the 161 programs in this repository assembles and
+    runs here, verified by a conformance suite that loads them from disk.
+
     ARCHITECTURE:
-    - Frontend: Semantic HTML5, CSS3 with Glassmorphism UI
-    - Logic: Vanilla JavaScript (ES6+) emulation engine
-    - Storage: Browser-based virtual memory model (64KB segment)
-    ============================================================================
+    - Engine    ES modules, no dependencies: six CPU modules, five assembler
+                modules, four execution modules
+    - Interface Five modules and three stylesheets, no framework, no build step
+    - Testing   Nine suites run under Node with "npm test"
+    =============================================================================
 -->
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>8086 Assembly Emulator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+
+    <title>8086 Microprocessor Simulator</title>
     <meta name="description"
-        content="Interactive Intel 8086 Microprocessor Simulator - Run and debug 8086 assembly programs in your browser">
+          content="An Intel 8086 simulator that assembles and executes 8086 assembly language in the browser, with a full register, flag, stack and memory view.">
+    <meta name="author" content="Amey Thakur">
+
     <link rel="icon"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2358a6ff' stroke-width='1.5'%3E%3Crect x='7' y='2' width='10' height='20' rx='1.5' fill='%2358a6ff' fill-opacity='0.1'/%3E%3Cpath d='M4 5h3 M4 8h3 M4 11h3 M4 14h3 M4 17h3 M4 20h3' /%3E%3Cpath d='M20 5h-3 M20 8h-3 M20 11h-3 M20 14h-3 M20 17h-3 M20 20h-3' /%3E%3Ctext x='12' y='14' font-family='monospace' font-size='5' fill='%2358a6ff' stroke='none' text-anchor='middle' font-weight='bold' letter-spacing='-0.5'%3E8086%3C/text%3E%3C/svg%3E">
-    <link rel="stylesheet" href="styles.css?v=final">
+          href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%231F5C9E'/%3E%3Ctext x='16' y='21' font-family='monospace' font-size='11' font-weight='700' fill='white' text-anchor='middle'%3E86%3C/text%3E%3C/svg%3E">
+
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
 </head>
 
 <body>
-    <!-- Apple-style Loading Screen -->
-    <div id="loading-overlay">
-        <div class="loader-content">
-            <svg class="icon icon-xxl pulse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="1.5">
-                <rect x="7" y="2" width="10" height="20" rx="1.5" fill="currentColor" fill-opacity="0.1" />
-                <path d="M4 5h3 M4 8h3 M4 11h3 M4 14h3 M4 17h3 M4 20h3" />
-                <path d="M20 5h-3 M20 8h-3 M20 11h-3 M20 14h-3 M20 17h-3 M20 20h-3" />
-                <text x="12" y="14" font-family="monospace" font-size="5" fill="currentColor" stroke="none"
-                    text-anchor="middle" font-weight="bold" letter-spacing="-0.5">8086</text>
-            </svg>
-            <div class="progress-container">
-                <div class="progress-bar"></div>
-            </div>
-            <div class="loading-text">Simulating 8086 Architecture...</div>
-        </div>
-    </div>
+    <div class="app" data-view="editor" data-library="closed">
 
-    <!-- Intelligent Tooltip -->
-    <div id="tooltip" class="tooltip"></div>
-
-    <div class="header">
-        <div class="header-left">
-            <span class="header-logo"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="1.5">
-                    <rect x="7" y="2" width="10" height="20" rx="1.5" fill="currentColor" fill-opacity="0.1" />
-                    <path d="M4 5h3 M4 8h3 M4 11h3 M4 14h3 M4 17h3 M4 20h3" />
-                    <path d="M20 5h-3 M20 8h-3 M20 11h-3 M20 14h-3 M20 17h-3 M20 20h-3" />
-                    <text x="12" y="14" font-family="monospace" font-size="5" fill="currentColor" stroke="none"
-                        text-anchor="middle" font-weight="bold" letter-spacing="-0.5">8086</text>
-                </svg></span>
-            <div class="header-title">
-                <h1>8086 Assembly Emulator</h1>
-                <p class="subtitle">Interactive Intel 8086 Microprocessor Simulator</p>
-            </div>
-        </div>
-        <div class="toolbar">
-            <button class="btn btn-primary" onclick="compileCode()"><svg class="icon" viewBox="0 0 24 24"
-                    fill="currentColor">
-                    <path
-                        d="M12 15.5A3.5 3.5 0 0115.5 12 3.5 3.5 0 0112 8.5 3.5 3.5 0 018.5 12 3.5 3.5 0 0112 15.5m7.43-2.53c.04-.32.07-.64.07-.97 0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0014 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1 0 .33.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66z" />
-                </svg> Compile</button>
-            <button class="btn btn-run" onclick="runCode()"><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8 5v14l11-7z" />
-                </svg> Run</button>
-            <button class="btn btn-step" onclick="stepCode()"><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
-                </svg> Step</button>
-            <button class="btn btn-danger" onclick="resetEmulator()"><svg class="icon" viewBox="0 0 24 24"
-                    fill="currentColor">
-                    <path
-                        d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
-                </svg> Reset</button>
-            <div class="toolbar-divider"></div>
-            <a href="https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS" class="btn btn-ghost"
-                target="_blank">
-                <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                </svg> GitHub
-            </a>
-            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
-                <span id="theme-icon"><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" />
-                    </svg></span>
+        <!-- ================================================================ -->
+        <!-- TOOLBAR                                                          -->
+        <!-- ================================================================ -->
+        <header class="toolbar">
+            <button type="button" id="action-library"
+                    class="button button--quiet button--icon toolbar__library-toggle"
+                    aria-expanded="false" aria-label="Show the program library">
+                <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 5h18v2H3V5zm0 6h18v2H3v-2zm0 6h18v2H3v-2z"/>
+                </svg>
             </button>
+
+            <div class="toolbar__identity">
+                <div>
+                    <div class="toolbar__title">8086 Microprocessor Simulator</div>
+                    <div class="toolbar__subtitle">Intel 8086 &middot; assemble, run and step through 8086 assembly</div>
+                </div>
+            </div>
+
+            <div class="toolbar__actions toolbar__actions--end">
+                <button type="button" id="action-assemble" class="button" title="Assemble (Ctrl+B)">
+                    <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                    </svg>
+                    <span class="button__text">Assemble</span>
+                </button>
+
+                <button type="button" id="action-run" class="button button--primary" title="Run or stop (F5)">
+                    <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M8 5v14l11-7L8 5z"/>
+                    </svg>
+                    <span id="action-run-label">Run</span>
+                </button>
+
+                <button type="button" id="action-step" class="button" title="Step one instruction (F10)">
+                    <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/>
+                    </svg>
+                    <span class="button__text">Step</span>
+                </button>
+
+                <button type="button" id="action-reset" class="button" title="Reset the machine">
+                    <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M17.65 6.35A8 8 0 1 0 19.73 14h-2.08A6 6 0 1 1 12 6a5.9 5.9 0 0 1 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                    <span class="button__text">Reset</span>
+                </button>
+
+                <div class="toolbar__divider" role="presentation"></div>
+
+                <button type="button" id="action-theme" class="button button--quiet button--icon"
+                        aria-label="Switch to the dark theme">
+                    <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36A5.39 5.39 0 0 1 12.5 8.5 5.4 5.4 0 0 1 13.36 3.1 9.2 9.2 0 0 0 12 3z"/>
+                    </svg>
+                </button>
+
+                <a class="button button--quiet button--icon"
+                   href="https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS"
+                   target="_blank" rel="noopener" aria-label="This repository on GitHub" id="link-github">
+                    <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.44 9.8 8.21 11.39.6.1.82-.26.82-.58 0-.28-.01-1.23-.02-2.23-3.01.56-3.79-.73-4.03-1.41-.14-.35-.72-1.41-1.23-1.7-.42-.22-1.02-.78-.02-.79.95-.01 1.62.87 1.85 1.23 1.08 1.82 2.81 1.31 3.5.99.1-.78.42-1.31.76-1.61-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.53.11-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.3-1.55 3.3-1.23 3.3-1.23.66 1.65.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.38.81 1.1.81 2.22 0 1.6-.01 2.9-.01 3.29 0 .32.21.69.82.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                </a>
+            </div>
+        </header>
+
+        <!-- The tab bar, on screens that show one panel at a time. -->
+        <nav class="viewtabs" role="tablist" aria-label="Which panel to show">
+            <button type="button" class="viewtabs__tab" role="tab"
+                    data-view="editor" aria-selected="true">Program</button>
+            <button type="button" class="viewtabs__tab" role="tab"
+                    data-view="inspector" aria-selected="false">Machine</button>
+        </nav>
+
+        <!-- ================================================================ -->
+        <!-- BODY                                                             -->
+        <!-- ================================================================ -->
+        <div class="app__body">
+
+            <!-- ---- the program library ------------------------------------ -->
+            <aside class="panel panel--library" aria-label="Program library">
+                <div class="panel__head">
+                    <span class="label">Library</span>
+                    <span class="library__count" id="library-total"></span>
+                </div>
+
+                <div class="library__search">
+                    <label class="visually-hidden" for="library-search">Search the library</label>
+                    <input type="search" id="library-search" class="field"
+                           placeholder="Search 161 programs" autocomplete="off" spellcheck="false">
+                </div>
+
+                <div class="panel__body" id="library-list"></div>
+            </aside>
+
+            <!-- ---- the editor --------------------------------------------- -->
+            <main class="panel panel--editor" aria-label="Source">
+                <div class="panel__head">
+                    <div>
+                        <span class="editor__filename" id="filename">untitled.asm</span>
+                        <span class="editor__origin">&mdash; 8086 assembly</span>
+                    </div>
+
+                    <div class="toolbar__actions">
+                        <button type="button" id="action-copy" class="button button--quiet">Copy</button>
+                        <button type="button" id="action-download" class="button button--quiet">Download</button>
+                    </div>
+                </div>
+
+                <p class="notice notice--info" id="notice" hidden></p>
+
+                <div class="panel__body panel__body--fixed">
+                    <div class="editor">
+                        <div class="editor__gutter" id="gutter" aria-hidden="true"></div>
+
+                        <div class="editor__surface">
+                            <pre class="editor__painted mono" id="painted" aria-hidden="true"></pre>
+
+                            <label class="visually-hidden" for="source">8086 assembly source</label>
+                            <textarea class="editor__input" id="source"
+                                      spellcheck="false" autocomplete="off"
+                                      autocapitalize="off" autocorrect="off"
+                                      wrap="off"
+                                      placeholder="Write 8086 assembly here."></textarea>
+                        </div>
+                    </div>
+
+                    <section class="diagnostics" id="diagnostics" hidden>
+                        <header class="diagnostics__head">
+                            <span class="label">Problems</span>
+                            <span class="library__count" id="diagnostics-count"></span>
+                        </header>
+                        <div id="diagnostics-list"></div>
+                    </section>
+                </div>
+            </main>
+
+            <!-- ---- the machine -------------------------------------------- -->
+            <aside class="panel panel--inspector" aria-label="Machine state">
+                <div class="panel__head">
+                    <span class="label">Machine</span>
+                    <span class="library__count" id="count">0 executed</span>
+                </div>
+
+                <div class="panel__body">
+                    <section class="section">
+                        <header class="section__head">
+                            <span class="label">Registers</span>
+                        </header>
+                        <div class="section__body">
+                            <div class="registers" id="registers"></div>
+                        </div>
+                    </section>
+
+                    <section class="section">
+                        <header class="section__head">
+                            <span class="label">Flags</span>
+                        </header>
+                        <div class="section__body">
+                            <div class="flags" id="flags"></div>
+                        </div>
+                    </section>
+
+                    <section class="section">
+                        <header class="section__head">
+                            <span class="label">Console</span>
+                        </header>
+                        <div class="section__body">
+                            <div class="console">
+                                <pre class="console__output" id="output" aria-live="polite"></pre>
+
+                                <div class="console__input">
+                                    <label class="visually-hidden" for="input">Keystrokes to give the program</label>
+                                    <input type="text" id="input" class="field"
+                                           placeholder="Keys the program will read"
+                                           autocomplete="off" spellcheck="false">
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="section">
+                        <header class="section__head">
+                            <span class="label">Stack</span>
+                        </header>
+                        <div class="section__body" id="stack"></div>
+                    </section>
+
+                    <section class="section">
+                        <header class="section__head">
+                            <span class="label">Memory</span>
+                            <label class="visually-hidden" for="memory-offset">Memory offset in hexadecimal</label>
+                            <input type="text" id="memory-offset" class="field mono"
+                                   style="width: 84px; height: 24px;"
+                                   value="0000" maxlength="4"
+                                   autocomplete="off" spellcheck="false">
+                        </header>
+                        <div class="section__body" id="memory"></div>
+                    </section>
+
+                    <section class="section">
+                        <header class="section__head">
+                            <span class="label">Devices</span>
+                        </header>
+                        <div class="section__body" id="devices"></div>
+                    </section>
+                </div>
+            </aside>
+
+            <div class="drawer-scrim" role="presentation"></div>
         </div>
+
+        <!-- ================================================================ -->
+        <!-- STATUS BAR                                                       -->
+        <!-- ================================================================ -->
+        <footer class="status">
+            <span class="status__item">
+                <span class="state" id="state" data-state="ready">
+                    <span class="state__dot"></span>
+                    <span id="state-text">Ready</span>
+                </span>
+            </span>
+
+            <span class="status__item status__item--optional" id="queued">no input queued</span>
+
+            <span class="status__item status__item--end">
+                <a href="https://github.com/Amey-Thakur" target="_blank" rel="noopener">Amey Thakur</a>
+            </span>
+        </footer>
     </div>
-    <!-- MAIN LAYOUT -->
-    <div class="main">
-        <!-- SIDEBAR: Program Library -->
-        <div class="sidebar">
-            <h3><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
-                </svg> Program Library (161)</h3>
-            <div id="program-list"></div>
-        </div>
-        <!-- CENTER: Code Editor Engine -->
-        <div class="editor-panel">
-            <div class="editor-header">
-                <div><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M14.17 5L19 9.83V19H5V5h9.17M15 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V9l-6-6zM7 15h10v2H7v-2zm0-4h10v2H7v-2zm0-4h7v2H7V7z" />
-                    </svg> Code Editor — <span id="current-file">hello_world_dos.asm</span></div>
-                <div class="editor-actions">
-                    <button class="btn btn-secondary btn-sm" onclick="copyCode()" title="Copy to Clipboard"><svg
-                            class="icon icon-sm" viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
-                        </svg>
-                        Copy</button>
-                    <button class="btn btn-secondary btn-sm" onclick="downloadCode()" title="Download .asm file"><svg
-                            class="icon icon-sm" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
-                        </svg>
-                        Download</button>
-                    <button class="btn btn-secondary btn-sm" onclick="shareCode()" title="Share this program"><svg
-                            class="icon icon-sm" viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z" />
-                        </svg>
-                        Share</button>
-                </div>
-            </div>
-            <div class="editor-container">
-                <div class="line-numbers" id="line-numbers"></div>
-                <textarea id="code-editor" spellcheck="false" oninput="updateLineNumbers()" onscroll="syncScroll()">; 8086 Assembly - Hello World
-; Click a program from the sidebar to load it
 
-ORG 100H
-
-START:
-    MOV AH, 09H         ; DOS: display string
-    LEA DX, MSG         ; Load address of string
-    INT 21H             ; Execute interrupt
-
-    MOV AH, 4CH         ; DOS: terminate program
-    INT 21H             ; Execute
-
-MSG DB 'Hello, World!', 0DH, 0AH, '$'
-</textarea>
-                <div id="debug-bar" class="debug-bar">
-                    <div class="debug-content">
-                        <span class="debug-label">EXECUTION TRACE</span>
-                        <span class="debug-instruction" id="debug-instruction"></span>
-                        <span class="debug-explanation" id="debug-explanation"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- RIGHT PANEL: Registers & Status -->
-        <div class="right-panel">
-            <!-- 16-bit General Purpose Registers -->
-            <div class="panel-section">
-                <h4><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z" />
-                    </svg> Registers</h4>
-                <div class="registers">
-                    <div class="register" data-reg="AX">
-                        <div class="register-name">AX</div>
-                        <div class="register-value" id="reg-ax">0000</div>
-                    </div>
-                    <div class="register" data-reg="BX">
-                        <div class="register-name">BX</div>
-                        <div class="register-value" id="reg-bx">0000</div>
-                    </div>
-                    <div class="register" data-reg="CX">
-                        <div class="register-name">CX</div>
-                        <div class="register-value" id="reg-cx">0000</div>
-                    </div>
-                    <div class="register" data-reg="DX">
-                        <div class="register-name">DX</div>
-                        <div class="register-value" id="reg-dx">0000</div>
-                    </div>
-                    <div class="register" data-reg="SI">
-                        <div class="register-name">SI</div>
-                        <div class="register-value" id="reg-si">0000</div>
-                    </div>
-                    <div class="register" data-reg="DI">
-                        <div class="register-name">DI</div>
-                        <div class="register-value" id="reg-di">0000</div>
-                    </div>
-                    <div class="register" data-reg="SP">
-                        <div class="register-name">SP</div>
-                        <div class="register-value" id="reg-sp">FFFE</div>
-                    </div>
-                    <div class="register" data-reg="BP">
-                        <div class="register-name">BP</div>
-                        <div class="register-value" id="reg-bp">0000</div>
-                    </div>
-                </div>
-            </div>
-            <div class="panel-section">
-                <h4><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M14 6l-1-2H5v17h2v-7h5l1 2h7V6h-6zm4 8h-4l-1-2H7V6h5l1 2h5v6z" />
-                    </svg> Flags</h4>
-                <div class="flags">
-                    <span class="flag" id="flag-cf" data-flag="CF">CF</span>
-                    <span class="flag" id="flag-zf" data-flag="ZF">ZF</span>
-                    <span class="flag" id="flag-sf" data-flag="SF">SF</span>
-                    <span class="flag" id="flag-of" data-flag="OF">OF</span>
-                    <span class="flag" id="flag-pf" data-flag="PF">PF</span>
-                    <span class="flag" id="flag-af" data-flag="AF">AF</span>
-                </div>
-            </div>
-
-            <!-- Output Console for Interrupts (INT 21H) -->
-            <div class="panel-section output-section">
-                <h4><svg class="icon" viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10zm-2-1h-6v-2h6v2zM7.5 17l-1.41-1.41L8.67 13l-2.59-2.59L7.5 9l4 4-4 4z" />
-                    </svg> Output Console</h4>
-                <div id="output"></div>
-            </div>
-            <div class="status" id="status">Ready. Select a program or write your own code.</div>
-        </div>
-    </div>
-    <div class="footer">
-        <div id="system-bus" class="system-bus"></div>
-        <span>Created by</span>
-        <a href="https://github.com/Amey-Thakur" target="_blank" class="footer-link">
-            <svg class="footer-chip" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M6 2h12v2H6V2zM4 6h16v12H4V6zm2 2v8h12V8H6zm-4 2h2v4H2v-4zm20 0h2v4h-2v-4zM6 20h12v2H6v-2z" />
-            </svg>
-            Amey Thakur
-        </a>
-        <span class="copyright">© 2021</span>
-    </div>
-
-    <!-- Load JavaScript files -->
-    <script src="programs.js?v=2026.3"></script>
-    <script src="emulator.js?v=2026.3"></script>
+    <script type="module" src="js/ui/app.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,326 @@
+/* -----------------------------------------------------------------------------
+   Stylesheet:  base.css
+   Module:      Stylesheet, 1 of 3
+   Stack:       CSS, no framework, no build step
+   Description: The design tokens everything else is built from, and the small
+                reset that makes them behave the same in every browser.
+
+                The palette is deliberately quiet. This is an instrument for
+                reading numbers, so the page gets out of the way: paper white
+                rather than pure white, hairline rules instead of shadows, and
+                exactly one accent colour, used only where something is active
+                or needs a decision.
+
+                Both themes are defined here. The dark one is not an inversion
+                of the light one, because inverting paper gives a flat grey that
+                is tiring to read; it is a separate set of values chosen to hold
+                the same contrast ratios.
+
+   Authors:     Amey Thakur
+   Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+   License:     CC BY 4.0
+----------------------------------------------------------------------------- */
+
+/* -----------------------------------------------------------------------------
+   TOKENS
+----------------------------------------------------------------------------- */
+:root {
+    /* ---- surfaces ---------------------------------------------------------- */
+    --page:            #F4F3EF;   /* the desk the instrument sits on            */
+    --surface:         #FCFCFA;   /* panel faces                                */
+    --surface-sunken:  #F0EFEA;   /* wells: the editor, the console             */
+    --surface-raised:  #FFFFFF;   /* the one element in front of the rest       */
+
+    /* ---- ink --------------------------------------------------------------- */
+    --ink:             #1B1B19;   /* body text                                  */
+    --ink-muted:       #5C5C57;   /* labels, secondary text                     */
+    --ink-faint:       #6A6A63;   /* line numbers, units, placeholders          */
+
+    /* ---- lines ------------------------------------------------------------- */
+    --rule:            #DEDDD6;   /* panel edges and table rules                */
+    --rule-strong:     #C6C5BC;   /* the edge of an input                       */
+
+    /* ---- accent ------------------------------------------------------------ */
+    --accent:          #1F5C9E;
+    --accent-hover:    #17497E;
+    --accent-soft:     #E4EDF6;   /* selected row, active tab                   */
+    --accent-ink:      #FFFFFF;   /* text on the accent                         */
+
+    /* ---- state ------------------------------------------------------------- */
+    --ok:              #2C6E49;
+    --ok-soft:         #E3EFE8;
+    --warn:            #8A5A11;
+    --warn-soft:       #F6EEDF;
+    --error:           #9B2C2C;
+    --error-soft:      #F6E5E5;
+
+    /* ---- a value that changed on the last step ----------------------------- */
+    --changed:         #B45309;
+    --changed-soft:    #FBEEDC;
+
+    /* ---- source colouring ---------------------------------------------------
+       Seven colours, one per category, each doing a job when reading a listing.
+       All of them clear 4.5:1 against the editor's own background, so the
+       colour is legible on its own terms and is never the only thing carrying
+       the meaning: a comment is also set back, a label is also in bold.
+    ------------------------------------------------------------------------- */
+    --code-comment:    #5A6657;   /* green grey: present, and set back        */
+    --code-directive:  #7A4FA3;   /* violet: instructions to the assembler    */
+    --code-mnemonic:   #1F5C9E;   /* blue: instructions to the processor      */
+    --code-register:   #0F6B5C;   /* teal: where a value lives                */
+    --code-number:     #A2560F;   /* amber: a literal value                   */
+    --code-string:     #2C6E49;   /* green: text the program prints           */
+    --code-label:      #9B2C6F;   /* magenta: somewhere the program can jump  */
+
+    /* ---- type -------------------------------------------------------------- */
+    --font-ui: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono",
+                 "Roboto Mono", Consolas, "Liberation Mono", monospace;
+
+    --size-xs:   11px;
+    --size-sm:   12px;
+    --size-base: 13px;
+    --size-md:   14px;
+    --size-lg:   16px;
+    --size-xl:   20px;
+
+    --line-tight:  1.25;
+    --line-normal: 1.5;
+    --line-code:   1.65;
+
+    /* ---- spacing, on a four pixel grid ------------------------------------- */
+    --space-1:  4px;
+    --space-2:  8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+
+    /* ---- shape ------------------------------------------------------------- */
+    --radius-sm: 3px;
+    --radius:    4px;
+    --radius-lg: 6px;
+
+    /* ---- structure --------------------------------------------------------- */
+    --toolbar-height: 52px;
+    --status-height:  30px;
+    --library-width: 248px;
+    --inspector-width: 340px;
+
+    --transition: 120ms ease;
+
+    color-scheme: light;
+}
+
+/* -----------------------------------------------------------------------------
+   DARK THEME
+
+   Chosen rather than computed. The surfaces stay slightly warm so that white
+   text does not glare, and the accent is lifted because a mid blue disappears
+   against a dark ground.
+----------------------------------------------------------------------------- */
+:root[data-theme="dark"] {
+    --page:            #16171A;
+    --surface:         #1D1F23;
+    --surface-sunken:  #131417;
+    --surface-raised:  #24272C;
+
+    --ink:             #E8E8E4;
+    --ink-muted:       #A6A69F;
+    --ink-faint:       #8C8C84;
+
+    --rule:            #2E3136;
+    --rule-strong:     #3D4147;
+
+    --accent:          #5FA0DC;
+    --accent-hover:    #7FB6E8;
+    --accent-soft:     #1E2B38;
+    --accent-ink:      #0E1114;
+
+    --ok:              #6FBF8F;
+    --ok-soft:         #1A2721;
+    --warn:            #D6A45C;
+    --warn-soft:       #2A2318;
+    --error:           #E08585;
+    --error-soft:      #2C1C1C;
+
+    --changed:         #E0A458;
+    --changed-soft:    #2E2417;
+
+    /* Lifted, not inverted. A colour that reads well on paper goes muddy on a
+       dark ground, so each one is re-chosen at the lightness it needs. */
+    --code-comment:    #7C8A78;
+    --code-directive:  #C79BE4;
+    --code-mnemonic:   #6FADE4;
+    --code-register:   #5FC9B0;
+    --code-number:     #E5A863;
+    --code-string:     #86CFA0;
+    --code-label:      #E695C4;
+
+    color-scheme: dark;
+}
+
+/* -----------------------------------------------------------------------------
+   RESET
+
+   Only what is actually needed. A long reset is mostly undoing rules no
+   browser has applied since 2015.
+----------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: var(--size-base);
+    line-height: var(--line-normal);
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* The application owns the viewport; only the panels inside it scroll. */
+    overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-weight: 600;
+    line-height: var(--line-tight);
+}
+
+p  { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+    color: inherit;
+}
+
+button {
+    background: none;
+    border: 0;
+    cursor: pointer;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+svg {
+    display: block;
+    flex: none;
+}
+
+/* -----------------------------------------------------------------------------
+   FOCUS
+
+   Visible, and the same everywhere. A keyboard user should never have to guess
+   where they are.
+----------------------------------------------------------------------------- */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* -----------------------------------------------------------------------------
+   SHARED UTILITIES
+----------------------------------------------------------------------------- */
+
+/* Present to screen readers, absent from the page. */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* The small capitals used for every panel heading and column label. */
+.label {
+    font-size: var(--size-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+}
+
+.mono {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "zero" 1;
+}
+
+/* -----------------------------------------------------------------------------
+   SCROLLBARS
+
+   Thin and unobtrusive, so a panel with a scrollbar does not look different in
+   width from one without.
+----------------------------------------------------------------------------- */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--rule-strong) transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: var(--rule-strong);
+    border: 3px solid transparent;
+    border-radius: 6px;
+    background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--ink-faint);
+    border: 3px solid transparent;
+    background-clip: content-box;
+}
+
+/* -----------------------------------------------------------------------------
+   MOTION
+
+   Everything here is a state change rather than an animation, so anyone who
+   has asked for less of it loses nothing by turning it all off.
+----------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

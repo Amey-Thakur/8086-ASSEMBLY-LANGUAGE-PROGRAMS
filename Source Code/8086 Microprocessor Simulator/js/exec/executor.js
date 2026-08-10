@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // Script Name: executor.js
-// Module:      Execution, 1 of 4
+// Module:      Execution, 1 of 3
 // Stack:       JavaScript (ES2020), depends on the CPU core and the assembler
 // Description: Executes one assembled instruction at a time against a live CPU.
 //
@@ -240,6 +240,32 @@ export class Executor {
     }
 
     /**
+     * Find the instruction a misspelling was most likely meant to be.
+     *
+     * Almost every mistake of this kind is one wrong letter, one letter too
+     * many or one too few, so anything more than two edits away is more likely
+     * to be a different word than a typed one. Below three letters no
+     * suggestion is offered at all, because at that length everything is close
+     * to everything else.
+     */
+    nearestMnemonic(mnemonic) {
+        const typed = String(mnemonic).toUpperCase();
+
+        if (typed.length < 3) return null;
+
+        let best     = null;
+        let bestCost = 3;
+
+        for (const candidate of this.handlers.keys()) {
+            const cost = editDistance(typed, candidate, bestCost);
+
+            if (cost < bestCost) { bestCost = cost; best = candidate; }
+        }
+
+        return best;
+    }
+
+    /**
      * Work out which port an IN or OUT is addressing.
      *
      * An immediate port number fits in one byte. Anything above that has to be
@@ -294,8 +320,11 @@ export class Executor {
         const handler = this.handlers.get(instruction.mnemonic);
 
         if (!handler) {
+            const nearest = this.nearestMnemonic(instruction.mnemonic);
+
             throw new ExecutionError(
-                `"${instruction.mnemonic}" is not a recognised 8086 instruction`,
+                `"${instruction.mnemonic}" is not a recognised 8086 instruction` +
+                (nearest ? `. Did you mean ${nearest}?` : ''),
                 instruction.line
             );
         }
@@ -632,6 +661,47 @@ export class Executor {
     knows(mnemonic) {
         return this.handlers.has(String(mnemonic).toUpperCase());
     }
+}
+
+// -----------------------------------------------------------------------------
+// EDIT DISTANCE
+//
+// How many single character changes turn one word into another. Used only to
+// suggest what a misspelled mnemonic was meant to be.
+// -----------------------------------------------------------------------------
+
+/**
+ * @param {string} from
+ * @param {string} to
+ * @param {number} ceiling  give up once every path costs at least this much
+ * @returns {number} the distance, or the ceiling if it is at least that far
+ */
+export function editDistance(from, to, ceiling = Infinity) {
+    // A difference in length is a lower bound on the distance, so most
+    // candidates can be dismissed without any work at all.
+    if (Math.abs(from.length - to.length) >= ceiling) return ceiling;
+
+    let previous = Array.from({ length: to.length + 1 }, (_, index) => index);
+
+    for (let row = 1; row <= from.length; row++) {
+        const current = [row];
+
+        let rowBest = row;
+
+        for (let column = 1; column <= to.length; column++) {
+            const substitute = previous[column - 1] + (from[row - 1] === to[column - 1] ? 0 : 1);
+            const cost       = Math.min(substitute, previous[column] + 1, current[column - 1] + 1);
+
+            current[column] = cost;
+            rowBest = Math.min(rowBest, cost);
+        }
+
+        if (rowBest >= ceiling) return ceiling;   // no path can improve from here
+
+        previous = current;
+    }
+
+    return previous[to.length];
 }
 
 export { NO_OPERAND };

@@ -214,6 +214,26 @@ expectState('CBW then IDIV handles negatives',
           state.ERROR?.includes('not a recognised 8086 instruction'), true);
 }
 
+// A misspelling should be named, because the message a reader gets is the
+// difference between a two second fix and a puzzled minute.
+{
+    const state = run('MOVV AX,1\nHLT');
+    check('a one letter slip is diagnosed', state.ERROR?.includes('Did you mean MOV?'), true);
+}
+
+{
+    const state = run('PSUH AX\nHLT');
+    check('two transposed letters are diagnosed',
+          state.ERROR?.includes('Did you mean PUSH?'), true);
+}
+
+{
+    // Nothing within two edits of this, so guessing would be worse than silence.
+    const state = run('FLUGELHORN AX,1\nHLT');
+    check('a word that resembles nothing gets no guess',
+          state.ERROR?.includes('Did you mean'), false);
+}
+
 {
     const state = run('MOV AX,10\nMOV BL,0\nDIV BL\nHLT');
     check('divide by zero surfaces as interrupt 0',
