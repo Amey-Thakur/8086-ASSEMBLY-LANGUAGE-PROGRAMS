@@ -675,6 +675,54 @@
     "output": "Value located! 1-based index position: 5",
     "finished": true
   },
+  "Number Theory/binomial_coefficient.asm": {
+    "output": "12 choose 5 is 792\n",
+    "finished": true
+  },
+  "Number Theory/classify_by_divisor_sum.asm": {
+    "output": "6: perfect\n12: abundant\n15: deficient\n28: perfect\n",
+    "finished": true
+  },
+  "Number Theory/collatz_sequence_length.asm": {
+    "output": "27 reaches one in 111 steps\nThe highest value on the way was 9232\n",
+    "finished": true
+  },
+  "Number Theory/coprime_check.asm": {
+    "output": "35 and 64: coprime\n24 and 36: share a factor of 12\n17 and 51: share a factor of 17\n",
+    "finished": true
+  },
+  "Number Theory/count_divisors.asm": {
+    "output": "36 has 9 divisors\n",
+    "finished": true
+  },
+  "Number Theory/digital_root.asm": {
+    "output": "By repeated addition: 2\nBy the modulo nine rule: 2\n",
+    "finished": true
+  },
+  "Number Theory/happy_number_check.asm": {
+    "output": "19 is happy\n20 is not happy\n23 is happy\n4 is not happy\n",
+    "finished": true
+  },
+  "Number Theory/modular_exponentiation.asm": {
+    "output": "7 to the 13th, modulo 11, is 2\n",
+    "finished": true
+  },
+  "Number Theory/prime_factorisation.asm": {
+    "output": "360 factorises as 2 x 2 x 2 x 3 x 3 x 5\n",
+    "finished": true
+  },
+  "Number Theory/sieve_of_eratosthenes.asm": {
+    "output": "Primes below 50:\n2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 \n",
+    "finished": true
+  },
+  "Number Theory/sum_of_squares_and_cubes.asm": {
+    "output": "Sum of 1 to 10:        55\nSum of the squares:    385\nSum of the cubes:      3025\nThe sum of the cubes is the plain sum squared.\n",
+    "finished": true
+  },
+  "Number Theory/triangular_numbers.asm": {
+    "output": "The first eight triangular numbers:\n1 3 6 10 15 21 28 36 \nThe formula agreed at every step.\n",
+    "finished": true
+  },
   "Patterns/diamond_pattern.asm": {
     "output": "Symmetric Diamond Pattern:\n    * \n   * * \n  * * * \n * * * * \n* * * * * \n * * * * \n  * * * \n   * * \n    * \n",
     "finished": true
