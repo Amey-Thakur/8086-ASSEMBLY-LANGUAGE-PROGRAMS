@@ -13,7 +13,7 @@
 //              .asm file from the folder beside this one, so what the simulator
 //              runs is what the repository actually holds.
 //
-//              287 programs across 36 categories.
+//              299 programs across 36 categories.
 //
 // Authors:     Amey Thakur
 // Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
@@ -45,7 +45,7 @@ export const PROGRAMS = {
     'Loops': ['countdown_versus_countup.asm', 'loop_counted_with_cx.asm', 'loop_over_two_arrays.asm', 'loop_skipping_elements.asm', 'loop_unrolling.asm', 'loop_walking_an_array.asm', 'loop_with_computed_step.asm', 'loop_with_early_exit.asm', 'loope_repeat_while_equal.asm', 'loopne_search_until_found.asm', 'nested_loops_multiplication_table.asm', 'post_test_loop.asm'],
     'Macros': ['conditional_macros.asm', 'macro_with_parameters.asm', 'nested_macros.asm', 'print_string_macro.asm'],
     'Mathematics': ['armstrong_number.asm', 'lcm.asm', 'perfect_number.asm', 'square_root.asm', 'twos_complement.asm'],
-    'Matrix': ['matrix_addition.asm', 'matrix_transpose.asm'],
+    'Matrix': ['matrix_addition.asm', 'matrix_determinant.asm', 'matrix_is_identity.asm', 'matrix_is_symmetric.asm', 'matrix_largest_and_smallest.asm', 'matrix_multiplication.asm', 'matrix_rotate_ninety_degrees.asm', 'matrix_row_and_column_sums.asm', 'matrix_scalar_multiply.asm', 'matrix_sparse_count.asm', 'matrix_subtraction.asm', 'matrix_trace_and_diagonals.asm', 'matrix_transpose.asm', 'matrix_upper_lower_triangular.asm'],
     'Memory Operations': ['block_copy.asm', 'memory_compare.asm', 'memory_fill.asm', 'memory_scan.asm'],
     'Number Theory': ['binomial_coefficient.asm', 'classify_by_divisor_sum.asm', 'collatz_sequence_length.asm', 'coprime_check.asm', 'count_divisors.asm', 'digital_root.asm', 'happy_number_check.asm', 'modular_exponentiation.asm', 'prime_factorisation.asm', 'sieve_of_eratosthenes.asm', 'sum_of_squares_and_cubes.asm', 'triangular_numbers.asm'],
     'Patterns': ['diamond_pattern.asm', 'inverted_triangle.asm', 'number_pyramid.asm', 'triangle_pattern.asm'],
@@ -64,7 +64,7 @@ export const PROGRAMS = {
 
 /** How many programs the library holds. Written out so that anything quoting
  *  the number reads it from here rather than repeating it. */
-export const PROGRAM_COUNT = 287;
+export const PROGRAM_COUNT = 299;
 
 /** How many categories they are grouped into. */
 export const CATEGORY_COUNT = 36;

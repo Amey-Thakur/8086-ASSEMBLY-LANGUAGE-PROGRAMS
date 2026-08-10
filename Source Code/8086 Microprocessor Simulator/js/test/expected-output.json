@@ -655,8 +655,56 @@
     "output": "Matrix Addition completed. Result stored in memory.",
     "finished": true
   },
+  "Matrix/matrix_determinant.asm": {
+    "output": "A:\n     6     1     1\n     4    -2     5\n     2     8     7\nDeterminant: -306\n",
+    "finished": true
+  },
+  "Matrix/matrix_is_identity.asm": {
+    "output": "The first matrix:\n     1     0     0\n     0     1     0\n     0     0     1\nis the identity\nThe second matrix:\n     1     0     0\n     0     1     0\n     0     1     1\nis not the identity\n",
+    "finished": true
+  },
+  "Matrix/matrix_is_symmetric.asm": {
+    "output": "The first matrix:\n     1     7     3\n     7     4     5\n     3     5     6\nis symmetric\nThe second matrix:\n     1     7     3\n     2     4     5\n     3     5     6\nis not symmetric\n",
+    "finished": true
+  },
+  "Matrix/matrix_largest_and_smallest.asm": {
+    "output": "A:\n    14    -3    27\n    -8    41     6\n    19     2   -22\nLargest:  41  at row 1, column 1\nSmallest: -22  at row 2, column 2\n",
+    "finished": true
+  },
+  "Matrix/matrix_multiplication.asm": {
+    "output": "A:\n     1     2     3\n     4     5     6\n     7     8     9\nB:\n     9     8     7\n     6     5     4\n     3     2     1\nA x B:\n    30    24    18\n    84    69    54\n   138   114    90\n",
+    "finished": true
+  },
+  "Matrix/matrix_rotate_ninety_degrees.asm": {
+    "output": "Before:\n     1     2     3\n     4     5     6\n     7     8     9\nRotated clockwise:\n     7     4     1\n     8     5     2\n     9     6     3\n",
+    "finished": true
+  },
+  "Matrix/matrix_row_and_column_sums.asm": {
+    "output": "A:\n     2     7     6\n     9     5     1\n     4     3     8\nRow sums:    15  15  15  \nColumn sums: 15  15  15  \nBoth totals agree.\n",
+    "finished": true
+  },
+  "Matrix/matrix_scalar_multiply.asm": {
+    "output": "A:\n     1     2     3\n     4     5     6\n     7     8     9\nA x 7:\n     7    14    21\n    28    35    42\n    49    56    63\nA x 4, by shifting:\n     4     8    12\n    16    20    24\n    28    32    36\n",
+    "finished": true
+  },
+  "Matrix/matrix_sparse_count.asm": {
+    "output": "A:\n     0     0     3\n     0     0     0\n     7     0     0\nZeros:     7 of 9\nMore than half the cells are empty, so a list of the non\nzero positions would take less room than the matrix.\n",
+    "finished": true
+  },
+  "Matrix/matrix_subtraction.asm": {
+    "output": "A:\n    10    20    30\n    40    50    60\n    70    80    90\nB:\n     1     2     3\n     4     5     6\n     7     8     9\nA - B:\n     9    18    27\n    36    45    54\n    63    72    81\n",
+    "finished": true
+  },
+  "Matrix/matrix_trace_and_diagonals.asm": {
+    "output": "A:\n     1     2     3\n     4     5     6\n     7     8     9\nTrace, the leading diagonal: 15\nThe other diagonal:          15\n",
+    "finished": true
+  },
   "Matrix/matrix_transpose.asm": {
     "output": "Matrix Transpose completed successfully.",
+    "finished": true
+  },
+  "Matrix/matrix_upper_lower_triangular.asm": {
+    "output": "The first matrix is upper triangular\nThe second matrix is lower triangular\n",
     "finished": true
   },
   "Memory Operations/block_copy.asm": {
