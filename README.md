@@ -18,7 +18,7 @@
 
 <div align="center">
 
-  [Authors](#authors) &nbsp;·&nbsp; [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Quick Start](#quick-start) &nbsp;·&nbsp; [Program Details](#program-details) &nbsp;·&nbsp; [Roadmap](#learning-roadmap) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Specifications](#interrupt-vector-specifications) &nbsp;·&nbsp; [Debugging](#debugging--error-analysis) &nbsp;·&nbsp; [Resources](#useful-resources) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [Usage Guidelines](#usage-guidelines) &nbsp;·&nbsp; [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
+  [Author](#author) &nbsp;·&nbsp; [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Quick Start](#quick-start) &nbsp;·&nbsp; [Program Details](#program-details) &nbsp;·&nbsp; [Roadmap](#learning-roadmap) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Specifications](#interrupt-vector-specifications) &nbsp;·&nbsp; [Debugging](#debugging--error-analysis) &nbsp;·&nbsp; [Resources](#useful-resources) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [Usage Guidelines](#usage-guidelines) &nbsp;·&nbsp; [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
 
 </div>
 
@@ -98,7 +98,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 - **Emulator** → Emu8086 (native) · 8086 Microprocessor Simulator (browser)
 - **Language** → Assembly (ASM)
 - **Simulator** → JavaScript (ES2020 Modules), no dependencies and no build step
-- **Verification** → 599 conformance tests, run with `npm test`
+- **Verification** → 602 conformance tests, run with `npm test`
 
 ---
 
@@ -196,7 +196,7 @@ copies, so what runs is what the repository holds.
 | **Instructions** | The full 8086 set: arithmetic with all nine flags, BCD adjustment, shifts and rotates through carry, string operations with `REP`, `CALL`/`RET`, and port `IN`/`OUT` |
 | **Assembler** | Two passes with forward references, `MACRO` with `LOCAL`, conditional assembly, constant expressions including `$`, `OFFSET`, `SEG`, `DUP` and jump tables |
 | **Services** | `INT 21h` for console, buffered input, files and the clock; `INT 10h`, `16h`, `1Ah`, `15h` and `20h` |
-| **Verification** | 599 tests across nine suites, including one that assembles and runs all 161 programs |
+| **Verification** | 602 tests across nine suites, including one that assembles and runs all 161 programs |
 
 **Running the tests**
 
@@ -787,7 +787,7 @@ Special thanks to the mentors and peers whose encouragement, discussions, and su
 
   [↑ Back to Top](#8086-assembly-language-programs)
 
-  [Authors](#authors) &nbsp;·&nbsp; [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Quick Start](#quick-start) &nbsp;·&nbsp; [Program Details](#program-details) &nbsp;·&nbsp; [Roadmap](#learning-roadmap) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Specifications](#interrupt-vector-specifications) &nbsp;·&nbsp; [Debugging](#debugging--error-analysis) &nbsp;·&nbsp; [Resources](#useful-resources) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [Usage Guidelines](#usage-guidelines) &nbsp;·&nbsp; [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
+  [Author](#author) &nbsp;·&nbsp; [Overview](#overview) &nbsp;·&nbsp; [Features](#features) &nbsp;·&nbsp; [Structure](#project-structure) &nbsp;·&nbsp; [Quick Start](#quick-start) &nbsp;·&nbsp; [Program Details](#program-details) &nbsp;·&nbsp; [Roadmap](#learning-roadmap) &nbsp;·&nbsp; [Best Practices](#best-practices-for-assembly) &nbsp;·&nbsp; [Specifications](#interrupt-vector-specifications) &nbsp;·&nbsp; [Debugging](#debugging--error-analysis) &nbsp;·&nbsp; [Resources](#useful-resources) &nbsp;·&nbsp; [Contributing](#contributing) &nbsp;·&nbsp; [Usage Guidelines](#usage-guidelines) &nbsp;·&nbsp; [License](#license) &nbsp;·&nbsp; [About](#about-this-repository) &nbsp;·&nbsp; [Acknowledgments](#acknowledgments)
 
   <br>
 
