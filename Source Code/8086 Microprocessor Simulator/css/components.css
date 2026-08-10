@@ -686,6 +686,110 @@
 .notice--error { background: var(--error-soft);  color: var(--error); }
 
 /* -----------------------------------------------------------------------------
+   THE KEYBOARD LIST
+
+   Summoned with a question mark. Drawn from the same table that dispatches the
+   keys, so it cannot describe a shortcut that does not exist.
+----------------------------------------------------------------------------- */
+.scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+
+    background: rgb(0 0 0 / 34%);
+}
+
+.scrim[hidden] { display: none; }
+
+.keys {
+    width: 100%;
+    max-width: 560px;
+    max-height: 80vh;
+
+    display: flex;
+    flex-direction: column;
+
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    overflow: hidden;
+}
+
+.keys__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    flex: none;
+    padding: var(--space-3) var(--space-4);
+
+    border-bottom: 1px solid var(--rule);
+}
+
+.keys__title {
+    font-size: var(--size-md);
+    font-weight: 600;
+}
+
+.keys__body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--space-2) var(--space-4) var(--space-4);
+}
+
+.keys__group {
+    margin-top: var(--space-4);
+}
+
+.keys__list {
+    display: grid;
+    grid-template-columns: minmax(96px, auto) 1fr;
+    gap: 5px var(--space-4);
+    align-items: baseline;
+
+    margin: var(--space-2) 0 0;
+}
+
+.keys__list dt { text-align: right; }
+
+.keys__list dd {
+    margin: 0;
+    font-size: var(--size-sm);
+    color: var(--ink-muted);
+}
+
+kbd {
+    display: inline-block;
+    padding: 2px 7px;
+
+    border: 1px solid var(--rule-strong);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-sm);
+    background: var(--surface-raised);
+
+    font-family: var(--font-mono);
+    font-size: var(--size-xs);
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--ink);
+}
+
+@media (max-width: 480px) {
+    .keys__list {
+        grid-template-columns: 1fr;
+        gap: 2px;
+    }
+
+    .keys__list dt { text-align: left; margin-top: var(--space-2); }
+}
+
+/* -----------------------------------------------------------------------------
    TOUCH
 
    Where the pointer is coarse, every target grows to a size a finger can hit

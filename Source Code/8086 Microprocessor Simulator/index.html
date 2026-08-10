@@ -39,9 +39,115 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components.css">
+
+    <!--
+        The loading screen is styled here rather than in a stylesheet, so that
+        it paints on the very first frame. A screen that arrives after the
+        stylesheet it depends on has covered nothing.
+    -->
+    <style>
+        #loading {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+
+            background: #F4F3EF;
+            transition: opacity 240ms ease;
+        }
+
+        #loading[data-state="done"] { opacity: 0; pointer-events: none; }
+
+        @media (prefers-color-scheme: dark) { #loading { background: #16171A; } }
+        :root[data-theme="dark"]  #loading { background: #16171A; }
+        :root[data-theme="light"] #loading { background: #F4F3EF; }
+
+        #loading .mark {
+            display: grid;
+            place-items: center;
+
+            width: 54px;
+            height: 54px;
+
+            border-radius: 8px;
+            background: #1F5C9E;
+
+            color: #FFFFFF;
+            font-family: ui-monospace, Consolas, monospace;
+            font-size: 21px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        #loading .who {
+            font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1B1B19;
+        }
+
+        #loading .what {
+            font-family: ui-monospace, Consolas, monospace;
+            font-size: 12px;
+            color: #6A6A63;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            #loading .who  { color: #E8E8E4; }
+            #loading .what { color: #8C8C84; }
+        }
+
+        /* Three dots that fill in, which says the machine is coming up without
+           pretending to know how far along it is. A progress bar that is not
+           measuring anything is a lie told with a rectangle. */
+        #loading .beat {
+            display: flex;
+            gap: 5px;
+        }
+
+        #loading .beat span {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #C6C5BC;
+            animation: loading-beat 1.05s ease-in-out infinite;
+        }
+
+        #loading .beat span:nth-child(2) { animation-delay: 0.14s; }
+        #loading .beat span:nth-child(3) { animation-delay: 0.28s; }
+
+        @media (prefers-color-scheme: dark) {
+            #loading .beat span { background: #3D4147; }
+        }
+
+        @keyframes loading-beat {
+            0%, 100% { opacity: 0.35; }
+            50%      { opacity: 1; background: #1F5C9E; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #loading .beat span { animation: none; opacity: 0.7; }
+        }
+    </style>
 </head>
 
 <body>
+    <!-- ==================================================================== -->
+    <!-- LOADING                                                              -->
+    <!-- Removed by app.js once the machine is genuinely ready.               -->
+    <!-- ==================================================================== -->
+    <div id="loading" role="status" aria-live="polite">
+        <div class="mark" aria-hidden="true">86</div>
+        <div class="who">8086 Microprocessor Simulator</div>
+        <div class="what">Amey Thakur &middot; bringing the machine up</div>
+        <div class="beat" aria-hidden="true"><span></span><span></span><span></span></div>
+    </div>
+
     <div class="app" data-view="editor" data-library="closed">
 
         <!-- ================================================================ -->
@@ -93,6 +199,13 @@
                 </button>
 
                 <div class="toolbar__divider" role="presentation"></div>
+
+                <button type="button" id="action-keys" class="button button--quiet button--icon"
+                        aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">
+                    <svg class="button__icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20 5H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 12H4V7h16v10zM6 9h2v2H6V9zm3 0h2v2H9V9zm3 0h2v2h-2V9zm3 0h2v2h-2V9zM6 12h2v2H6v-2zm3 0h6v2H9v-2zm7 0h2v2h-2v-2z"/>
+                    </svg>
+                </button>
 
                 <button type="button" id="action-theme" class="button button--quiet button--icon"
                         aria-label="Switch to the dark theme">
@@ -275,6 +388,9 @@
             </span>
         </footer>
     </div>
+
+    <!-- The keyboard list, drawn from the table in shortcuts.js -->
+    <div class="scrim" id="shortcuts" hidden></div>
 
     <script type="module" src="js/ui/app.js"></script>
 </body>

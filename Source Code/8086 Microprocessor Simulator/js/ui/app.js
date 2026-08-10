@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // Script Name: app.js
-// Module:      Interface, 6 of 6
+// Module:      Interface, 7 of 7
 // Stack:       JavaScript (ES2020), no framework
 // Description: The controller. Owns the machine, drives assemble, run, step and
 //              reset, and keeps every panel showing the same state.
@@ -32,6 +32,7 @@ import { Editor }    from './editor.js';
 import { Inspector } from './inspector.js';
 import { Library }   from './library.js';
 import { Console }   from './console.js';
+import { Shortcuts } from './shortcuts.js';
 
 /** Instructions executed per animation frame while running. Chosen so a frame
  *  stays inside its budget on a modest laptop, and a delay loop still finishes
@@ -87,6 +88,26 @@ export class Application {
 
         this.editor.value = WELCOME;
         this.reset('Ready. Assemble the program, then run it or step through it.');
+
+        this.dismissLoading();
+    }
+
+    /**
+     * Take the loading screen away.
+     *
+     * It exists because the interface is built from fifteen ES modules, and
+     * between the first byte of HTML and the moment they have all loaded there
+     * is a stretch with nothing on the page. It is removed rather than hidden,
+     * so it cannot intercept a click afterwards, and only once everything it
+     * was covering for is genuinely ready.
+     */
+    dismissLoading() {
+        const screen = document.querySelector('#loading');
+
+        if (!screen) return;
+
+        screen.dataset.state = 'done';
+        setTimeout(() => screen.remove(), 260);
     }
 
     // -------------------------------------------------------------------------
@@ -156,39 +177,27 @@ export class Application {
             if (item?.dataset.line) this.editor.revealLine(Number(item.dataset.line));
         });
 
-        document.addEventListener('keydown', event => this.handleShortcut(event));
-    }
+        on('#action-keys', () => this.shortcuts.toggle());
 
-    /**
-     * The four shortcuts worth having, on the keys a debugger uses.
-     *
-     * They are ignored while a text field has focus unless a modifier is held,
-     * so typing F5 into the input queue does not start the program.
-     */
-    handleShortcut(event) {
-        const typing = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName);
-
-        if (event.key === 'F5' || (event.ctrlKey && event.key === 'Enter')) {
-            event.preventDefault();
-            this.toggleRun();
-            return;
-        }
-
-        if (event.key === 'F10') {
-            event.preventDefault();
-            this.step();
-            return;
-        }
-
-        if (event.ctrlKey && event.key.toLowerCase() === 'b') {
-            event.preventDefault();
-            this.assemble();
-            return;
-        }
-
-        if (event.key === 'Escape' && !typing) {
-            this.stop('Stopped.');
-        }
+        // Every shortcut is declared in shortcuts.js. This is only the map from
+        // the name of an action to the method that carries it out, so the key
+        // table and the behaviour stay in one place each.
+        this.shortcuts = new Shortcuts(query('#shortcuts'), {
+            run:              () => this.toggleRun(),
+            step:             () => this.step(),
+            assemble:         () => this.assemble(),
+            reset:            () => this.reset('Machine reset.'),
+            stop:             () => this.stop('Stopped.'),
+            search:           () => { this.toggleLibrary(true); query('#library-search').focus(); },
+            library:          () => this.toggleLibrary(),
+            'view-editor':    () => this.showView('editor'),
+            'view-inspector': () => this.showView('inspector'),
+            'focus-editor':   () => this.editor.focus(),
+            theme:            () => this.toggleTheme(),
+            clear:            () => { this.console.clear(); this.setNotice('info', 'Console cleared.'); },
+            download:         () => this.downloadSource(),
+            help:             () => this.shortcuts.toggle()
+        });
     }
 
     // -------------------------------------------------------------------------

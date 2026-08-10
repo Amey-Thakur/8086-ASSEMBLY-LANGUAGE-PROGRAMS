@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+    =============================================================================
+    PROJECT: 8086 MICROPROCESSOR SIMULATOR
+    =============================================================================
+    AUTHOR:      Amey Thakur
+    GITHUB:      https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+    PROFILE:     https://github.com/Amey-Thakur
+    LICENSE:     MIT License
+
+    DESCRIPTION:
+    The page GitHub Pages serves when an address in this repository does not
+    exist. Written as a diagnostic in the same voice the simulator uses for a
+    real one, because a wrong turn is a better place to explain the machine
+    than to apologise.
+
+    Deliberately self contained: no stylesheet and no script are loaded, so it
+    renders even when the request that failed was for the assets themselves.
+    =============================================================================
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="robots" content="noindex">
+
+    <title>Interrupt 404 &middot; 8086 Microprocessor Simulator</title>
+    <meta name="description"
+          content="That address is not mapped. Return to the 8086 Microprocessor Simulator.">
+
+    <link rel="icon"
+          href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%231F5C9E'/%3E%3Ctext x='16' y='21' font-family='monospace' font-size='11' font-weight='700' fill='white' text-anchor='middle'%3E86%3C/text%3E%3C/svg%3E">
+
+    <style>
+        /* ---- the same tokens the simulator uses ---------------------------- */
+        :root {
+            --page:      #F4F3EF;
+            --surface:   #FCFCFA;
+            --sunken:    #F0EFEA;
+            --ink:       #1B1B19;
+            --muted:     #5C5C57;
+            --faint:     #6A6A63;
+            --rule:      #DEDDD6;
+            --accent:    #1F5C9E;
+            --error:     #9B2C2C;
+            --error-bg:  #F6E5E5;
+            --comment:   #5A6657;
+            --mnemonic:  #1F5C9E;
+            --register:  #0F6B5C;
+            --number:    #A2560F;
+
+            --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono",
+                    Consolas, "Liberation Mono", monospace;
+            --ui: "Inter", "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+
+            color-scheme: light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --page:      #16171A;
+                --surface:   #1D1F23;
+                --sunken:    #131417;
+                --ink:       #E8E8E4;
+                --muted:     #A6A69F;
+                --faint:     #8C8C84;
+                --rule:      #2E3136;
+                --accent:    #5FA0DC;
+                --error:     #E08585;
+                --error-bg:  #2C1C1C;
+                --comment:   #7C8A78;
+                --mnemonic:  #6FADE4;
+                --register:  #5FC9B0;
+                --number:    #E5A863;
+
+                color-scheme: dark;
+            }
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body { height: 100%; margin: 0; }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+
+            background: var(--page);
+            color: var(--ink);
+            font-family: var(--ui);
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        main {
+            width: 100%;
+            max-width: 620px;
+        }
+
+        /* ---- the heading -------------------------------------------------- */
+        .code {
+            font-family: var(--mono);
+            font-size: clamp(56px, 16vw, 96px);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            color: var(--accent);
+            margin: 0 0 4px;
+        }
+
+        h1 {
+            font-size: clamp(18px, 5vw, 22px);
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin: 0 0 8px;
+        }
+
+        p { margin: 0 0 16px; color: var(--muted); }
+
+        /* ---- the diagnostic, in the simulator's own format ----------------- */
+        .diagnostic {
+            margin: 20px 0 24px;
+            border: 1px solid var(--rule);
+            border-radius: 4px;
+            background: var(--sunken);
+            overflow: hidden;
+        }
+
+        .diagnostic__head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+
+            padding: 7px 14px;
+            border-bottom: 1px solid var(--rule);
+            background: var(--surface);
+
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        pre {
+            margin: 0;
+            padding: 14px;
+            overflow-x: auto;
+
+            font-family: var(--mono);
+            font-size: 13px;
+            line-height: 1.7;
+            tab-size: 4;
+        }
+
+        .c { color: var(--comment); font-style: italic; }
+        .m { color: var(--mnemonic); font-weight: 600; }
+        .r { color: var(--register); }
+        .n { color: var(--number); }
+
+        .fault {
+            display: block;
+            margin-top: 10px;
+            padding: 8px 10px;
+            border-left: 3px solid var(--error);
+            background: var(--error-bg);
+            color: var(--error);
+            font-weight: 600;
+            white-space: pre-wrap;
+        }
+
+        /* ---- the way out -------------------------------------------------- */
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            min-height: 34px;
+            padding: 0 14px;
+
+            border: 1px solid var(--rule);
+            border-radius: 4px;
+            background: var(--surface);
+
+            color: var(--ink);
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+
+            transition: background 120ms ease, border-color 120ms ease;
+        }
+
+        .button:hover { border-color: var(--faint); background: var(--sunken); }
+
+        .button--primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #FFFFFF;
+        }
+
+        .button--primary:hover { filter: brightness(0.92); }
+
+        footer {
+            padding-top: 18px;
+            border-top: 1px solid var(--rule);
+            font-size: 12px;
+            color: var(--faint);
+        }
+
+        footer a { color: var(--accent); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <p class="code" aria-hidden="true">404</p>
+
+        <h1>That address is not mapped.</h1>
+
+        <p>
+            The 8086 reaches a megabyte and this repository occupies rather less of it.
+            Whatever was at the address you asked for, it is not there now.
+        </p>
+
+        <section class="diagnostic" aria-label="What the simulator would say">
+            <header class="diagnostic__head">
+                <span>Diagnostic</span>
+                <span>interrupt 404</span>
+            </header>
+
+<pre><span class="c">; the request that brought you here</span>
+    <span class="m">MOV</span> <span class="r">AH</span>, <span class="n">09H</span>          <span class="c">; ask for a page</span>
+    <span class="m">LEA</span> <span class="r">DX</span>, REQUESTED_URL
+    <span class="m">INT</span> <span class="n">21H</span>
+<span class="fault">Nothing is stored at that offset.
+Interrupt 404 is not one the processor provides.</span></pre>
+        </section>
+
+        <div class="actions">
+            <a class="button button--primary"
+               href="/8086-ASSEMBLY-LANGUAGE-PROGRAMS/">Open the simulator</a>
+            <a class="button"
+               href="https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS">Browse the repository</a>
+            <a class="button"
+               href="https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS/discussions">Ask a question</a>
+        </div>
+
+        <footer>
+            <strong>8086 Assembly Language Programs</strong> &mdash; every program in the
+            repository assembles and runs in the browser.
+            <br>
+            Built by <a href="https://github.com/Amey-Thakur">Amey Thakur</a>.
+        </footer>
+    </main>
+</body>
+
+</html>
