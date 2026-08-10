@@ -228,6 +228,18 @@ export function parseAddressExpression(inner, line = null, context = null) {
         }
 
         if (/^[A-Za-z_@$?][A-Za-z0-9_@$?]*$/.test(body)) {
+            // A name that is already known to be an EQU is a number, not an
+            // address, so it belongs in the displacement. [SI+STRIDE] has one
+            // symbol and a constant, not two symbols. The kind is compared as a
+            // string rather than imported, because the assembler imports this
+            // module and the cycle would not resolve.
+            const known = context?.symbols?.[body.toUpperCase()];
+
+            if (known?.kind === 'constant') {
+                displacement += negative ? -known.value : known.value;
+                continue;
+            }
+
             if (symbol) throw new SyntaxError8086(`two symbols in "[${inner}]"`, line);
             symbol = body;
             continue;

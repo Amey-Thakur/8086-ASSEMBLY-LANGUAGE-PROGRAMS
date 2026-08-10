@@ -1,6 +1,50 @@
 {
+  "Addressing Modes/based_addressing_mode.asm": {
+    "output": "Based addressing: a base register plus a constant\n[BX+0] year     = 1985\n[BX+2] quantity = 42\n[BX+4] price    = 995\n\nThe other spelling, DATA_W[BX], puts the constant first.\nBX = 0 gives 10, BX = 2 gives 20, BX = 8 gives 50\n",
+    "finished": true
+  },
+  "Addressing Modes/based_indexed_addressing_mode.asm": {
+    "output": "Based indexed: base register plus index register\nBX carries row*6 and SI carries column*2\nrow 0, column 0 holds 1\nrow 1, column 2 holds 6\nrow 2, column 1 holds 8\n\nThe whole table read this way:\n1 2 3 \n4 5 6 \n7 8 9 \n\nGRID[BX][SI] and [GRID+BX+SI] are the same instruction.\n",
+    "finished": true
+  },
+  "Addressing Modes/based_indexed_with_displacement.asm": {
+    "output": "Base plus index plus displacement, the widest form\nThe centre cell, row 1 column 1: 5\nIts right neighbour, displacement +2: 6\nIts left neighbour, displacement -2: 4\nThe cell below it, displacement +6: 8\nThe cell above it, displacement -6: 2\nThe five of them added up: 25\n\nNeither BX nor SI moved. Only the constant changed.\n",
+    "finished": true
+  },
   "Addressing Modes/comprehensive_8086_addressing_modes_reference.asm": {
     "output": "Addressing Modes Demo Completed Successfully!",
+    "finished": true
+  },
+  "Addressing Modes/direct_addressing_mode.asm": {
+    "output": "Direct addressing: the assembler writes the address down\nMOV AX, FIRST        AX = 4321\nMOV FIRST, 8765      FIRST = 8765\nFIRST + SECOND       = 9999\nTwo reads of one name always agree: 1234 and 1234\nA running total kept in memory: 15\n",
+    "finished": true
+  },
+  "Addressing Modes/immediate_addressing_mode.asm": {
+    "output": "Immediate addressing: the value travels in the instruction\nMOV AX, 500      AX = 500\nADD AX, 250      AX = 750\nSUB AX, 50       AX = 700\nMOV BL, 25       BL = 25\nMOV AX, 0FFFFH   AX = 65535\n\nA constant can only be the source. It has no address, so it can never be the destination.\n",
+    "finished": true
+  },
+  "Addressing Modes/indexed_addressing_mode.asm": {
+    "output": "Indexed addressing: an index register plus a constant\nA word is two bytes, so element n sits at byte offset n*2\nelement 0 at offset 0 holds 10\nelement 1 at offset 2 holds 20\nelement 2 at offset 4 holds 30\nelement 3 at offset 6 holds 40\nelement 4 at offset 8 holds 50\n\nSum of all five: 150\nOne past the end, DATA_W[HOWMANY*2], would be out of bounds.\n",
+    "finished": true
+  },
+  "Addressing Modes/register_addressing_mode.asm": {
+    "output": "Register addressing: both operands are inside the processor\nAX = 1000 and BX = 250\nMOV CX, AX       CX = 1000\nADD CX, BX       CX = 1250\nXCHG AX, BX      AX = 250 and BX = 1000\n\nAH and AL are the two halves of AX.\nAX = 258 so AH = 1 and AL = 2\n",
+    "finished": true
+  },
+  "Addressing Modes/register_indirect_addressing_mode.asm": {
+    "output": "Register indirect: the register holds the address\nThrough BX: 11\nThrough SI: 11\nThrough DI: 11\nWalking the array with SI: 11 22 33 44 \nThrough BP, which reads the stack: 777\n\nOnly BX, BP, SI and DI may hold an address. AX, CX and DX cannot.\n",
+    "finished": true
+  },
+  "Addressing Modes/relative_addressing_mode.asm": {
+    "output": "Relative addressing: jumps carry a distance, not an address\nA forward jump skipped the next line.\nA backward jump counting down: 5 4 3 2 1 \n\nBranch one was taken.\nAn indirect jump through a register is absolute, not relative.\n",
+    "finished": true
+  },
+  "Addressing Modes/segment_override_addressing.asm": {
+    "output": "Segment overrides: changing which segment a mode uses\nDS:[BX] reads 1111\nES:[BX] with ES = DS reads the same word: 1111\nCopied to SPARE through ES: 1111 2222 3333 4444 \n\n[BP] defaults to the stack and reads 9999\nDS:[BP] overrides that and reads 1111\n\nA prefix costs one byte and two clocks. The defaults are chosen so most code needs none.\n",
+    "finished": true
+  },
+  "Addressing Modes/string_addressing_mode.asm": {
+    "output": "String addressing: DS:SI to ES:DI, with no operands\nSource:   ADDRESSING\nCopied:   ADDRESSING\nBackwards: GNISSERDDA\n\nLODSB then STOSB does the same work one byte at a time.\nCLD counts up, STD counts down. Leave the flag clear.\n",
     "finished": true
   },
   "Arithmetic/add_array_of_bytes_from_memory.asm": {
