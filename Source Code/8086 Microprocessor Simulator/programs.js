@@ -13,7 +13,7 @@
 //              .asm file from the folder beside this one, so what the simulator
 //              runs is what the repository actually holds.
 //
-//              323 programs across 36 categories.
+//              335 programs across 36 categories.
 //
 // Authors:     Amey Thakur
 // Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
@@ -48,7 +48,7 @@ export const PROGRAMS = {
     'Matrix': ['matrix_addition.asm', 'matrix_determinant.asm', 'matrix_is_identity.asm', 'matrix_is_symmetric.asm', 'matrix_largest_and_smallest.asm', 'matrix_multiplication.asm', 'matrix_rotate_ninety_degrees.asm', 'matrix_row_and_column_sums.asm', 'matrix_scalar_multiply.asm', 'matrix_sparse_count.asm', 'matrix_subtraction.asm', 'matrix_trace_and_diagonals.asm', 'matrix_transpose.asm', 'matrix_upper_lower_triangular.asm'],
     'Memory Operations': ['block_copy.asm', 'memory_compare.asm', 'memory_fill.asm', 'memory_scan.asm'],
     'Number Theory': ['binomial_coefficient.asm', 'classify_by_divisor_sum.asm', 'collatz_sequence_length.asm', 'coprime_check.asm', 'count_divisors.asm', 'digital_root.asm', 'happy_number_check.asm', 'modular_exponentiation.asm', 'prime_factorisation.asm', 'sieve_of_eratosthenes.asm', 'sum_of_squares_and_cubes.asm', 'triangular_numbers.asm'],
-    'Patterns': ['diamond_pattern.asm', 'inverted_triangle.asm', 'number_pyramid.asm', 'triangle_pattern.asm'],
+    'Patterns': ['alphabet_triangle.asm', 'binary_pattern.asm', 'butterfly_pattern.asm', 'diamond_pattern.asm', 'floyd_triangle.asm', 'hollow_pyramid.asm', 'hollow_square.asm', 'hourglass_pattern.asm', 'inverted_triangle.asm', 'multiplication_grid.asm', 'number_pyramid.asm', 'pascal_triangle.asm', 'pyramid_of_stars.asm', 'right_aligned_triangle.asm', 'spiral_matrix_print.asm', 'triangle_pattern.asm'],
     'Procedures': ['basic_procedure.asm', 'local_variables.asm', 'nested_procedures.asm', 'procedure_parameters.asm', 'recursive_factorial.asm'],
     'Recursion': ['binary_search_recursive.asm', 'factorial_recursive_frames.asm', 'fibonacci_recursive.asm', 'gcd_recursive.asm', 'mutual_recursion_even_odd.asm', 'power_recursive.asm', 'recursion_versus_iteration.asm', 'reverse_string_recursive.asm', 'stack_frame_anatomy.asm', 'sum_array_recursive.asm', 'sum_of_digits_recursive.asm', 'tower_of_hanoi.asm'],
     'Searching': ['binary_search.asm', 'character_occurrences_count.asm', 'linear_search.asm', 'search_element_array.asm'],
@@ -64,7 +64,7 @@ export const PROGRAMS = {
 
 /** How many programs the library holds. Written out so that anything quoting
  *  the number reads it from here rather than repeating it. */
-export const PROGRAM_COUNT = 323;
+export const PROGRAM_COUNT = 335;
 
 /** How many categories they are grouped into. */
 export const CATEGORY_COUNT = 36;

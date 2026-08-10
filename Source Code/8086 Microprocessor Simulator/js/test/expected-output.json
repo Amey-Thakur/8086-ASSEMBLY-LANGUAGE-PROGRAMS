@@ -867,16 +867,64 @@
     "output": "The first eight triangular numbers:\n1 3 6 10 15 21 28 36 \nThe formula agreed at every step.\n",
     "finished": true
   },
+  "Patterns/alphabet_triangle.asm": {
+    "output": "Restarting each row:\nA\nAB\nABC\nABCD\nABCDE\nABCDEF\n\nContinuing through:\nA\nBC\nDEF\nGHIJ\nKLMNO\nPQRSTU\n",
+    "finished": true
+  },
+  "Patterns/binary_pattern.asm": {
+    "output": "Ones where the row and column sum is even:\n1\n01\n101\n0101\n10101\n010101\n1010101\n",
+    "finished": true
+  },
+  "Patterns/butterfly_pattern.asm": {
+    "output": "A butterfly:\n*        *\n**      **\n***    ***\n****  ****\n**********\n**********\n****  ****\n***    ***\n**      **\n*        *\n",
+    "finished": true
+  },
   "Patterns/diamond_pattern.asm": {
     "output": "Symmetric Diamond Pattern:\n    * \n   * * \n  * * * \n * * * * \n* * * * * \n * * * * \n  * * * \n   * * \n    * \n",
+    "finished": true
+  },
+  "Patterns/floyd_triangle.asm": {
+    "output": "Floyd's triangle, seven rows:\n1   \n2   3   \n4   5   6   \n7   8   9   10  \n11  12  13  14  15  \n16  17  18  19  20  21  \n22  23  24  25  26  27  28  \n",
+    "finished": true
+  },
+  "Patterns/hollow_pyramid.asm": {
+    "output": "A hollow pyramid of six rows:\n     *\n    * *\n   *   *\n  *     *\n *       *\n***********\n",
+    "finished": true
+  },
+  "Patterns/hollow_square.asm": {
+    "output": "A hollow square of side seven:\n*******\n*     *\n*     *\n*     *\n*     *\n*     *\n*******\n",
+    "finished": true
+  },
+  "Patterns/hourglass_pattern.asm": {
+    "output": "An hourglass:\n*********\n *******\n  *****\n   ***\n    *\n   ***\n  *****\n *******\n*********\n",
     "finished": true
   },
   "Patterns/inverted_triangle.asm": {
     "output": "Inverted Star Triangle:\n*****\n****\n***\n**\n*\n",
     "finished": true
   },
+  "Patterns/multiplication_grid.asm": {
+    "output": "The nine times nine table:\n  x 1   2   3   4   5   6   7   8   9   \n1   1   2   3   4   5   6   7   8   9   \n2   2   4   6   8   10  12  14  16  18  \n3   3   6   9   12  15  18  21  24  27  \n4   4   8   12  16  20  24  28  32  36  \n5   5   10  15  20  25  30  35  40  45  \n6   6   12  18  24  30  36  42  48  54  \n7   7   14  21  28  35  42  49  56  63  \n8   8   16  24  32  40  48  56  64  72  \n9   9   18  27  36  45  54  63  72  81  \n",
+    "finished": true
+  },
   "Patterns/number_pyramid.asm": {
     "output": "Numeric Pyramid Structure:\n    1\n   12\n  123\n 1234\n12345\n",
+    "finished": true
+  },
+  "Patterns/pascal_triangle.asm": {
+    "output": "Pascal's triangle, eight rows:\n                1   \n              1   1   \n            1   2   1   \n          1   3   3   1   \n        1   4   6   4   1   \n      1   5   10  10  5   1   \n    1   6   15  20  15  6   1   \n  1   7   21  35  35  21  7   1   \n",
+    "finished": true
+  },
+  "Patterns/pyramid_of_stars.asm": {
+    "output": "A pyramid of six rows:\n     *\n    ***\n   *****\n  *******\n *********\n***********\n",
+    "finished": true
+  },
+  "Patterns/right_aligned_triangle.asm": {
+    "output": "Right aligned, then left aligned:\n     *\n    **\n   ***\n  ****\n *****\n******\n\n*\n**\n***\n****\n*****\n******\n",
+    "finished": true
+  },
+  "Patterns/spiral_matrix_print.asm": {
+    "output": "The grid read as a spiral:\n1   2   3   4   8   12  16  15  14  13  9   5   6   7   11  10  \n",
     "finished": true
   },
   "Patterns/triangle_pattern.asm": {
