@@ -13,7 +13,7 @@
 //              .asm file from the folder beside this one, so what the simulator
 //              runs is what the repository actually holds.
 //
-//              335 programs across 36 categories.
+//              347 programs across 37 categories.
 //
 // Authors:     Amey Thakur
 // Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
@@ -32,6 +32,7 @@ export const PROGRAMS = {
     'Conditional Jumps': ['indirect_jump_through_register.asm', 'jcxz_guard_before_a_loop.asm', 'jump_if_equal_or_not_equal.asm', 'jump_on_carry_flag.asm', 'jump_on_overflow_flag.asm', 'jump_on_parity_flag.asm', 'jump_on_sign_flag.asm', 'short_jump_range_and_bridging.asm', 'signed_comparison_family.asm', 'signed_versus_unsigned_trap.asm', 'test_instruction_before_branch.asm', 'unsigned_comparison_family.asm'],
     'Control Flow': ['conditional_branching_and_status_flags.asm', 'for_loop_counter_iteration_pattern.asm', 'if_then_else_conditional_logic_structure.asm', 'loop_instruction_cx_register_control.asm', 'switch_case_multiway_branching_logic.asm', 'unconditional_jump_and_program_redirection.asm', 'while_loop_pre_test_conditional_iteration.asm'],
     'Conversion': ['ascii_to_integer.asm', 'bcd_to_ascii_and_back.asm', 'binary_to_decimal.asm', 'binary_to_hexadecimal_text.asm', 'celsius_fahrenheit_temperature_converter.asm', 'convert_decimal_to_binary_representation.asm', 'convert_decimal_to_octal_representation.asm', 'convert_hexadecimal_to_decimal_string.asm', 'convert_hexadecimal_to_packed_bcd.asm', 'convert_packed_bcd_to_hexadecimal.asm', 'decimal_to_any_base.asm', 'decimal_to_roman_numerals.asm', 'gray_code_conversion.asm', 'hex_string_to_value.asm', 'hex_to_seven_segment_decoder_lookup.asm', 'number_to_words.asm', 'reverse_digits_of_integer_value.asm', 'roman_numerals_to_decimal.asm', 'seconds_to_time_of_day.asm', 'string_comparison_lexicographical_check.asm', 'string_copy_using_manual_loop_iteration.asm', 'string_copy_using_movsb_instruction.asm', 'temperature_scales.asm'],
+    'DOS Services': ['dos_buffered_input_0ah.asm', 'dos_create_and_write_file.asm', 'dos_delete_file.asm', 'dos_direct_console_06h.asm', 'dos_exit_codes.asm', 'dos_get_date_and_time.asm', 'dos_menu_driven_program.asm', 'dos_password_masking.asm', 'dos_print_string_09h.asm', 'dos_read_character.asm', 'dos_read_file.asm', 'dos_write_to_handle.asm'],
     'Data Structures': ['balanced_parentheses.asm', 'binary_tree_in_array.asm', 'circular_queue.asm', 'deque_double_ended.asm', 'evaluate_postfix.asm', 'hash_table_linear_probing.asm', 'infix_to_postfix.asm', 'linked_list_in_memory.asm', 'priority_queue_by_insertion.asm', 'queue.asm', 'set_union_and_intersection.asm', 'stack_array.asm', 'stack_using_pointer.asm', 'stack_with_minimum.asm'],
     'Data Transfer': ['in_out_port_transfer.asm', 'lahf_sahf_flag_transfer.asm', 'lds_les_far_pointers.asm', 'lea_versus_offset.asm', 'mov_between_registers.asm', 'mov_immediate_forms.asm', 'mov_memory_and_register.asm', 'mov_segment_registers.asm', 'push_pop_stack_order.asm', 'pushf_popf_preserve_flags.asm', 'xchg_swap_without_temporary.asm', 'xlat_lookup_table.asm'],
     'Expression': ['average_of_array.asm', 'calculator.asm', 'check_even_odd.asm', 'count_vowels.asm', 'count_words.asm', 'factorial.asm', 'fibonacci.asm', 'gcd_two_numbers.asm', 'power.asm', 'prime_number_check.asm', 'reverse_array.asm', 'string_concatenation.asm', 'substring_search.asm'],
@@ -64,7 +65,7 @@ export const PROGRAMS = {
 
 /** How many programs the library holds. Written out so that anything quoting
  *  the number reads it from here rather than repeating it. */
-export const PROGRAM_COUNT = 335;
+export const PROGRAM_COUNT = 347;
 
 /** How many categories they are grouped into. */
-export const CATEGORY_COUNT = 36;
+export const CATEGORY_COUNT = 37;

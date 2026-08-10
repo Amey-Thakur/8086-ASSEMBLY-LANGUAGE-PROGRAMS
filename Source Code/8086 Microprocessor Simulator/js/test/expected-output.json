@@ -311,6 +311,54 @@
     "output": "C: -40   F: -40   K: 233\nC: 0   F: 32   K: 273\nC: 37   F: 98   K: 310\nC: 100   F: 212   K: 373\nC: 25   F: 77   K: 298\n",
     "finished": true
   },
+  "DOS Services/dos_buffered_input_0ah.asm": {
+    "output": "Type something and press Enter: 5\n\nYou typed 1 characters: 5\n",
+    "finished": true
+  },
+  "DOS Services/dos_create_and_write_file.asm": {
+    "output": "Created NOTES.TXT with handle 5\nWrote 57 bytes\nClosed the file.\n",
+    "finished": true
+  },
+  "DOS Services/dos_delete_file.asm": {
+    "output": "Created TEMP.TXT\nDeleted it.\nOpening it now fails, as it should.\n",
+    "finished": true
+  },
+  "DOS Services/dos_direct_console_06h.asm": {
+    "output": "Writing three characters with 06h: ABC\nChecking for a waiting key: found 5\n",
+    "finished": true
+  },
+  "DOS Services/dos_exit_codes.asm": {
+    "output": "The reading is 137, which is over the limit. Exiting with code 1.\n",
+    "finished": true
+  },
+  "DOS Services/dos_get_date_and_time.asm": {
+    "output": "Date: 14/6/2021   Day: Mon\nTime: 09:30:00\n",
+    "finished": true
+  },
+  "DOS Services/dos_menu_driven_program.asm": {
+    "output": "\nChoose:\n  1  the sum of the two values\n  2  their product\n  3  the larger of them\n  4  quit, or press Enter\nYour choice: 5\nThat is not one of the choices.\n\nChoose:\n  1  the sum of the two values\n  2  their product\n  3  the larger of them\n  4  quit, or press Enter\nYour choice: \nFinished.\n",
+    "finished": true
+  },
+  "DOS Services/dos_password_masking.asm": {
+    "output": "Password: *\nRejected.\n",
+    "finished": true
+  },
+  "DOS Services/dos_print_string_09h.asm": {
+    "output": "Amey Thakur\nThe dollar sign ends the string and is not shown.\none\ttwo\tthree\nThis line ends with a bell.\u0007\n",
+    "finished": true
+  },
+  "DOS Services/dos_read_character.asm": {
+    "output": "Service 01h reads and echoes. You typed: 5\nService 08h reads without echoing. You typed: \nService 07h is the same but ignores Ctrl-C: 3\n",
+    "finished": true
+  },
+  "DOS Services/dos_read_file.asm": {
+    "output": "Wrote the file.\nRead back 44 bytes:\nThe quick brown fox jumps over the lazy dog.\n",
+    "finished": true
+  },
+  "DOS Services/dos_write_to_handle.asm": {
+    "output": "This went to handle 1, the standard output.\nThis went to handle 2, where errors belong.\nA price of $5 cannot be printed with service 09h.\n",
+    "finished": true
+  },
   "Data Structures/balanced_parentheses.asm": {
     "output": "First:  { a[i] = (b + c) * d; }  balanced\nSecond: { a[i) = (b + c] * d; }  mismatched at position 5\nThird:  (a + b  ended with brackets still open\n",
     "finished": true
