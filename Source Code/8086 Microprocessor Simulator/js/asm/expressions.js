@@ -136,14 +136,16 @@ export function evaluateExpression(text, context = new ExpressionContext()) {
 
     if (tokens.length === 0) throw new SyntaxError8086('empty expression');
 
-    const state = { tokens, position: 0, reference: null, context };
+    const state = { tokens, position: 0, reference: null, addresses: 0, context };
     const value = parseComparison(state);
 
     if (state.position < tokens.length) {
         throw new SyntaxError8086(`unexpected "${tokens[state.position].text}" in "${text}"`);
     }
 
-    return { value: value | 0, reference: state.reference };
+    // Only a net count of exactly one address makes the expression an
+    // address. Zero means the references cancelled, as in a length.
+    return { value: value | 0, reference: state.addresses === 1 ? state.reference : null };
 }
 
 /** True when the text can be evaluated with the names currently known. */
@@ -207,7 +209,14 @@ function parseSum(state) {
         const operator = accept(state, '+', '-', 'OR', 'XOR');
         if (!operator) return value;
 
-        const right = parseProduct(state);
+        // Whatever the right hand side contributes to the address count is
+        // subtracted rather than added when the operator is a minus. That is
+        // what makes TABLE_END - TABLE a length instead of an address: the two
+        // references cancel and the result is an ordinary number.
+        const before = state.addresses;
+        const right  = parseProduct(state);
+
+        if (operator === '-') state.addresses = before - (state.addresses - before);
 
         if (operator === '+')       value += right;
         else if (operator === '-')  value -= right;
@@ -248,18 +257,22 @@ function parseUnary(state) {
     // OFFSET and SEG suppress the reference, because they ask about the address
     // rather than about what is stored there.
     if (accept(state, 'OFFSET')) {
-        const saved = state.reference;
-        const value = parseUnary(state);
+        const saved  = state.reference;
+        const counted = state.addresses;
+        const value  = parseUnary(state);
 
         state.reference = saved;
+        state.addresses = counted;
         return value;
     }
 
     if (accept(state, 'SEG')) {
-        const saved = state.reference;
+        const saved   = state.reference;
+        const counted = state.addresses;
 
         parseUnary(state);
         state.reference = saved;
+        state.addresses = counted;
         return state.context.segment;
     }
 
@@ -343,8 +356,11 @@ function readName(state, name) {
 
     if (symbol.kind === 'data') {
         // A data name used bare means "what is stored here", so the caller has
-        // to treat the whole expression as an address.
+        // to treat the whole expression as an address. The running count is what
+        // decides that: one address makes an address, and two that subtract make
+        // a plain number.
         state.reference ??= name.toUpperCase();
+        state.addresses++;
         return symbol.offset;
     }
 

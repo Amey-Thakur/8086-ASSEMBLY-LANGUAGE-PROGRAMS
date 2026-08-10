@@ -198,5 +198,154 @@ console.log('\nA REALISTIC PROGRAM  (the shape the 161 programs actually take)')
 }
 
 // -----------------------------------------------------------------------------
+console.log('\nREPT, THE ASSEMBLER REPEATING A BLOCK');
+// -----------------------------------------------------------------------------
+{
+    const result = assemble(`
+.MODEL SMALL
+.DATA
+    FOUR    DW 0
+.CODE
+START:
+    REPT 4
+    INC AX
+    ENDM
+    MOV BX, AX
+    MOV AH, 4CH
+    INT 21H
+END START
+`);
+
+    check('REPT reported no errors', result.diagnostics.length, 0);
+    check('four copies were written', result.instructions.filter(i => i.mnemonic === 'INC').length, 4);
+    check('the line after the block survived', result.instructions[4].mnemonic, 'MOV');
+
+    // A count that only the symbol table would know cannot be used, because the
+    // repetition happens before the symbol table exists.
+    const late = assemble(`
+.MODEL SMALL
+.DATA
+    HOWMANY EQU 3
+.CODE
+START:
+    REPT HOWMANY
+    INC AX
+    ENDM
+    MOV AH, 4CH
+    INT 21H
+END START
+`);
+
+    check('a symbolic count is refused with a reason',
+          late.diagnostics.some(d => d.message.includes('before the program is laid out')), true);
+
+    // ENDM closes a REPT as well as a macro, so a macro containing one must not
+    // be cut short at the inner ENDM.
+    const nested = assemble(`
+BAR MACRO HOWMANY
+    REPT HOWMANY
+    INC AX
+    ENDM
+    MOV BX, AX
+ENDM
+
+.MODEL SMALL
+.CODE
+START:
+    BAR 3
+    MOV AH, 4CH
+    INT 21H
+END START
+`);
+
+    check('a REPT inside a macro reported no errors', nested.diagnostics.length, 0);
+    check('the macro repeated three times',
+          nested.instructions.filter(i => i.mnemonic === 'INC').length, 3);
+    check('the rest of the macro body survived the inner ENDM',
+          nested.instructions.some(i => i.mnemonic === 'MOV'), true);
+}
+
+// -----------------------------------------------------------------------------
+console.log('\nLABEL, A POSITION THAT RESERVES NOTHING');
+// -----------------------------------------------------------------------------
+{
+    const result = assemble(`
+.MODEL SMALL
+.DATA
+    TABLE     LABEL WORD
+    DW 1, 2, 3, 4, 5
+    TABLE_END LABEL WORD
+    ROWS      EQU (TABLE_END - TABLE) / 2
+.CODE
+START:
+    MOV AX, ROWS
+    MOV BX, TABLE_END - TABLE
+    MOV AH, 4CH
+    INT 21H
+END START
+`);
+
+    check('LABEL reported no errors', result.diagnostics.length, 0);
+    check('the marker reserved no bytes', result.data.length, 10);
+    check('both markers are data symbols',
+          [result.symbols.TABLE.kind, result.symbols.TABLE_END.kind],
+          [SYMBOL.DATA, SYMBOL.DATA]);
+    check('they bracket the region exactly',
+          result.symbols.TABLE_END.offset - result.symbols.TABLE.offset, 10);
+    check('LABEL WORD declares a width of two', result.symbols.TABLE.width, 2);
+    check('the measured row count folded to five', result.symbols.ROWS.value, 5);
+
+    // The difference of two addresses is a count, not an address, so it has to
+    // assemble as an immediate rather than as a memory read.
+    check('a label difference is an immediate, not a memory read',
+          result.instructions[1].operands[1].kind, 'immediate');
+    check('and it carries the right number',
+          result.instructions[1].operands[1].value, 10);
+}
+
+// -----------------------------------------------------------------------------
+console.log('\nWHEN A DATA NAME MAKES AN EXPRESSION AN ADDRESS');
+// -----------------------------------------------------------------------------
+{
+    const result = assemble(`
+.MODEL SMALL
+.DATA
+    FIRST   DW 1, 2, 3
+    SECOND  DW 9
+.CODE
+START:
+    MOV AX, FIRST + 2
+    MOV BX, OFFSET FIRST + 2
+    MOV CX, SECOND - FIRST
+    MOV DX, SECOND - FIRST + 1
+    MOV AH, 4CH
+    INT 21H
+END START
+`);
+
+    check('no errors', result.diagnostics.length, 0);
+
+    // One address left standing means a memory reference: the word two bytes
+    // past FIRST, which is the second element.
+    check('one address makes it a memory reference',
+          result.instructions[0].operands[1].kind, 'memory');
+
+    // OFFSET asks about the address instead of the contents, so the count is
+    // suppressed and the result is a plain number.
+    check('OFFSET suppresses it',
+          result.instructions[1].operands[1].kind, 'immediate');
+
+    // Two addresses that subtract cancel, leaving a length.
+    check('two addresses cancel to a number',
+          result.instructions[2].operands[1].kind, 'immediate');
+    check('and the length is right', result.instructions[2].operands[1].value, 6);
+
+    // Cancelling still holds with a constant added afterwards.
+    check('a constant added after the cancellation keeps it a number',
+          result.instructions[3].operands[1].kind, 'immediate');
+    check('and the arithmetic is right', result.instructions[3].operands[1].value, 7);
+}
+
+// -----------------------------------------------------------------------------
 console.log(`\n${passed} passed, ${failed} failed\n`);
 process.exit(failed === 0 ? 0 : 1);

@@ -13,7 +13,7 @@
 //              .asm file from the folder beside this one, so what the simulator
 //              runs is what the repository actually holds.
 //
-//              407 programs across 39 categories.
+//              424 programs across 39 categories.
 //
 // Authors:     Amey Thakur
 // Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
@@ -45,7 +45,7 @@ export const PROGRAMS = {
     'Interrupts': ['bios_cursor_position.asm', 'bios_keyboard.asm', 'bios_system_time.asm', 'bios_video_mode.asm', 'dos_display_char.asm', 'dos_display_string.asm', 'dos_read_char.asm', 'dos_read_string.asm'],
     'Introduction': ['data_definition_demo.asm', 'display_characters.asm', 'display_string_direct.asm', 'display_system_time.asm', 'hello_world_dos.asm', 'hello_world_interrupt.asm', 'hello_world_procedure.asm', 'hello_world_procedure_advanced.asm', 'hello_world_string.asm', 'hello_world_vga.asm', 'keyboard_wait_input.asm', 'mov_instruction_demo.asm', 'print_alphabets.asm', 'procedure_demo.asm', 'procedure_multiplication.asm'],
     'Loops': ['countdown_versus_countup.asm', 'loop_counted_with_cx.asm', 'loop_over_two_arrays.asm', 'loop_skipping_elements.asm', 'loop_unrolling.asm', 'loop_walking_an_array.asm', 'loop_with_computed_step.asm', 'loop_with_early_exit.asm', 'loope_repeat_while_equal.asm', 'loopne_search_until_found.asm', 'nested_loops_multiplication_table.asm', 'post_test_loop.asm'],
-    'Macros': ['conditional_macros.asm', 'macro_with_parameters.asm', 'nested_macros.asm', 'print_string_macro.asm'],
+    'Macros': ['conditional_assembly_switches.asm', 'conditional_macros.asm', 'macro_building_data_tables.asm', 'macro_expansion_pitfalls.asm', 'macro_library_of_helpers.asm', 'macro_local_labels.asm', 'macro_repeat_and_fill.asm', 'macro_versus_procedure.asm', 'macro_with_parameters.asm', 'macro_with_register_argument.asm', 'nested_macros.asm', 'print_string_macro.asm'],
     'Mathematics': ['armstrong_number.asm', 'lcm.asm', 'perfect_number.asm', 'square_root.asm', 'twos_complement.asm'],
     'Matrix': ['matrix_addition.asm', 'matrix_determinant.asm', 'matrix_is_identity.asm', 'matrix_is_symmetric.asm', 'matrix_largest_and_smallest.asm', 'matrix_multiplication.asm', 'matrix_rotate_ninety_degrees.asm', 'matrix_row_and_column_sums.asm', 'matrix_scalar_multiply.asm', 'matrix_sparse_count.asm', 'matrix_subtraction.asm', 'matrix_trace_and_diagonals.asm', 'matrix_transpose.asm', 'matrix_upper_lower_triangular.asm'],
     'Memory Operations': ['block_copy.asm', 'memory_compare.asm', 'memory_fill.asm', 'memory_scan.asm'],
@@ -59,7 +59,7 @@ export const PROGRAMS = {
     'Signed Arithmetic': ['absolute_value.asm', 'sign_extension_cbw_cwd.asm', 'signed_array_average.asm', 'signed_byte_arithmetic.asm', 'signed_divide_idiv.asm', 'signed_minimum_and_maximum.asm', 'signed_multiply_imul.asm', 'signed_overflow_detection.asm', 'signed_range_check.asm', 'signed_sorting_by_value.asm', 'signed_versus_shift_division.asm', 'two_complement_representation.asm'],
     'Simulation': ['fire_monitoring_system.asm', 'garment_defect.asm', 'water_level_controller.asm'],
     'Sorting': ['array_ascending.asm', 'array_descending.asm', 'bubble_sort.asm', 'bubble_sort_with_early_exit.asm', 'check_if_sorted.asm', 'cocktail_shaker_sort.asm', 'counting_sort.asm', 'find_kth_smallest.asm', 'gnome_sort.asm', 'insertion_sort.asm', 'insertion_sort_word_array.asm', 'merge_sort_bottom_up.asm', 'merge_two_sorted_arrays.asm', 'selection_sort.asm', 'selection_sort_word_array.asm', 'sort_bytes_ascending.asm', 'sort_descending_order.asm'],
-    'Stack Operations': ['push_pop.asm', 'reverse_string_stack.asm', 'swap_using_stack.asm'],
+    'Stack Operations': ['balanced_brackets_check.asm', 'inspect_stack_registers.asm', 'last_in_first_out_order.asm', 'passing_arguments_on_stack.asm', 'push_pop.asm', 'reverse_string_stack.asm', 'save_all_registers.asm', 'save_and_restore_flags.asm', 'stack_depth_measurement.asm', 'stack_frame_with_bp.asm', 'stack_pointer_movement.asm', 'swap_using_stack.asm'],
     'String Instructions': ['cmpsb_compare_strings.asm', 'count_character_occurrences.asm', 'lodsb_process_each_byte.asm', 'movsb_copy_a_string.asm', 'movsw_copy_words.asm', 'overlapping_copy_with_direction.asm', 'palindrome_with_string_instructions.asm', 'reverse_string_with_pointers.asm', 'scasb_find_a_character.asm', 'segment_override_on_source.asm', 'stosb_fill_a_buffer.asm', 'string_length_with_scasb.asm'],
     'String Operations': ['caesar_cipher.asm', 'capitalise_each_word.asm', 'character_frequency_table.asm', 'check_anagram.asm', 'count_letters_digits_others.asm', 'longest_word_in_sentence.asm', 'palindrome_check.asm', 'remove_duplicate_characters.asm', 'replace_character.asm', 'reverse_words_in_sentence.asm', 'run_length_encoding.asm', 'string_contains_substring.asm', 'string_length.asm', 'string_reverse.asm', 'to_lowercase.asm', 'to_uppercase.asm', 'trim_spaces.asm'],
     'Utilities': ['beep_sound.asm', 'clear_screen.asm', 'delay_timer.asm', 'display_date.asm', 'password_input.asm']
@@ -67,7 +67,7 @@ export const PROGRAMS = {
 
 /** How many programs the library holds. Written out so that anything quoting
  *  the number reads it from here rather than repeating it. */
-export const PROGRAM_COUNT = 407;
+export const PROGRAM_COUNT = 424;
 
 /** How many categories they are grouped into. */
 export const CATEGORY_COUNT = 39;

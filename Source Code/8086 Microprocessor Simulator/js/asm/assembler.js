@@ -34,6 +34,9 @@ import { evaluateExpression, ExpressionContext }                    from './expr
 /** Directives that reserve or initialise storage, and how wide each unit is. */
 const DATA_DIRECTIVES = { DB: 1, DW: 2, DD: 4 };
 
+/** The widths a "NAME LABEL type" marker can declare. */
+const MARKER_WIDTHS = { BYTE: 1, WORD: 2, DWORD: 4 };
+
 /** Directives consumed by the assembler that emit nothing by themselves. */
 const IGNORED_DIRECTIVES = new Set([
     '.MODEL', '.STACK', '.386', '.8086', '.486', '.586',
@@ -222,6 +225,13 @@ export class Assembler {
             // "MSG DB 'Hi$'" reaches the lexer as mnemonic MSG, operand "DB 'Hi$'".
             const asData = this.matchDataDefinition(line);
             if (asData) { this.emitData(asData, line); continue; }
+
+            // ---- "NAME LABEL WORD" -------------------------------------------
+            // Names the current position without reserving anything. Two of them
+            // around a region measure it exactly, which is how a table declares
+            // its own length instead of carrying a hand written count.
+            const asMarker = this.matchPositionMarker(line);
+            if (asMarker) { this.definePosition(asMarker, line); continue; }
 
             if (line.mnemonic && Object.hasOwn(DATA_DIRECTIVES, line.mnemonic)) {
                 this.emitData({ name: line.label, directive: line.mnemonic, items: line.operands }, line);
@@ -427,6 +437,41 @@ export class Assembler {
         const items = [match[2].trim(), ...line.operands.slice(1)];
 
         return { name: line.mnemonic, directive: match[1].toUpperCase(), items };
+    }
+
+    /**
+     * Recognise "NAME LABEL WORD", which marks a position and reserves nothing.
+     *
+     * It reaches the lexer the same way a data definition does: the name arrives
+     * as the mnemonic and "LABEL WORD" as the single operand.
+     */
+    matchPositionMarker(line) {
+        if (!line.mnemonic || line.operands.length !== 1) return null;
+        if (Object.hasOwn(DATA_DIRECTIVES, line.mnemonic)) return null;
+
+        const match = line.operands[0].match(/^LABEL\s+(BYTE|WORD|DWORD)$/i);
+
+        if (!match) return null;
+
+        return { name: line.mnemonic, type: match[1].toUpperCase() };
+    }
+
+    /** Record a position marker as a data symbol occupying no bytes. */
+    definePosition(marker, line) {
+        const name  = marker.name.toUpperCase();
+        const width = MARKER_WIDTHS[marker.type];
+
+        if (Object.hasOwn(this.symbols, name)) {
+            this.report(`"${marker.name}" is defined more than once`, line.line);
+            return;
+        }
+
+        this.symbols[name] = {
+            kind:   SYMBOL.DATA,
+            offset: this.dataBytes.length,
+            width,
+            length: 0
+        };
     }
 
     /** Lay bytes into the data image and record where the name points. */

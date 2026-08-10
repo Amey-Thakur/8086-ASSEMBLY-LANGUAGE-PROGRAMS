@@ -903,12 +903,44 @@
     "output": "Halving 1000 until it reaches zero:\n500 250 125 62 31 15 7 3 1 0 \nPasses: 10\n",
     "finished": true
   },
+  "Macros/conditional_assembly_switches.asm": {
+    "output": "One file, several programs, decided at assembly time\n  [trace] about to convert\n  [trace] range checked and accepted\nImperial build: 40 units becomes 480\n\nVERBOSE is 1, CHECKING is 1, UNITS is 2.\nThe metric branch is not in this program at all.\n",
+    "finished": true
+  },
   "Macros/conditional_macros.asm": {
     "output": "Status: Value is zero!",
     "finished": true
   },
+  "Macros/macro_building_data_tables.asm": {
+    "output": "A table emitted by a macro, and measured not counted\nRows in the table:  5\nBytes in the table: 20\nWords reserved:     4\n\ncode  price\n101   250\n102   175\n103   990\n104   45\n105   1200\n\nTotal of the prices: 2660\n\nAdding a sixth ITEM line would change every number above without another edit.\n",
+    "finished": true
+  },
+  "Macros/macro_expansion_pitfalls.asm": {
+    "output": "Three ways a macro surprises you, and the fixes\n\n1. An argument named twice\n   DOUBLE_BAD BX with BX = 21 gives 42\n   DOUBLE_GOOD BX gives             42\n\n2. A body that eats a register\n   CX before SUM_TO_BAD 5:  40\n   CX after it:             0\n   CX after SUM_TO_GOOD 5:  40\n   the sum itself:          15\n\n3. Size is invisible in the source\n   Four uses of a ten instruction macro is forty instructions.\n   The source shows four lines, and reads as if it were cheap.\n",
+    "finished": true
+  },
+  "Macros/macro_library_of_helpers.asm": {
+    "output": "Macros written in terms of other macros\nwidth:  24\nheight: 8\ncount:  15\nprice:  250\narea:   192\ntotal:  3750\n\nREPORT_PAIR expanded to LABELLED twice, which expanded to SAY, SHOW and BREAK_LINE six times in all.\n",
+    "finished": true
+  },
+  "Macros/macro_local_labels.asm": {
+    "output": "LOCAL gives every expansion its own private labels\nfirst use, counting from 5:  5 4 3 2 1 \nsecond use, counting from 3: 3 2 1 \nthird use, counting from 7:  7 6 5 4 3 2 1 \na label free macro, three sums: 15 150 1500 \n\nAll three loops share one source line but assembled to three separate labels.\n",
+    "finished": true
+  },
+  "Macros/macro_repeat_and_fill.asm": {
+    "output": "REPT unrolls at assembly time, so no counter is needed\nA chart drawn entirely by the assembler:\n###\n######\n#########\n############\n============\n\nAnd the same row drawn by a real loop instead:\n############\n\nThe unrolled rows have no counter and no branch. The looped row is shorter in the file and longer to run.\n",
+    "finished": true
+  },
+  "Macros/macro_versus_procedure.asm": {
+    "output": "The same work as a macro and as a procedure\nby macro:     21 75 900\nby procedure: 21 75 900\n\nThree uses of the macro assembled three copies of the body. Three calls shared one.\nA macro is faster and larger. A procedure is smaller and slower. Short and hot favours the macro.\n",
+    "finished": true
+  },
   "Macros/macro_with_parameters.asm": {
     "output": "",
+    "finished": true
+  },
+  "Macros/macro_with_register_argument.asm": {
+    "output": "A macro argument is text, so it can name a register\nAfter CLEAR on each of them:\nBX = 0\nCX = 0\nSI = 0\nDI = 0\n\nThen loaded with 100, 200 and 300:\nBX = 100\nCX = 200\nSI = 300\n\nTOTAL_OF DI, BX, CX, SI gave:\nDI = 600\n\nOne macro cleared four different registers. A procedure would have needed four copies or a run time decision.\n",
     "finished": true
   },
   "Macros/nested_macros.asm": {
@@ -1479,12 +1511,48 @@
     "output": "Before: 42 17 93 8 65 31 76 4 \nAfter:  93 76 65 42 31 17 8 4 \n",
     "finished": true
   },
+  "Stack Operations/balanced_brackets_check.asm": {
+    "output": "Bracket matching, the textbook use of a stack\ntext: (a[b]{c})   balanced\ntext: ([)]   not balanced\ntext: ((a+b)   not balanced\ntext: a)b(   not balanced\n\nAn opener is pushed. A closer must match the top. Anything left over at the end is unclosed.\n",
+    "finished": true
+  },
+  "Stack Operations/inspect_stack_registers.asm": {
+    "output": "The three registers that describe the stack\nSS, the stack segment:      0900H\nSP, the top of the stack:   FFFEH\nBP, the current frame:      0000H\nSS:SP as a linear address:  8FFEH\nA linear address is the segment shifted left four, plus the offset.\n\nAfter three pushes SP has dropped by six:\nSP is now:                  FFF8H\nSS is unchanged:            0900H\nA push moves the offset only. The segment never moves.\n",
+    "finished": true
+  },
+  "Stack Operations/last_in_first_out_order.asm": {
+    "output": "A stack hands things back in the opposite order\nPushed in this order:  10 20 30 40 50 60 \nPopped in this order:  60 50 40 30 20 10 \nThe popped list, kept in memory: 60 50 40 30 20 10 \n\nThis is the shortest way to reverse anything on this processor.\n",
+    "finished": true
+  },
+  "Stack Operations/passing_arguments_on_stack.asm": {
+    "output": "Four arguments on the stack, none in a register\nSUM_FOUR(1, 2, 3, 4)   = 10\nSUM_FOUR(10, 20, 30, 40) = 100\nSUM_FOUR(100, 200, 300, 400) = 1000\n\nA fifth or a fiftieth argument needs no new mechanism.\nThis version ends with RET 8, so the procedure cleans up.\n",
+    "finished": true
+  },
   "Stack Operations/push_pop.asm": {
     "output": "",
     "finished": true
   },
   "Stack Operations/reverse_string_stack.asm": {
     "output": "Original: HELLO\nReversed: OLLEH",
+    "finished": true
+  },
+  "Stack Operations/save_all_registers.asm": {
+    "output": "A procedure that leaves every register as it found it\nbefore:  AX=1 BX=2 CX=3 SI=5 DI=6 BP=7\nafter:   AX=1 BX=2 CX=3 SI=5 DI=6 BP=7\n\nThe procedure filled all six with 9999 while it ran.\nDX is not one of the six. It carries the message pointer for every print here, so it can never hold a test value.\nEvery register matches: the save was complete.\n",
+    "finished": true
+  },
+  "Stack Operations/save_and_restore_flags.asm": {
+    "output": "PUSHF and POPF carry all nine flags at once\nAfter SUB AX, AX the zero flag is set.\nPUSHF saved it, a CMP that clears it ran, POPF put it back.\nThe zero flag survived: correct.\nThe flag word itself, as a hex number: F246H\nSTC then PUSHF then CLC then POPF leaves carry: set\n",
+    "finished": true
+  },
+  "Stack Operations/stack_depth_measurement.asm": {
+    "output": "How much stack did it actually use?\nRecursion depth requested: 6\nFactorial result:          720\nBytes of stack consumed:   24\nBytes per level:           4\n\nThe .STACK directive reserved 256 bytes.\nSo this routine could nest about 64 levels before running out.\n",
+    "finished": true
+  },
+  "Stack Operations/stack_frame_with_bp.asm": {
+    "output": "A stack frame: PUSH BP, MOV BP SP, work, POP BP, RET\nAREA called with width 12 and height 7\n[BP+4] the first argument pushed:  12\n[BP+6] the second argument:        7\na local kept at [BP-2]:            84\nthe product returned in AX:        84\n\nThe caller removed both arguments with ADD SP, 4.\nBP stays still while SP moves, so the offsets never change.\n",
+    "finished": true
+  },
+  "Stack Operations/stack_pointer_movement.asm": {
+    "output": "The stack grows downwards, two bytes at a time\nSP at the start:        65534\nafter PUSH 1111:        65532\nafter PUSH 2222:        65530\nafter PUSH 3333:        65528\nafter one POP:          65530\nafter the second POP:   65532\nafter the third POP:    65534\n\nEach push costs two bytes and each pop returns them.\nThe pops came back 3333 2222 1111, the reverse of the pushes.\n",
     "finished": true
   },
   "Stack Operations/swap_using_stack.asm": {

@@ -34,8 +34,26 @@
 
 'use strict';
 
+import { ExpressionContext, evaluateExpression } from './expressions.js';
+
 /** How many times an expansion may itself expand before it is called a loop. */
 const MAX_EXPANSION_DEPTH = 32;
+
+/**
+ * How many copies one REPT may produce.
+ *
+ * High enough for any honest unrolling and low enough that a mistyped count
+ * fails with a message instead of filling memory.
+ */
+const MAX_REPEAT_COUNT = 4096;
+
+/**
+ * Lines that open a block closed by ENDM.
+ *
+ * ENDM serves both a macro definition and a REPT, so the two have to be counted
+ * together to know which one a given ENDM belongs to.
+ */
+const OPENS_A_BLOCK = /^(REPT\b|[A-Za-z_@$?][A-Za-z0-9_@$?]*\s+MACRO\b)/i;
 
 /** Result of expansion: source lines carrying their original line numbers. */
 export class SourceLine {
@@ -62,10 +80,8 @@ export function expandMacros(source) {
 
     const { macros, body } = collectDefinitions(raw, diagnostics);
 
-    if (Object.keys(macros).length === 0) {
-        return { lines: body, macros, diagnostics };
-    }
-
+    // The pass runs even when nothing was defined, because REPT is expanded here
+    // too and a file may use one without defining a single macro.
     const counter = { value: 0 };
     const lines   = expand(body, macros, diagnostics, counter, 0);
 
@@ -94,6 +110,7 @@ function collectDefinitions(lines, diagnostics) {
                     name:       header[1].toUpperCase(),
                     parameters: splitList(header[2]),
                     body:       [],
+                    depth:      0,
                     line:       line.line
                 };
                 continue;
@@ -103,7 +120,23 @@ function collectDefinitions(lines, diagnostics) {
             continue;
         }
 
+        // ENDM closes a REPT block as well as a macro, so the nesting has to be
+        // counted. Without this a macro whose body contains a REPT would appear
+        // to finish at the REPT's own ENDM, and the rest of it would be treated
+        // as ordinary source.
+        if (OPENS_A_BLOCK.test(bare)) {
+            current.depth++;
+            current.body.push(line);
+            continue;
+        }
+
         if (/^ENDM\b/i.test(bare)) {
+            if (current.depth > 0) {
+                current.depth--;
+                current.body.push(line);
+                continue;
+            }
+
             macros[current.name] = current;
             current = null;
             continue;
@@ -137,7 +170,27 @@ function expand(lines, macros, diagnostics, counter, depth) {
 
     const output = [];
 
-    for (const line of lines) {
+    for (let at = 0; at < lines.length; at++) {
+        const line = lines[at];
+
+        // ---- REPT: the assembler writes the body out N times ----------------
+        // This is handled here rather than in a pass of its own so that a
+        // repeated body may contain macro calls, and a macro body may contain a
+        // REPT, in either order.
+        const repeat = withoutComment(line.text).trim().match(/^REPT\s+(.+)$/i);
+
+        if (repeat) {
+            const block = takeBlock(lines, at, diagnostics);
+            const times = countOf(repeat[1], line.line, diagnostics);
+
+            for (let round = 0; round < times; round++) {
+                output.push(...expand(block.body, macros, diagnostics, counter, depth + 1));
+            }
+
+            at = block.end;
+            continue;
+        }
+
         const call = matchCall(line.text, macros);
 
         if (!call) { output.push(line); continue; }
@@ -155,6 +208,90 @@ function expand(lines, macros, diagnostics, counter, depth) {
     }
 
     return output;
+}
+
+/**
+ * Collects the body of a REPT block, from the line after the REPT to the ENDM
+ * that closes it, counting any nested blocks on the way.
+ *
+ * @returns {{body: SourceLine[], end: number}} end is the index of the ENDM.
+ */
+function takeBlock(lines, start, diagnostics) {
+    const body = [];
+
+    let depth = 0;
+
+    for (let at = start + 1; at < lines.length; at++) {
+        const bare = withoutComment(lines[at].text).trim();
+
+        if (OPENS_A_BLOCK.test(bare)) depth++;
+
+        if (/^ENDM\b/i.test(bare)) {
+            if (depth === 0) return { body, end: at };
+            depth--;
+        }
+
+        body.push(lines[at]);
+    }
+
+    diagnostics.push({
+        message: 'REPT has no ENDM to close it',
+        line: lines[start].line
+    });
+
+    return { body, end: lines.length - 1 };
+}
+
+/**
+ * Works out how many times a REPT should repeat.
+ *
+ * The count is needed before the symbol table exists, so it has to be a number
+ * or a small sum of numbers. A macro argument that arrived as a literal counts,
+ * which is the usual way a REPT gets its length. Anything else is refused with
+ * an explanation rather than guessed at.
+ */
+function countOf(text, line, diagnostics) {
+    const trimmed = text.trim();
+
+    if (!/^[0-9A-Fa-fHhOoQqBbDd\s()+\-*/]+$/.test(trimmed)) {
+        diagnostics.push({
+            message: `REPT needs a count the assembler can work out before the ` +
+                     `program is laid out, and "${trimmed}" is not one. A number ` +
+                     `or a macro argument holding a number will do.`,
+            line
+        });
+        return 0;
+    }
+
+    const value = evaluateLiteralArithmetic(trimmed);
+
+    if (value === null || value < 0 || value > MAX_REPEAT_COUNT) {
+        diagnostics.push({
+            message: `REPT count "${trimmed}" is not a whole number between 0 ` +
+                     `and ${MAX_REPEAT_COUNT}`,
+            line
+        });
+        return 0;
+    }
+
+    return value;
+}
+
+/**
+ * Folds a sum or product of plain numbers, with no symbols involved.
+ *
+ * The assembler's own expression evaluator does the work, against an empty
+ * symbol table so that a name cannot creep in. That keeps REPT 2*4 and
+ * REPT (3+1) reading exactly as they do everywhere else in the source.
+ */
+function evaluateLiteralArithmetic(text) {
+    try {
+        const { value, reference } = evaluateExpression(text, new ExpressionContext({}));
+
+        return reference === null ? value : null;
+    } catch {
+        return null;
+    }
 }
 
 /** Recognise a line that calls a macro, allowing a label in front of it. */
