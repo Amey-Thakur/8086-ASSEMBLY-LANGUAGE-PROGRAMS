@@ -105,7 +105,11 @@ const FILES = [
     'README.md',
     'docs/SPECIFICATION.md',
     'codemeta.json',
-    'CITATION.cff'
+    'CITATION.cff',
+
+    // The simulator describes itself to search engines and to anyone who reads
+    // the page source, and that description quotes the count too.
+    'Source Code/8086 Microprocessor Simulator/index.html'
 ];
 
 // -----------------------------------------------------------------------------

@@ -10,6 +10,11 @@
         "test:record": "node js/test/output.test.mjs --update",
         "index": "node js/tools/index-programs.mjs",
         "counts": "node js/tools/sync-counts.mjs",
-        "counts:check": "node js/tools/sync-counts.mjs --check"
+        "counts:check": "node js/tools/sync-counts.mjs --check",
+        "structure": "node js/tools/sync-structure.mjs",
+        "structure:check": "node js/tools/sync-structure.mjs --check",
+        "catalogue": "node js/tools/sync-catalogue.mjs",
+        "catalogue:check": "node js/tools/sync-catalogue.mjs --check",
+        "links": "node js/tools/check-links.mjs"
     }
 }

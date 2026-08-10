@@ -52,15 +52,15 @@
     "finished": true
   },
   "Arithmetic/addition_16bit_packed_bcd.asm": {
-    "output": "",
+    "output": "\nResults:\n  VAL_BCD1 = 37704\n  VAL_BCD2 = 6213\n  RES_SUM = 4499\n  RES_CARRY = 1\n",
     "finished": true
   },
   "Arithmetic/addition_16bit_simple.asm": {
-    "output": "",
+    "output": "\nResults:\n  VAL8_1 = 5\n  VAL8_2 = 6\n  SUM8 = 11\n  VAL16_1 = 4660\n  VAL16_2 = 85\n  SUM16 = 4745\n",
     "finished": true
   },
   "Arithmetic/addition_16bit_with_carry_detection.asm": {
-    "output": "",
+    "output": "\nResults:\n  VAL16_1 = 4660\n  VAL16_2 = 20800\n  RESULT = 25460\n  C_SET = 0\n",
     "finished": true
   },
   "Arithmetic/addition_8bit_with_user_input.asm": {
@@ -68,7 +68,7 @@
     "finished": true
   },
   "Arithmetic/calculate_sum_of_first_n_natural_numbers.asm": {
-    "output": "",
+    "output": "\nResults:\n  VAL_N = 10\n  RES_FINAL_SUM = 55\n",
     "finished": true
   },
   "Arithmetic/count_set_bits_in_16bit_binary.asm": {
@@ -76,11 +76,11 @@
     "finished": true
   },
   "Arithmetic/decimal_adjust_after_addition_demo.asm": {
-    "output": "",
+    "output": "\nResults:\n  VAL1 = 39\n  VAL2 = 53\n",
     "finished": true
   },
   "Arithmetic/division_16bit_dividend_by_8bit_divisor.asm": {
-    "output": "",
+    "output": "\nResults:\n  VAL_DIVIDEND = 26663\n  VAL_DIVISOR = 254\n  RES_QUO = 104\n  RES_REM = 247\n",
     "finished": true
   },
   "Arithmetic/generate_multiplication_table_for_number.asm": {
@@ -88,7 +88,7 @@
     "finished": true
   },
   "Arithmetic/multiplication_8bit_unsigned.asm": {
-    "output": "",
+    "output": "\nResults:\n  VAL8_1 = 237\n  VAL8_2 = 153\n  PRODUCT = 36261\n",
     "finished": true
   },
   "Arithmetic/signed_addition_and_subtraction_demo.asm": {
@@ -108,7 +108,7 @@
     "finished": true
   },
   "Array Operations/calculate_sum_of_array_elements.asm": {
-    "output": "",
+    "output": "\nResults:\n  FINAL_SUM = 240\n",
     "finished": true
   },
   "Array Operations/copy_block_of_data_between_arrays.asm": {
@@ -128,15 +128,15 @@
     "finished": true
   },
   "Array Operations/find_maximum_element_in_array.asm": {
-    "output": "",
+    "output": "\nResults:\n  MAXIMUM_VAL = 137\n",
     "finished": true
   },
   "Array Operations/find_minimum_element_in_array.asm": {
-    "output": "",
+    "output": "\nResults:\n  MINIMUM_VAL = 18\n",
     "finished": true
   },
   "Array Operations/insert_element_into_array_at_index.asm": {
-    "output": "",
+    "output": "\nResults:\n  NEW_ELEMENT = 37\n",
     "finished": true
   },
   "Array Operations/interleave_two_arrays.asm": {
@@ -284,7 +284,7 @@
     "finished": true
   },
   "Bitwise Operations/bitwise_and_logic_demonstration.asm": {
-    "output": "",
+    "output": "\nResults:\n  VALUE_A = 15\n  VALUE_B = 240\n  AND_RES = 0\n",
     "finished": true
   },
   "Bitwise Operations/bitwise_branchless_selection.asm": {
@@ -300,27 +300,27 @@
     "finished": true
   },
   "Bitwise Operations/bitwise_logical_shift_left_and_multiplication.asm": {
-    "output": "",
+    "output": "\nResults:\n  SEED_VAL = 8\n  SHIFT_COUNT = 2\n  SHL_RESULT = 32\n",
     "finished": true
   },
   "Bitwise Operations/bitwise_logical_shift_right_and_division.asm": {
-    "output": "",
+    "output": "\nResults:\n  SEED_VAL = 32\n  SHIFT_COUNT = 2\n  SHR_RESULT = 8\n",
     "finished": true
   },
   "Bitwise Operations/bitwise_not_ones_complement_demonstration.asm": {
-    "output": "",
+    "output": "\nResults:\n  ORIG_VAL = 15\n  NOT_RES = 240\n",
     "finished": true
   },
   "Bitwise Operations/bitwise_or_logic_demonstration.asm": {
-    "output": "",
+    "output": "\nResults:\n  VAL_1 = 15\n  VAL_2 = 240\n  UNION_RES = 255\n",
     "finished": true
   },
   "Bitwise Operations/bitwise_rotate_left_circular_shift.asm": {
-    "output": "",
+    "output": "\nResults:\n  SEED_VAL = 129\n  ROT_COUNT = 2\n  ROT_RESULT = 6\n",
     "finished": true
   },
   "Bitwise Operations/bitwise_rotate_right_circular_shift.asm": {
-    "output": "",
+    "output": "\nResults:\n  SEED_VAL = 129\n  ROT_COUNT = 2\n  ROT_RESULT = 96\n",
     "finished": true
   },
   "Bitwise Operations/bitwise_set_membership.asm": {
@@ -328,7 +328,7 @@
     "finished": true
   },
   "Bitwise Operations/bitwise_xor_logic_demonstration.asm": {
-    "output": "",
+    "output": "\nResults:\n  VAL_X = 170\n  VAL_Y = 85\n  XOR_RES = 255\n",
     "finished": true
   },
   "Conditional Jumps/indirect_jump_through_register.asm": {
@@ -460,7 +460,7 @@
     "finished": true
   },
   "Conversion/convert_hexadecimal_to_packed_bcd.asm": {
-    "output": "",
+    "output": "\nResults:\n  VAL_HEX = 65535\n",
     "finished": true
   },
   "Conversion/convert_packed_bcd_to_hexadecimal.asm": {
@@ -696,7 +696,7 @@
     "finished": true
   },
   "Expression/factorial.asm": {
-    "output": "",
+    "output": "\nResults:\n  INPUT_N = 5\n  RESULT_LO = 120\n  RESULT_HI = 0\n",
     "finished": true
   },
   "Expression/fibonacci.asm": {
@@ -892,15 +892,15 @@
     "finished": true
   },
   "Graphics/draw_line.asm": {
-    "output": "",
+    "output": "\nResults:\n  LINE_ROW = 100\n  LINE_START = 50\n  LINE_LEN = 220\n  LINE_COLOR = 14\n",
     "finished": true
   },
   "Graphics/draw_pixel.asm": {
-    "output": "",
+    "output": "\nResults:\n  PIXEL_X = 160\n  PIXEL_Y = 100\n  PIXEL_COL = 15\n",
     "finished": true
   },
   "Graphics/draw_rectangle.asm": {
-    "output": "",
+    "output": "\nResults:\n  RECT_X = 100\n  RECT_Y = 50\n  RECT_W = 120\n  RECT_H = 100\n  RECT_COL = 4\n",
     "finished": true
   },
   "Graphics/screen_clear_and_scroll.asm": {
@@ -1160,7 +1160,7 @@
     "finished": true
   },
   "Macros/macro_with_parameters.asm": {
-    "output": "",
+    "output": "\nResults:\n  NUM1 = 100\n  NUM2 = 50\n  SUM = 150\n  PRODUCT = 800\n",
     "finished": true
   },
   "Macros/macro_with_register_argument.asm": {
@@ -1500,7 +1500,7 @@
     "finished": true
   },
   "Procedures/local_variables.asm": {
-    "output": "",
+    "output": "\nResults:\n  NUM1 = 100\n  NUM2 = 50\n  RESULT = 300\n",
     "finished": true
   },
   "Procedures/nested_procedures.asm": {
@@ -1512,7 +1512,7 @@
     "finished": true
   },
   "Procedures/procedure_parameters.asm": {
-    "output": "",
+    "output": "\nResults:\n  NUM1 = 10\n  NUM2 = 20\n  RESULT = 30\n",
     "finished": true
   },
   "Procedures/procedure_pointer_in_register.asm": {
@@ -1520,7 +1520,7 @@
     "finished": true
   },
   "Procedures/recursive_factorial.asm": {
-    "output": "",
+    "output": "\nResults:\n  NUM = 5\n  RESULT = 120\n",
     "finished": true
   },
   "Procedures/register_preservation_proof.asm": {
