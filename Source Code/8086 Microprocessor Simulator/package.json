@@ -6,6 +6,7 @@
     "author": "Amey Thakur",
     "license": "CC-BY-4.0",
     "scripts": {
-        "test": "node js/test/core.test.mjs && node js/test/alu.test.mjs && node js/test/cpu.test.mjs && node js/test/lexer.test.mjs && node js/test/operands.test.mjs && node js/test/assembler.test.mjs && node js/test/executor.test.mjs && node js/test/strings.test.mjs && node js/test/programs.test.mjs"
+        "test": "node js/test/core.test.mjs && node js/test/alu.test.mjs && node js/test/cpu.test.mjs && node js/test/lexer.test.mjs && node js/test/operands.test.mjs && node js/test/assembler.test.mjs && node js/test/executor.test.mjs && node js/test/strings.test.mjs && node js/test/programs.test.mjs && node js/test/output.test.mjs",
+        "test:record": "node js/test/output.test.mjs --update"
     }
 }
