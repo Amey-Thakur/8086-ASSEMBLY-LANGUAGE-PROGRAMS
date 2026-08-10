@@ -112,7 +112,7 @@
     "finished": true
   },
   "Array Operations/copy_block_of_data_between_arrays.asm": {
-    "output": "",
+    "output": "\nRegisters when the program finished:\n  AX = 2048   BX = 0   CX = 0   DX = 0\n",
     "finished": true
   },
   "Array Operations/count_odd_and_even_numbers_in_array.asm": {
@@ -120,7 +120,7 @@
     "finished": true
   },
   "Array Operations/delete_element_from_array_by_index.asm": {
-    "output": "",
+    "output": "\nRegisters when the program finished:\n  AX = 2128   BX = 0   CX = 0   DX = 0\n",
     "finished": true
   },
   "Array Operations/element_frequency_count.asm": {
@@ -464,7 +464,7 @@
     "finished": true
   },
   "Conversion/convert_packed_bcd_to_hexadecimal.asm": {
-    "output": "",
+    "output": "\nRegisters when the program finished:\n  AX = 0   BX = 5   CX = 0   DX = 1\n",
     "finished": true
   },
   "Conversion/decimal_to_any_base.asm": {
@@ -484,7 +484,7 @@
     "finished": true
   },
   "Conversion/hex_to_seven_segment_decoder_lookup.asm": {
-    "output": "",
+    "output": "\nRegisters when the program finished:\n  AX = 109   BX = 0   CX = 0   DX = 0\n",
     "finished": true
   },
   "Conversion/number_to_words.asm": {
@@ -512,7 +512,7 @@
     "finished": true
   },
   "Conversion/string_copy_using_movsb_instruction.asm": {
-    "output": "",
+    "output": "\nRegisters when the program finished:\n  AX = 0   BX = 0   CX = 0   DX = 0\n",
     "finished": true
   },
   "Conversion/temperature_scales.asm": {
@@ -720,7 +720,7 @@
     "finished": true
   },
   "Expression/reverse_array.asm": {
-    "output": "",
+    "output": "\nRegisters when the program finished:\n  AX = 2053   BX = 0   CX = 0   DX = 0\n",
     "finished": true
   },
   "Expression/string_concatenation.asm": {
@@ -884,7 +884,7 @@
     "finished": true
   },
   "Graphics/colored_text.asm": {
-    "output": "",
+    "output": "\nRegisters when the program finished:\n  AX = 53   BX = 80   CX = 0   DX = 0\n",
     "finished": true
   },
   "Graphics/colour_attribute_table.asm": {
@@ -1896,7 +1896,7 @@
     "finished": true
   },
   "Stack Operations/push_pop.asm": {
-    "output": "",
+    "output": "\nRegisters when the program finished:\n  AX = 4660   BX = 22136   CX = 39612   DX = 4660\n",
     "finished": true
   },
   "Stack Operations/reverse_string_stack.asm": {

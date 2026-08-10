@@ -172,7 +172,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 │       │   ├── asm/                         # Lexer, macros, expressions, operands, assembler (5)
 │       │   ├── exec/                        # Executor, devices, strings, interrupts (4)
 │       │   ├── ui/                          # Editor, inspector, library, console, panels, app (8)
-│       │   ├── tools/                       # Index and count generators (3)
+│       │   ├── tools/                       # Index and count generators (5)
 │       │   └── test/                        # Conformance suites (13)
 │       ├── index.html                       # Simulator entry point
 │       ├── package.json                     # Test runner configuration
@@ -1196,7 +1196,16 @@ Essential tools and documentation for 8086 programming:
 <!-- CONTRIBUTING -->
 ## Contributing
 
-This repository maintains a rigorous fork-and-pull collaboration model. Contributions that enhance the codebase's educational value and technical precision are highly appreciated.
+Full guidance is in **[CONTRIBUTING.md](CONTRIBUTING.md)**: how to add a program, how to change the simulator, and what verification is expected before a pull request.
+
+The short version. Everything here must be correct and provably so, which means:
+
+- `npm test` passes before you start and after you finish
+- a new program carries the standard header, prints its result, and terminates
+- a change to the engine comes with a test
+- `expected-output.json` is regenerated, never hand-edited
+
+This repository maintains a fork-and-pull model.
 
 1.  **Fork the Repository**
     Replicate the repository to your personal remote namespace.
