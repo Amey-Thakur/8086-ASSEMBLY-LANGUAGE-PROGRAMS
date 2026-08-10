@@ -1027,6 +1027,54 @@
     "output": "Right-Angled Star Triangle:\n*\n**\n***\n****\n*****\n",
     "finished": true
   },
+  "Port Programming/adc_read_and_scale.asm": {
+    "output": "Raw reading: 0   scaled: 0 degrees   heater on\nRaw reading: 64   scaled: 25 degrees   heater on\nRaw reading: 128   scaled: 50 degrees   heater on\nRaw reading: 192   scaled: 75 degrees   heater off\nRaw reading: 255   scaled: 100 degrees   heater off\n",
+    "finished": true
+  },
+  "Port Programming/buzzer_tone_pattern.asm": {
+    "output": "Three short: ##..##..##..\nTwo long:    ########....########....\nUrgent:      #.#.#.#.#.\n",
+    "finished": true
+  },
+  "Port Programming/dac_ramp_and_triangle.asm": {
+    "output": "A rising ramp:\n0 32 64 96 128 160 192 224 \nA triangle:\n0 32 64 96 128 160 192 224 224 192 160 128 96 64 32 0 \n",
+    "finished": true
+  },
+  "Port Programming/keypad_matrix_scan.asm": {
+    "output": "Scanning the four rows:\nrow 0  columns 00000000   nothing\nrow 1  columns 00000000   nothing\nrow 2  columns 00000100   key: 9\nrow 3  columns 00000000   nothing\n",
+    "finished": true
+  },
+  "Port Programming/led_running_light.asm": {
+    "output": "A single lamp travelling along eight and back:\n00000001\n00000010\n00000100\n00001000\n00010000\n00100000\n01000000\n10000000\n10000000\n01000000\n00100000\n00010000\n00001000\n00000100\n00000010\n00000001\n00000001\n00000010\n00000100\n00001000\n00010000\n00100000\n01000000\n10000000\n10000000\n01000000\n00100000\n00010000\n00001000\n00000100\n00000010\n00000001\n",
+    "finished": true
+  },
+  "Port Programming/port_word_versus_byte.asm": {
+    "output": "Wrote 1234h as a word to port 40.\n  port 40 now holds 34h\n  port 41 now holds 12h\nPort 03F8h needs DX, and holds 5Ah\n",
+    "finished": true
+  },
+  "Port Programming/relay_control_bank.asm": {
+    "output": "relays now: 00000001   pump on\nrelays now: 00000011   fan on\nrelays now: 00000111   alarm on\nrelays now: 00000101   fan off\nrelays now: 00000000   everything off\n",
+    "finished": true
+  },
+  "Port Programming/seven_segment_display.asm": {
+    "output": "digit  segments  sent to port 199\n0      00111111  63\n1      00000110  6\n2      01011011  91\n3      01001111  79\n4      01100110  102\n5      01101101  109\n6      01111101  125\n7      00000111  7\n8      01111111  127\n9      01101111  111\n",
+    "finished": true
+  },
+  "Port Programming/stepper_motor_full_step.asm": {
+    "output": "Turning forward:\n00000011\n00000110\n00001100\n00001001\n00000011\n00000110\n00001100\n00001001\nTurning back:\n00001001\n00001100\n00000110\n00000011\n00001001\n00001100\n00000110\n00000011\n",
+    "finished": true
+  },
+  "Port Programming/stepper_motor_half_step.asm": {
+    "output": "Eight half steps, one full revolution of the sequence:\n00000001   one coil\n00000011   two coils\n00000010   one coil\n00000110   two coils\n00000100   one coil\n00001100   two coils\n00001000   one coil\n00001001   two coils\n",
+    "finished": true
+  },
+  "Port Programming/traffic_light_state_table.asm": {
+    "output": "phase  port     north      east\n0  00001100  green  red    \n1  00001010  amber  red    \n2  00100001  red    green  \n3  00010001  red    amber  \n0  00001100  green  red    \n1  00001010  amber  red    \n2  00100001  red    green  \n3  00010001  red    amber  \n",
+    "finished": true
+  },
+  "Port Programming/water_level_controller.asm": {
+    "output": "sensors 00000000   outputs 00000001   filling\nsensors 00000001   outputs 00000001   holding\nsensors 00000011   outputs 00000000   full, pump off\nsensors 00000001   outputs 00000000   holding\nsensors 00000000   outputs 00000001   filling\n",
+    "finished": true
+  },
   "Procedures/basic_procedure.asm": {
     "output": "",
     "finished": true
