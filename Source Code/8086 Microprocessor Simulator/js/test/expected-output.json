@@ -943,12 +943,60 @@
     "output": "Word-sized Bubble Sort completed.",
     "finished": true
   },
+  "Sorting/bubble_sort_with_early_exit.asm": {
+    "output": "Before: 42 17 93 8 65 31 76 4 \nAfter:  4 8 17 31 42 65 76 93 \n",
+    "finished": true
+  },
+  "Sorting/check_if_sorted.asm": {
+    "output": "The first array:  is in order\nThe second array: is not in order\n",
+    "finished": true
+  },
+  "Sorting/cocktail_shaker_sort.asm": {
+    "output": "Before: 42 17 93 8 65 31 76 4 \nAfter:  4 8 17 31 42 65 76 93 \n",
+    "finished": true
+  },
+  "Sorting/counting_sort.asm": {
+    "output": "Before: 7 3 9 3 1 7 5 9 3 \nAfter:  1 3 3 3 5 7 7 9 9 \n",
+    "finished": true
+  },
+  "Sorting/find_kth_smallest.asm": {
+    "output": "The third smallest value is 17\n",
+    "finished": true
+  },
+  "Sorting/gnome_sort.asm": {
+    "output": "Before: 42 17 93 8 65 31 76 4 \nAfter:  4 8 17 31 42 65 76 93 \n",
+    "finished": true
+  },
   "Sorting/insertion_sort.asm": {
     "output": "Insertion Sort sequence finalized successfully.",
     "finished": true
   },
+  "Sorting/insertion_sort_word_array.asm": {
+    "output": "Before: 42 17 93 8 65 31 76 4 \nAfter:  4 8 17 31 42 65 76 93 \n",
+    "finished": true
+  },
+  "Sorting/merge_sort_bottom_up.asm": {
+    "output": "Before: 42 17 93 8 65 31 76 4 \nAfter:  4 8 17 31 42 65 76 93 \n",
+    "finished": true
+  },
+  "Sorting/merge_two_sorted_arrays.asm": {
+    "output": "Left:   2 5 9 14 20 \nRight:  1 6 7 15 30 44 \nMerged: 1 2 5 6 7 9 14 15 20 30 44 \n",
+    "finished": true
+  },
   "Sorting/selection_sort.asm": {
     "output": "Selection Sort execution finished.",
+    "finished": true
+  },
+  "Sorting/selection_sort_word_array.asm": {
+    "output": "Before: 42 17 93 8 65 31 76 4 \nAfter:  4 8 17 31 42 65 76 93 \n",
+    "finished": true
+  },
+  "Sorting/sort_bytes_ascending.asm": {
+    "output": "Before: 52 11 87 3 66 24 90 15 \nAfter:  3 11 15 24 52 66 87 90 \n",
+    "finished": true
+  },
+  "Sorting/sort_descending_order.asm": {
+    "output": "Before: 42 17 93 8 65 31 76 4 \nAfter:  93 76 65 42 31 17 8 4 \n",
     "finished": true
   },
   "Stack Operations/push_pop.asm": {

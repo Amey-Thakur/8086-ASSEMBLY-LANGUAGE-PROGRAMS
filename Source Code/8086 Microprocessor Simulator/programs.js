@@ -13,7 +13,7 @@
 //              .asm file from the folder beside this one, so what the simulator
 //              runs is what the repository actually holds.
 //
-//              263 programs across 36 categories.
+//              275 programs across 36 categories.
 //
 // Authors:     Amey Thakur
 // Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
@@ -55,7 +55,7 @@ export const PROGRAMS = {
     'Shift and Rotate': ['arithmetic_shift_signed_divide.asm', 'multiply_by_ten_using_shifts.asm', 'overflow_flag_on_single_shift.asm', 'pack_two_bytes_into_word.asm', 'rotate_left_no_carry.asm', 'rotate_right_through_carry.asm', 'rotate_through_carry_multiword_shift.asm', 'rotate_to_test_each_bit.asm', 'shift_left_to_multiply.asm', 'shift_right_to_divide_unsigned.asm', 'unpack_word_into_two_bytes.asm', 'variable_shift_count_in_cl.asm'],
     'Signed Arithmetic': ['absolute_value.asm', 'sign_extension_cbw_cwd.asm', 'signed_array_average.asm', 'signed_byte_arithmetic.asm', 'signed_divide_idiv.asm', 'signed_minimum_and_maximum.asm', 'signed_multiply_imul.asm', 'signed_overflow_detection.asm', 'signed_range_check.asm', 'signed_sorting_by_value.asm', 'signed_versus_shift_division.asm', 'two_complement_representation.asm'],
     'Simulation': ['fire_monitoring_system.asm', 'garment_defect.asm', 'water_level_controller.asm'],
-    'Sorting': ['array_ascending.asm', 'array_descending.asm', 'bubble_sort.asm', 'insertion_sort.asm', 'selection_sort.asm'],
+    'Sorting': ['array_ascending.asm', 'array_descending.asm', 'bubble_sort.asm', 'bubble_sort_with_early_exit.asm', 'check_if_sorted.asm', 'cocktail_shaker_sort.asm', 'counting_sort.asm', 'find_kth_smallest.asm', 'gnome_sort.asm', 'insertion_sort.asm', 'insertion_sort_word_array.asm', 'merge_sort_bottom_up.asm', 'merge_two_sorted_arrays.asm', 'selection_sort.asm', 'selection_sort_word_array.asm', 'sort_bytes_ascending.asm', 'sort_descending_order.asm'],
     'Stack Operations': ['push_pop.asm', 'reverse_string_stack.asm', 'swap_using_stack.asm'],
     'String Instructions': ['cmpsb_compare_strings.asm', 'count_character_occurrences.asm', 'lodsb_process_each_byte.asm', 'movsb_copy_a_string.asm', 'movsw_copy_words.asm', 'overlapping_copy_with_direction.asm', 'palindrome_with_string_instructions.asm', 'reverse_string_with_pointers.asm', 'scasb_find_a_character.asm', 'segment_override_on_source.asm', 'stosb_fill_a_buffer.asm', 'string_length_with_scasb.asm'],
     'String Operations': ['palindrome_check.asm', 'string_length.asm', 'string_reverse.asm', 'to_lowercase.asm', 'to_uppercase.asm'],
@@ -64,7 +64,7 @@ export const PROGRAMS = {
 
 /** How many programs the library holds. Written out so that anything quoting
  *  the number reads it from here rather than repeating it. */
-export const PROGRAM_COUNT = 263;
+export const PROGRAM_COUNT = 275;
 
 /** How many categories they are grouped into. */
 export const CATEGORY_COUNT = 36;
