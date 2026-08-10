@@ -223,6 +223,54 @@
     "output": "\nPushed To Stack: 1\nPushed To Stack: 2\nPopped From Stack: \u0000\nPopped From Stack: 2\nStatus: Stack Underflow!",
     "finished": true
   },
+  "Data Transfer/in_out_port_transfer.asm": {
+    "output": "Sent to port 7:      00A5H\nRead back from it:   00A5H\nSent to port 03F8H:  004DH\n",
+    "finished": true
+  },
+  "Data Transfer/lahf_sahf_flag_transfer.asm": {
+    "output": "Flags byte saved in AH: 0047H\nZero and carry both came back.\n",
+    "finished": true
+  },
+  "Data Transfer/lds_les_far_pointers.asm": {
+    "output": "LES gave ES:BX = B800H:0000H\nLDS gave DS:SI = A000H:0200H\n",
+    "finished": true
+  },
+  "Data Transfer/lea_versus_offset.asm": {
+    "output": "The address of NUMBER: 0000H\nThe value at NUMBER:   1234H\nLEA and OFFSET agreed.\n",
+    "finished": true
+  },
+  "Data Transfer/mov_between_registers.asm": {
+    "output": "AX = 1234   BX = 1234   CX = 1234\n",
+    "finished": true
+  },
+  "Data Transfer/mov_immediate_forms.asm": {
+    "output": "Sixty five written five ways:\n65\n65\n65\n65\n65\n",
+    "finished": true
+  },
+  "Data Transfer/mov_memory_and_register.asm": {
+    "output": "Before: 100\nAfter:  123\n",
+    "finished": true
+  },
+  "Data Transfer/mov_segment_registers.asm": {
+    "output": "DS = 0800H\nES = 0800H\nDS and ES point at the same segment.\n",
+    "finished": true
+  },
+  "Data Transfer/push_pop_stack_order.asm": {
+    "output": "Pushed:  10 20 30\nPopped:  30 20 10\nSP returned to where it started.\n",
+    "finished": true
+  },
+  "Data Transfer/pushf_popf_preserve_flags.asm": {
+    "output": "The carry survived the calculation.\n",
+    "finished": true
+  },
+  "Data Transfer/xchg_swap_without_temporary.asm": {
+    "output": "Registers before: 11 and 22\nRegisters after:  22 and 11\nMemory after:     22\n",
+    "finished": true
+  },
+  "Data Transfer/xlat_lookup_table.asm": {
+    "output": "Seven segment patterns for 0, 1, 4, 8, 9:\n003FH\n0006H\n0066H\n007FH\n006FH\n",
+    "finished": true
+  },
   "Expression/average_of_array.asm": {
     "output": "Calculated Average: 5",
     "finished": true

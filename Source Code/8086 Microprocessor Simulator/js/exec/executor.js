@@ -28,7 +28,8 @@ import { OPERAND, effectiveAddress, segmentBaseOf } from '../asm/operands.js';
 import { SYMBOL }                                   from '../asm/assembler.js';
 import { Shifter, SHIFT_OPERATIONS }                from '../cpu/shifter.js';
 import { ALU, DivideError }                         from '../cpu/alu.js';
-import { ExecutionError }                           from '../cpu/cpu.js';
+import { ExecutionError, DEFAULT_CODE_SEGMENT,
+         DEFAULT_DATA_SEGMENT, DEFAULT_STACK_SEGMENT } from '../cpu/cpu.js';
 import { registerStringHandlers }                   from './strings.js';
 import { registerInterruptHandlers }                from './interrupts.js';
 
@@ -117,12 +118,22 @@ export class Executor {
         return 2;
     }
 
-    /** Resolve a symbol operand to a concrete value or address. */
+    /**
+     * Resolve a symbol operand to a concrete value or address.
+     *
+     * @DATA and its companions are constants fixed when the program was
+     * loaded, not readings of whatever the segment registers currently hold.
+     * The distinction matters: a program that points DS somewhere else, as
+     * LDS does, then restores it with MOV AX, @DATA. If @DATA reported the
+     * live DS it would hand back the segment being replaced, and the restore
+     * would silently do nothing.
+     */
     resolveSymbol(name) {
         const upper = String(name).toUpperCase();
 
-        if (upper === '@DATA' || upper === '@STACK') return this.cpu.registers.get('DS');
-        if (upper === '@CODE') return this.cpu.registers.get('CS');
+        if (upper === '@DATA')  return DEFAULT_DATA_SEGMENT;
+        if (upper === '@STACK') return DEFAULT_STACK_SEGMENT;
+        if (upper === '@CODE')  return DEFAULT_CODE_SEGMENT;
 
         const symbol = this.program.symbols[upper];
 

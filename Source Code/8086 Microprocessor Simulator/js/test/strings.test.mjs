@@ -467,6 +467,23 @@ expectState('WAIT, ESC and LOCK are accepted and do nothing',
             'MOV AX,7\nWAIT\nESC\nLOCK\nHLT',
             { AX: '0007' });
 
+// @DATA is a constant fixed at load time. Reporting the live DS instead would
+// make this restore a no-op, and the program would carry on with the wrong
+// data segment while looking entirely correct.
+expectState('@DATA survives DS being pointed elsewhere',
+            `.DATA
+             FAR_PTR DW 0200h, 0A000h
+             .CODE
+             MOV AX,@DATA
+             MOV DS,AX
+             LDS SI,FAR_PTR
+             MOV BX,DS
+             MOV AX,@DATA
+             MOV DS,AX
+             MOV CX,DS
+             HLT`,
+            { BX: 'A000', CX: '0800' });
+
 // -----------------------------------------------------------------------------
 console.log(`\n${passed} passed, ${failed} failed\n`);
 process.exit(failed === 0 ? 0 : 1);
