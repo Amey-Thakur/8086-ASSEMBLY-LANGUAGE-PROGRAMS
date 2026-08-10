@@ -143,6 +143,54 @@
     "output": "",
     "finished": true
   },
+  "Conditional Jumps/indirect_jump_through_register.asm": {
+    "output": "Routine two ran.\n",
+    "finished": true
+  },
+  "Conditional Jumps/jcxz_guard_before_a_loop.asm": {
+    "output": "With a count of four the body ran 4 times\nWith a count of zero the body ran 0 times\n",
+    "finished": true
+  },
+  "Conditional Jumps/jump_if_equal_or_not_equal.asm": {
+    "output": "The first two are equal.\nThe first and third differ.\nJE and JZ took the same branch.\n",
+    "finished": true
+  },
+  "Conditional Jumps/jump_on_carry_flag.asm": {
+    "output": "Fits:      30000 + 20000 = 50000\nOverflows: 60000 + 10000 needs seventeen bits\n",
+    "finished": true
+  },
+  "Conditional Jumps/jump_on_overflow_flag.asm": {
+    "output": "32000 + 1000 as a signed word:\n  OF is set: the answer will not fit\n  CF is clear: as unsigned it fits perfectly\n",
+    "finished": true
+  },
+  "Conditional Jumps/jump_on_parity_flag.asm": {
+    "output": "0003H has even parity\n0007H has odd parity\n00FFH has even parity\n0001H has odd parity\n",
+    "finished": true
+  },
+  "Conditional Jumps/jump_on_sign_flag.asm": {
+    "output": "negative\nzero\npositive\nnegative\npositive\n",
+    "finished": true
+  },
+  "Conditional Jumps/short_jump_range_and_bridging.asm": {
+    "output": "The near branch was taken.\nThe distant branch was reached by bridging.\n",
+    "finished": true
+  },
+  "Conditional Jumps/signed_comparison_family.asm": {
+    "output": "JG   taken: 25 is greater than -30\nJGE  taken: 25 is greater or equal\nJL   taken: -30 is less than 25\nJLE  taken: -30 is less or equal\n",
+    "finished": true
+  },
+  "Conditional Jumps/signed_versus_unsigned_trap.asm": {
+    "output": "Comparing FFFEh with 0002h:\n  unsigned: FFFEh is ABOVE 0002h\n  signed:   FFFEh is LESS than 0002h\n",
+    "finished": true
+  },
+  "Conditional Jumps/test_instruction_before_branch.asm": {
+    "output": "Bit 2 is set.\nBit 4 is set.\nSTATUS is unchanged after both tests.\n",
+    "finished": true
+  },
+  "Conditional Jumps/unsigned_comparison_family.asm": {
+    "output": "JA   taken: 60000 is above 40000\nJAE  taken: 60000 is above or equal\nJB   taken: 40000 is below 60000\nJBE  taken: 40000 is below or equal\nJAE and JBE both taken when equal\n",
+    "finished": true
+  },
   "Control Flow/conditional_branching_and_status_flags.asm": {
     "output": "Result: First operand is GREATER (Signed)",
     "finished": true
