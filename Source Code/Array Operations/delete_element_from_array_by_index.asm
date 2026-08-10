@@ -157,6 +157,13 @@ RPT_REGISTERS PROC
     PUSH BP
     MOV BP, SP
 
+    ; The program may have pointed DS somewhere of its own, at a video segment
+    ; or at segment zero, and the strings below live in the data image. SEG
+    ; gives their segment whatever the program left in DS.
+    PUSH DS
+    MOV AX, SEG RPT_HEAD
+    MOV DS, AX
+
     LEA DX, RPT_HEAD
     CALL RPT_SAY
 
@@ -183,6 +190,7 @@ RPT_REGISTERS PROC
     LEA DX, RPT_NL
     CALL RPT_SAY
 
+    POP DS
     POP BP
 
     POP AX

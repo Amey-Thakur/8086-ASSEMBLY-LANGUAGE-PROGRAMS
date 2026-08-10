@@ -30,6 +30,11 @@
 /** The 8086 addresses 65,536 ports through a sixteen bit port number. */
 const PORT_COUNT = 0x10000;
 
+/** The stepper motor latch, and the bit a driver polls before each step.
+ *  Reported as ready because there is no motor here that could be busy. */
+const STEPPER_PORT  = 7;
+const STEPPER_READY = 0x80;
+
 /** How many port writes to remember for display. Older ones are discarded. */
 const JOURNAL_LIMIT = 256;
 
@@ -62,9 +67,24 @@ export class PortSpace {
         this.journal = [];
     }
 
-    /** IN reads a port. A port never written reads as zero. */
+    /**
+     * IN reads a port. A port never written reads as zero.
+     *
+     * The stepper motor latch is the exception. A driver polls its top bit and
+     * steps only when the motor reports itself ready, which is the correct way
+     * to talk to one: pulsing faster than the rotor can turn makes it slip.
+     *
+     * There is no motor here to be busy, so the line would sit at zero for ever
+     * and the driver would poll for ever without taking a single step. Reporting
+     * ready is what the hardware does when it is idle, and it is what lets a
+     * correctly written driver actually run.
+     */
     read(port, width = 1) {
         const address = port & 0xFFFF;
+
+        if (address === STEPPER_PORT) {
+            return this.values[address] | STEPPER_READY;
+        }
 
         return width === 1
             ? this.values[address]

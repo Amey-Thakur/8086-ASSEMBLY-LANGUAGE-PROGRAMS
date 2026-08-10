@@ -696,7 +696,7 @@ For a full native experience with hardware access (requires Windows).
 
 | Program | Title | Description | Code |
 |:---|:---|:---|:-:|
-| `data_definition_demo.asm` | data_definition_demo.asm | Demonstrates how the assembler interprets data as instructions. These raw hex bytes correspond exactly to the MOV and RET logic found in mov_instruction_demo.asm. | [View](Source%20Code/Introduction/data_definition_demo.asm) |
+| `data_definition_demo.asm` | Code And Data Are The Same Bytes | Lays out the machine code of three instructions as raw bytes, names every one of them, and then runs the instructions they spell so the two can be compared. | [View](Source%20Code/Introduction/data_definition_demo.asm) |
 | `display_characters.asm` | Display Characters | Demonstrate character-by-character output using DOS services. Useful for building dynamic text in loops. | [View](Source%20Code/Introduction/display_characters.asm) |
 | `display_string_direct.asm` | Display String Direct | Direct string output demonstration using the DOS 09H service with a standard segment layout. | [View](Source%20Code/Introduction/display_string_direct.asm) |
 | `display_system_time.asm` | Display System Time | Fetch and display the current system time (HH:MM:SS.ms) using DOS Interrupt 21H / AH=2CH. | [View](Source%20Code/Introduction/display_system_time.asm) |
