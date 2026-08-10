@@ -1059,8 +1059,52 @@
     "output": "The string is 34 characters long\n",
     "finished": true
   },
+  "String Operations/caesar_cipher.asm": {
+    "output": "Plain:     Attack at Dawn, 0600!\nEncrypted: Dwwdfn dw Gdzq, 0600!\nDecrypted: Attack at Dawn, 0600!\n",
+    "finished": true
+  },
+  "String Operations/capitalise_each_word.asm": {
+    "output": "Before: the 8086 microPROCESSOR and its assembly LANGUAGE\nAfter:  The 8086 Microprocessor And Its Assembly Language\n",
+    "finished": true
+  },
+  "String Operations/character_frequency_table.asm": {
+    "output": "Letter counts:\na x 2   b x 1   e x 6   f x 1   h x 2   l x 1   m x 3   n x 1   o x 1   s x 8   t x 4   y x 2   \n",
+    "finished": true
+  },
+  "String Operations/check_anagram.asm": {
+    "output": "listen and silent are anagrams\nlisten and tinsel are anagrams\nlisten and litter are not anagrams\n",
+    "finished": true
+  },
+  "String Operations/count_letters_digits_others.asm": {
+    "output": "Upper case: 2\nLower case: 11\nDigits:     8\nSpaces:     4\nOther:      3\n",
+    "finished": true
+  },
+  "String Operations/longest_word_in_sentence.asm": {
+    "output": "The longest word is microprocessor, at 14 letters\n",
+    "finished": true
+  },
   "String Operations/palindrome_check.asm": {
     "output": "String is a Palindrome",
+    "finished": true
+  },
+  "String Operations/remove_duplicate_characters.asm": {
+    "output": "Input:  programming assembly\nOutput: progamin sebly\n",
+    "finished": true
+  },
+  "String Operations/replace_character.asm": {
+    "output": "Before: data_transfer_and_string_operations\nAfter:  data transfer and string operations\nReplacements: 4\n",
+    "finished": true
+  },
+  "String Operations/reverse_words_in_sentence.asm": {
+    "output": "Before: the quick brown fox\nAfter:  fox brown quick the\n",
+    "finished": true
+  },
+  "String Operations/run_length_encoding.asm": {
+    "output": "Input:    AAABBBBCCCCCCDDAAE\nEncoded:  A3B4C6D2A2E1\nEncoded length: 12, from 18\n",
+    "finished": true
+  },
+  "String Operations/string_contains_substring.asm": {
+    "output": "Found at position 14\nPositions examined: 15\n",
     "finished": true
   },
   "String Operations/string_length.asm": {
@@ -1077,6 +1121,10 @@
   },
   "String Operations/to_uppercase.asm": {
     "output": "Original: hello world\nUppercase: HELLO WORLD",
+    "finished": true
+  },
+  "String Operations/trim_spaces.asm": {
+    "output": "Raw:     [     amey   thakur      ]\nTrimmed: [amey   thakur]\nRemoved 11 characters\n",
     "finished": true
   },
   "Utilities/beep_sound.asm": {

@@ -13,7 +13,7 @@
 //              .asm file from the folder beside this one, so what the simulator
 //              runs is what the repository actually holds.
 //
-//              275 programs across 36 categories.
+//              287 programs across 36 categories.
 //
 // Authors:     Amey Thakur
 // Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
@@ -58,13 +58,13 @@ export const PROGRAMS = {
     'Sorting': ['array_ascending.asm', 'array_descending.asm', 'bubble_sort.asm', 'bubble_sort_with_early_exit.asm', 'check_if_sorted.asm', 'cocktail_shaker_sort.asm', 'counting_sort.asm', 'find_kth_smallest.asm', 'gnome_sort.asm', 'insertion_sort.asm', 'insertion_sort_word_array.asm', 'merge_sort_bottom_up.asm', 'merge_two_sorted_arrays.asm', 'selection_sort.asm', 'selection_sort_word_array.asm', 'sort_bytes_ascending.asm', 'sort_descending_order.asm'],
     'Stack Operations': ['push_pop.asm', 'reverse_string_stack.asm', 'swap_using_stack.asm'],
     'String Instructions': ['cmpsb_compare_strings.asm', 'count_character_occurrences.asm', 'lodsb_process_each_byte.asm', 'movsb_copy_a_string.asm', 'movsw_copy_words.asm', 'overlapping_copy_with_direction.asm', 'palindrome_with_string_instructions.asm', 'reverse_string_with_pointers.asm', 'scasb_find_a_character.asm', 'segment_override_on_source.asm', 'stosb_fill_a_buffer.asm', 'string_length_with_scasb.asm'],
-    'String Operations': ['palindrome_check.asm', 'string_length.asm', 'string_reverse.asm', 'to_lowercase.asm', 'to_uppercase.asm'],
+    'String Operations': ['caesar_cipher.asm', 'capitalise_each_word.asm', 'character_frequency_table.asm', 'check_anagram.asm', 'count_letters_digits_others.asm', 'longest_word_in_sentence.asm', 'palindrome_check.asm', 'remove_duplicate_characters.asm', 'replace_character.asm', 'reverse_words_in_sentence.asm', 'run_length_encoding.asm', 'string_contains_substring.asm', 'string_length.asm', 'string_reverse.asm', 'to_lowercase.asm', 'to_uppercase.asm', 'trim_spaces.asm'],
     'Utilities': ['beep_sound.asm', 'clear_screen.asm', 'delay_timer.asm', 'display_date.asm', 'password_input.asm']
 };
 
 /** How many programs the library holds. Written out so that anything quoting
  *  the number reads it from here rather than repeating it. */
-export const PROGRAM_COUNT = 275;
+export const PROGRAM_COUNT = 287;
 
 /** How many categories they are grouped into. */
 export const CATEGORY_COUNT = 36;
