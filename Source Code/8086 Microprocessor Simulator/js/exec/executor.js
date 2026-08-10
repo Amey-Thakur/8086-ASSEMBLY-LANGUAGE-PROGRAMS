@@ -437,6 +437,57 @@ export class Executor {
         this.define(['PUSHF'], () => cpu.push(flags.toWord()));
         this.define(['POPF'],  () => flags.fromWord(cpu.pop()));
 
+        // LAHF and SAHF move the low byte of the flags word through AH. They
+        // exist because the 8086 was meant to be source compatible with the
+        // 8080, whose flags lived in exactly those five bits.
+        this.define(['LAHF'], () => {
+            cpu.registers.set('AH', flags.toWord() & 0xFF);
+        });
+
+        this.define(['SAHF'], () => {
+            const high = flags.toWord() & 0xFF00;
+
+            flags.fromWord(high | cpu.registers.get('AH'));
+        });
+
+        // LDS and LES load a far pointer: four bytes in memory, the offset
+        // first and then the segment. This is how a program picks up a pointer
+        // that reaches outside its own data segment.
+        const loadPointer = (mnemonic, segment) => {
+            this.define([mnemonic], (operands, instruction) => {
+                expect(operands, 2, mnemonic);
+
+                if (operands[0].kind !== OPERAND.REGISTER) {
+                    throw new ExecutionError(
+                        `${mnemonic} loads a pointer into a register, and the first ` +
+                        `operand is not one`,
+                        instruction.line
+                    );
+                }
+
+                // The pointer may be written either as a bracketed address or
+                // as the name of the four bytes that hold it.
+                if (operands[1].kind !== OPERAND.MEMORY &&
+                    operands[1].kind !== OPERAND.SYMBOL) {
+                    throw new ExecutionError(
+                        `${mnemonic} reads its pointer from memory, so the second ` +
+                        `operand has to be an address or a data name`,
+                        instruction.line
+                    );
+                }
+
+                const address = this.addressOf(operands[1]);
+                const base    = segmentBaseOf(operands[1]);
+
+                this.write(operands[0], cpu.readMemory(address, 2, base, operands[1].override), 2);
+                cpu.registers.set(segment,
+                    cpu.readMemory((address + 2) & 0xFFFF, 2, base, operands[1].override));
+            });
+        };
+
+        loadPointer('LDS', 'DS');
+        loadPointer('LES', 'ES');
+
         // XLAT reads the byte at DS:BX+AL, the classic lookup table instruction.
         this.define(['XLAT', 'XLATB'], () => {
             const offset = (cpu.registers.get('BX') + cpu.registers.get('AL')) & 0xFFFF;
@@ -648,6 +699,30 @@ export class Executor {
         // ---- machine control --------------------------------------------------
         this.define(['NOP'], () => { /* deliberately nothing */ });
         this.define(['HLT'], () => { cpu.halted = true; });
+
+        // WAIT holds the processor until the coprocessor signals that it has
+        // finished, and ESC hands an instruction to that coprocessor. There is
+        // no 8087 here, so both are accepted and do nothing, which is exactly
+        // what a machine without one does.
+        this.define(['WAIT', 'FWAIT'], () => { /* no coprocessor to wait for */ });
+        this.define(['ESC'],           () => { /* no coprocessor to escape to */ });
+
+        // LOCK holds the bus for the next instruction. On one processor with
+        // nothing to contend with, there is nothing to hold it against. The
+        // lexer already treats it as a prefix; this covers it written alone.
+        this.define(['LOCK'], () => { /* single processor, nothing to lock out */ });
+
+        // INTO raises interrupt 4 when the last signed operation overflowed. It
+        // is how a program checks for overflow without writing a branch.
+        this.define(['INTO'], (operands, instruction) => {
+            if (!flags.OF) return;
+
+            throw new ExecutionError(
+                'signed overflow trapped by INTO (interrupt 4). The last signed ' +
+                'operation produced a result too large for its destination.',
+                instruction.line
+            );
+        });
 
         // ---- delegated groups -------------------------------------------------
         // String handling and the DOS services are large enough to own their own

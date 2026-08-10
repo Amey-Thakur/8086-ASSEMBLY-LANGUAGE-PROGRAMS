@@ -59,6 +59,7 @@ function run(source, input = '') {
         AX: hex(r.get('AX')), BX: hex(r.get('BX')), CX: hex(r.get('CX')), DX: hex(r.get('DX')),
         SI: hex(r.get('SI')), DI: hex(r.get('DI')),
         ZF: cpu.flags.ZF, CF: cpu.flags.CF, DF: cpu.flags.DF,
+        SF: cpu.flags.SF, OF: cpu.flags.OF, PF: cpu.flags.PF, AF: cpu.flags.AF,
         out: cpu.consoleOutput,
         exitCode: cpu.exitCode
     };
@@ -419,6 +420,52 @@ expectState('print a message, copy it, print the copy',
              MAIN ENDP
              END MAIN`,
             { out: 'AMEY AMEY', exitCode: 0 });
+
+// -----------------------------------------------------------------------------
+console.log('\nTHE REMAINDER OF THE INSTRUCTION SET');
+//
+// The eight instructions an audit against the programmer's reference found
+// missing. Two of them move the flags through AH, two load a far pointer, one
+// traps on overflow, and three exist for hardware this machine does not have.
+// -----------------------------------------------------------------------------
+expectState('LAHF copies the low flags into AH',
+            'STC\nMOV AH,0\nLAHF\nHLT',
+            { AX: '0300' });
+
+expectState('SAHF writes them back',
+            'MOV AH,0C7h\nSAHF\nHLT',
+            { CF: 1, ZF: 1, SF: 1 });
+
+expectState('LES loads a far pointer into ES and a register',
+            `.DATA
+             FARPTR DW 1234h, 0B800h
+             .CODE
+             LES BX,FARPTR
+             MOV AX,ES
+             HLT`,
+            { BX: '1234', AX: 'B800' });
+
+expectState('LDS loads one into DS',
+            `.DATA
+             FARPTR DW 5678h, 0A000h
+             .CODE
+             LDS SI,FARPTR
+             MOV AX,DS
+             HLT`,
+            { SI: '5678', AX: 'A000' });
+
+expectState('INTO passes when nothing overflowed',
+            'MOV AX,1\nADD AX,1\nINTO\nHLT',
+            { AX: '0002' });
+
+{
+    const state = run('MOV AX,7FFFh\nADD AX,1\nINTO\nHLT');
+    check('INTO traps when something did', state.ERROR?.includes('interrupt 4'), true);
+}
+
+expectState('WAIT, ESC and LOCK are accepted and do nothing',
+            'MOV AX,7\nWAIT\nESC\nLOCK\nHLT',
+            { AX: '0007' });
 
 // -----------------------------------------------------------------------------
 console.log(`\n${passed} passed, ${failed} failed\n`);

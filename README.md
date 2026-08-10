@@ -98,7 +98,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 - **Emulator** → Emu8086 (native) · 8086 Microprocessor Simulator (browser)
 - **Language** → Assembly (ASM)
 - **Simulator** → JavaScript (ES2020 Modules), no dependencies and no build step
-- **Verification** → 602 conformance tests, run with `npm test`
+- **Verification** → 609 conformance tests, run with `npm test`
 
 ---
 
@@ -196,7 +196,7 @@ copies, so what runs is what the repository holds.
 | **Instructions** | The full 8086 set: arithmetic with all nine flags, BCD adjustment, shifts and rotates through carry, string operations with `REP`, `CALL`/`RET`, and port `IN`/`OUT` |
 | **Assembler** | Two passes with forward references, `MACRO` with `LOCAL`, conditional assembly, constant expressions including `$`, `OFFSET`, `SEG`, `DUP` and jump tables |
 | **Services** | `INT 21h` for console, buffered input, files and the clock; `INT 10h`, `16h`, `1Ah`, `15h` and `20h` |
-| **Verification** | 602 tests across nine suites, including one that assembles and runs all 161 programs |
+| **Verification** | 609 tests across nine suites, including one that assembles and runs all 161 programs |
 
 **Running the tests**
 
