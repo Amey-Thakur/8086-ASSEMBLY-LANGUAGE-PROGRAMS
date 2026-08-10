@@ -163,6 +163,23 @@
             </button>
 
             <div class="toolbar__identity">
+                <!--
+                    The mark is a dual in-line package seen from above: the body,
+                    the notch that shows which end pin one is at, and the legs
+                    down each side. It is drawn rather than loaded, because the
+                    simulator carries no assets and an image file would be far
+                    larger than the path data.
+                -->
+                <svg class="toolbar__mark" viewBox="0 0 32 32" role="img"
+                     aria-label="An 8086 processor in a dual in-line package">
+                    <rect class="toolbar__mark-body" x="8.5" y="5.5" width="15" height="21" rx="1.5"/>
+                    <path class="toolbar__mark-notch" d="M13 5.5a3 3 0 0 0 6 0"/>
+                    <g class="toolbar__mark-pins">
+                        <path d="M8.5 9H5M8.5 13H5M8.5 17H5M8.5 21H5"/>
+                        <path d="M23.5 9H27M23.5 13H27M23.5 17H27M23.5 21H27"/>
+                    </g>
+                </svg>
+
                 <div>
                     <div class="toolbar__title">8086 Microprocessor Simulator</div>
                     <div class="toolbar__subtitle">Intel 8086 &middot; assemble, run and step through 8086 assembly</div>

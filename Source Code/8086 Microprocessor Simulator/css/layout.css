@@ -167,6 +167,34 @@
     overflow: hidden;
 }
 
+/* The chip mark beside the name. It follows the accent colour so it belongs to
+   the theme rather than sitting on top of it, and shrinks away on a narrow
+   screen where the name itself is the thing worth keeping. */
+.toolbar__mark {
+    flex: none;
+    width: 26px;
+    height: 26px;
+}
+
+.toolbar__mark-body {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.6;
+}
+
+.toolbar__mark-notch {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.4;
+}
+
+.toolbar__mark-pins path {
+    fill: none;
+    stroke: var(--ink-muted);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+}
+
 .toolbar__title {
     font-size: var(--size-md);
     font-weight: 600;
