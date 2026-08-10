@@ -8,7 +8,7 @@
   [![Technology](https://img.shields.io/badge/Technology-Assembly%208086-orange)](https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS)
   [![Developed by](https://img.shields.io/badge/Developed%20by-Amey%20Thakur-blue)](https://github.com/Amey-Thakur)
 
-  A comprehensive collection of **161 professionally documented 8086 Assembly programs**, featuring an **interactive web-based emulator**, smart error detection, _“Did you mean?”_ suggestions, and **step-by-step debugging**.
+  A comprehensive collection of **525 professionally documented 8086 Assembly programs**, featuring an **interactive web-based emulator**, smart error detection, _“Did you mean?”_ suggestions, and **step-by-step debugging**.
 
   **[Microprocessor Lab](https://github.com/Amey-Thakur/MICROPROCESSOR-AND-MICROPROCESSOR-LAB)** &nbsp;·&nbsp; **[Source Code](Source%20Code/)** &nbsp;·&nbsp; **[Technical Specification](docs/SPECIFICATION.md)** &nbsp;·&nbsp; **[Live Demo](https://amey-thakur.github.io/8086-ASSEMBLY-LANGUAGE-PROGRAMS/)**
 
@@ -44,7 +44,7 @@
 The **8086 Assembly Language Programs** repository is a curated collection of low-level assembly code designed to verify and strengthen the understanding of the 8086 microprocessor architecture. It demonstrates the practical implementation of instruction sets, memory management, and hardware simulation using the **Emu8086** emulator.
 
 > [!NOTE]
-> This repository contains **161 professionally documented programs** covering every aspect of 8086 assembly programming. All programs were developed, verified, and documented during my undergraduate studies (2018-2022) to master the 8086 architecture.
+> This repository contains **525 professionally documented programs** covering every aspect of 8086 assembly programming. All programs were developed, verified, and documented during my undergraduate studies (2018-2022) to master the 8086 architecture.
 
 ### Repository Purpose
 
@@ -111,7 +111,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 ├── docs/                                    # Formal Documentation
 │   └── SPECIFICATION.md                     # Technical Architecture & Specification
 │
-├── Source Code/                             # 8086 Assembly Programs (161 Files)
+├── Source Code/                             # 8086 Assembly Programs (525 Files)
 │   ├── Addressing Modes/                    # Comprehensive Addressing Modes Reference (1)
 │   ├── Arithmetic/                          # Basic Math: Add, Sub, Mul, Div, BCD (14)
 │   ├── Array Operations/                    # Sum, Min/Max, Deletion, Insertion (7)
@@ -182,7 +182,7 @@ As a computer engineer, understanding the underlying hardware-software interface
 Run programs instantly in your browser without any installation.
 
 1.  **Open the Live Demo**: [8086 Assembly Emulator](https://amey-thakur.github.io/8086-ASSEMBLY-LANGUAGE-PROGRAMS/)
-2.  **Select a Program**: Browse the sidebar library containing all **161 programs**.
+2.  **Select a Program**: Browse the sidebar library containing all **525 programs**.
 3.  **Run or Step**: Run to completion, or step one instruction at a time and watch the registers, flags, stack and memory change.
 
 Every program in this repository assembles and runs in the simulator. The
@@ -196,7 +196,7 @@ copies, so what runs is what the repository holds.
 | **Instructions** | The full 8086 set: arithmetic with all nine flags, BCD adjustment, shifts and rotates through carry, string operations with `REP`, `CALL`/`RET`, and port `IN`/`OUT` |
 | **Assembler** | Two passes with forward references, `MACRO` with `LOCAL`, conditional assembly, constant expressions including `$`, `OFFSET`, `SEG`, `DUP` and jump tables |
 | **Services** | `INT 21h` for console, buffered input, files and the clock; `INT 10h`, `16h`, `1Ah`, `15h` and `20h` |
-| **Verification** | 609 tests across nine suites, including one that assembles and runs all 161 programs |
+| **Verification** | 2010 tests across 12 suites, including one that assembles and runs all 525 programs |
 
 **Running the tests**
 
@@ -770,7 +770,7 @@ Copyright © 2021 Amey Thakur
 **Institution**: [Terna Engineering College](https://ternaengg.ac.in/), Navi Mumbai  
 **University**: [University of Mumbai](https://mu.ac.in/)
 
-This repository represents a comprehensive collection of 8086 assembly programs developed, verified, and documented during my academic journey. All content has been carefully organized to serve as a valuable resource for mastering low-level system architecture.
+This repository represents a comprehensive collection of 525 assembly programs developed, verified, and documented during my academic journey. All content has been carefully organized to serve as a valuable resource for mastering low-level system architecture.
 
 **Connect:** [GitHub](https://github.com/Amey-Thakur) &nbsp;·&nbsp; [LinkedIn](https://www.linkedin.com/in/amey-thakur) &nbsp;·&nbsp; [ORCID](https://orcid.org/0000-0001-5644-1575)
 

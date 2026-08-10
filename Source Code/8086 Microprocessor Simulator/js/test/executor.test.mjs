@@ -18,7 +18,7 @@
 
 import { CPU }       from '../cpu/cpu.js';
 import { Assembler } from '../asm/assembler.js';
-import { Executor }  from '../exec/executor.js';
+import { Executor, editDistance } from '../exec/executor.js';
 
 let passed = 0;
 let failed = 0;
@@ -244,6 +244,134 @@ expectState('CBW then IDIV handles negatives',
     const state = run('L: JMP L');
     check('an infinite loop is stopped, not hung',
           state.ERROR?.includes('never terminates'), true);
+}
+
+// -----------------------------------------------------------------------------
+console.log('\nWHERE AN 8086 DIFFERS FROM EVERYTHING AFTER IT');
+//
+// These are the behaviours a later processor changed. Getting one of them wrong
+// is invisible until somebody runs real period code against the emulator, and
+// then it is very wrong indeed. Each is pinned here because an emulator claiming
+// to be an 8086 has to be an 8086 and not a 386 with the new instructions taken
+// out.
+// -----------------------------------------------------------------------------
+
+// PUSH SP stores the value SP holds AFTER the decrement. The 80286 changed this
+// to store the original, and the difference was used for years to tell an 8086
+// from a 286 at run time.
+expectState('PUSH SP pushes the decremented value',
+            'MOV SP,1000h\nPUSH SP\nPOP BX\nHLT',
+            { BX: '0FFE', SP: '1000' });
+
+expectState('but PUSH of anything else is unaffected',
+            'MOV SP,1000h\nMOV AX,1234h\nPUSH AX\nPOP BX\nHLT',
+            { BX: '1234', SP: '1000' });
+
+// An 8086 does not mask the shift count. The 80186 onwards take it modulo 32, so
+// a count of 33 shifts once there and thirty-three times here.
+expectState('a shift count is not masked to five bits',
+            'MOV AL,0FFh\nMOV CL,33\nSHL AL,CL\nHLT',
+            { AX: '0000' });
+
+// A count of zero must leave every flag exactly as it found them.
+expectState('a shift of zero touches no flag',
+            'STC\nMOV AL,0FFh\nMOV CL,0\nSHL AL,CL\nHLT',
+            { AX: '00FF', CF: 1 });
+
+// NOT is the one logical instruction that sets no flags at all.
+expectState('NOT alters no flags',
+            'STC\nMOV AX,0\nNOT AX\nHLT',
+            { AX: 'FFFF', CF: 1, ZF: 0 });
+
+// LOOP decrements before testing, so entering with zero goes all the way round.
+expectState('LOOP entered with CX zero runs the full 65536 times',
+            'MOV CX,0\nXOR AX,AX\nAGAIN: INC AX\nLOOP AGAIN\nHLT',
+            { AX: '0000', CX: '0000' });
+
+// Parity is taken from the low eight bits even when the operation was on a word.
+expectState('parity comes from the low byte of a word result',
+            'MOV AX,0FF00h\nOR AX,AX\nHLT',
+            { PF: 1 });
+
+expectState('and an odd low byte clears it',
+            'MOV AX,0FF01h\nOR AX,AX\nHLT',
+            { PF: 0 });
+
+// A word at the very top of a segment wraps to offset zero for its high byte.
+expectState('a word read at offset FFFFh wraps inside the segment',
+            'MOV BX,0FFFFh\nMOV BYTE PTR [BX],0AAh\nMOV BYTE PTR [0],0BBh\nMOV AX,[BX]\nHLT',
+            { AX: 'BBAA' });
+
+// INC and DEC set every flag except the carry, which they leave alone. That is
+// what makes them usable inside a multiple precision loop.
+expectState('INC leaves the carry flag alone and sets the rest',
+            'STC\nMOV AX,7FFFh\nINC AX\nHLT',
+            { AX: '8000', CF: 1, OF: 1, SF: 1, ZF: 0 });
+
+// AAM and AAD take an operand, and it does not have to be ten. Assemblers write
+// ten when none is given, which hides the fact that the byte is there at all.
+expectState('AAM works in a base other than ten',
+            'MOV AL,0FFh\nAAM 16\nHLT',
+            { AX: '0F0F' });
+
+expectState('AAD works in a base other than ten',
+            'MOV AX,0104h\nAAD 16\nHLT',
+            { AX: '0014' });
+
+// -----------------------------------------------------------------------------
+console.log('\nDIAGNOSING AN UNRECOGNISED MNEMONIC');
+//
+// Three different things can be wrong and they need three different answers. A
+// typing slip wants the nearest mnemonic. A real instruction from a later
+// processor wants to be told so, because suggesting the nearest 8086 mnemonic
+// for MOVZX sends somebody hunting for a typing mistake that is not there.
+// Something unrecognisable wants no guess at all.
+// -----------------------------------------------------------------------------
+{
+    const complain = mnemonic => run(`
+.MODEL SMALL
+.STACK 100H
+.CODE
+START:
+    ${mnemonic}
+    MOV AH, 4CH
+    INT 21H
+END START
+`).ERROR ?? '';
+
+    // ---- typing slips -------------------------------------------------------
+    check('a substitution is diagnosed',   complain('MVO').includes('Did you mean MOV?'),   true);
+    check('a transposition is diagnosed',  complain('PSUH').includes('Did you mean PUSH?'), true);
+    check('an inserted letter is diagnosed', complain('XCHNG').includes('Did you mean XCHG?'), true);
+    check('a doubled letter is diagnosed', complain('ADDD').includes('Did you mean ADD?'),  true);
+
+    // Transposition is the commonest slip of all, and plain Levenshtein charges
+    // two for it. Counting it as one is what lets MVO reach MOV before anything
+    // else does.
+    check('a transposition costs one, not two', editDistance('MVO', 'MOV'), 1);
+    check('and an unrelated pair still costs two', editDistance('MVO', 'XOR') >= 2, true);
+
+    // ---- instructions from later processors ---------------------------------
+    const movzx = complain('MOVZX');
+
+    check('a 386 instruction is named as such', movzx.includes('80386'), true);
+    check('and is not passed off as a typing slip', movzx.includes('Did you mean'), false);
+    check('and says what to write instead', movzx.includes('CBW') || movzx.includes('XOR AH'), true);
+
+    check('a 186 instruction is recognised', complain('PUSHA').includes('80186'), true);
+    check('the whole SETcc family is recognised', complain('SETNE').includes('80386'), true);
+    check('the whole CMOVcc family is recognised', complain('CMOVGE').includes('Pentium Pro'), true);
+    check('coprocessor instructions are recognised', complain('FSQRT').includes('8087'), true);
+
+    // Some have no 8086 equivalent at all, and saying "use nothing" would be
+    // worse than saying so plainly.
+    check('an instruction with no equivalent says so',
+          complain('CPUID').includes('no equivalent'), true);
+
+    // ---- nothing worth guessing --------------------------------------------
+    check('gibberish gets no suggestion', complain('ZZZZZ').includes('Did you mean'), false);
+    check('and a suggestion sharing no opening letter is withheld',
+          complain('QQ').includes('Did you mean'), false);
 }
 
 // -----------------------------------------------------------------------------

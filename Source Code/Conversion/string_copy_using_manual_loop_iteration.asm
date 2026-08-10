@@ -17,9 +17,15 @@
 ; -----------------------------------------------------------------------------
 .DATA
     ; Source and Destination in the same segment for this demonstration
-    VAL_SOURCE    DB "BIOMEDICAL"       
-    VAL_DEST      DB 10 DUP('?')        
-    LEN_STRING    EQU 10                
+    VAL_SOURCE    DB "BIOMEDICAL"
+    VAL_DEST      DB 10 DUP('?')
+    LEN_STRING    EQU 10
+
+    ; The buffers carry no terminator, so they cannot be printed with service
+    ; 09H. These labels are for the running commentary only.
+    M_BEFORE      DB "Source: $"
+    M_AFTER       DB 0DH, 0AH, "Copied: $"
+    M_END         DB 0DH, 0AH, "$"
 
 ; -----------------------------------------------------------------------------
 ; CODE SEGMENT
@@ -50,12 +56,64 @@ L_MANUAL_COPY:
     ; (D) Repeat until counter hits 0
     LOOP L_MANUAL_COPY                   
     
-    ; Result: Memory at VAL_DEST now mirrors VAL_SOURCE.
-            
-    ; --- Step 4: Shutdown ---
+    ; --- Step 4: Show both buffers ---
+    ; The copy is finished and VAL_DEST now mirrors VAL_SOURCE. Leaving the
+    ; result in memory alone would make this indistinguishable from a program
+    ; that had not run, so both are printed and can be compared by eye.
+    LEA DX, M_BEFORE
+    MOV AH, 09H
+    INT 21H
+    LEA SI, VAL_SOURCE
+    MOV CX, LEN_STRING
+    CALL SHOW_BUFFER
+
+    LEA DX, M_AFTER
+    MOV AH, 09H
+    INT 21H
+    LEA SI, VAL_DEST
+    MOV CX, LEN_STRING
+    CALL SHOW_BUFFER
+
+    LEA DX, M_END
+    MOV AH, 09H
+    INT 21H
+
+    ; --- Step 5: Shutdown ---
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
+
+; -----------------------------------------------------------------------------
+; SHOW_BUFFER
+;
+; Prints the CX characters at DS:SI, one at a time.
+;
+; Service 09H cannot be used, because neither buffer ends in a dollar sign: they
+; hold exactly ten characters and nothing else. Printing by count rather than by
+; terminator is what any fixed length field needs.
+; -----------------------------------------------------------------------------
+SHOW_BUFFER PROC
+    PUSH AX
+    PUSH CX
+    PUSH DX
+    PUSH SI
+
+    JCXZ SHOW_DONE
+
+SHOW_ONE:
+    MOV DL, [SI]
+    MOV AH, 02H
+    INT 21H
+    INC SI
+    LOOP SHOW_ONE
+
+SHOW_DONE:
+    POP SI
+    POP DX
+    POP CX
+    POP AX
+    RET
+SHOW_BUFFER ENDP
 
 END MAIN
 
@@ -87,54 +145,6 @@ END MAIN
 ;    iteration. On older processors, this constant branching prevents optimal 
 ;    instruction pre-fetching.
 ; = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-
-;-----------------------------------------------------------------------------
-; DATA SEGMENT
-;-----------------------------------------------------------------------------
-DATA SEGMENT
-    SOURCE DB "BIOMEDICAL"               ; Source string (10 chars)
-    DEST DB 10 DUP(?)                    ; Destination buffer
-DATA ENDS
-
-;-----------------------------------------------------------------------------
-; CODE SEGMENT
-;-----------------------------------------------------------------------------
-CODE SEGMENT
-    ASSUME CS:CODE, DS:DATA
-    
-START:
-    ; Initialize Data Segment
-    MOV AX, DATA
-    MOV DS, AX
-    
-    ;-------------------------------------------------------------------------
-    ; Setup for Manual Copy
-    ;-------------------------------------------------------------------------
-    MOV SI, OFFSET SOURCE                ; SI points to source
-    MOV DI, OFFSET DEST                  ; DI points to destination
-    MOV CX, 000AH                        ; Count = 10 characters
-    
-    ;-------------------------------------------------------------------------
-    ; Manual Copy Loop (without string instructions)
-    ; Uses MOV to copy byte by byte
-    ;-------------------------------------------------------------------------
-COPY_LOOP:
-    MOV AL, [SI]                         ; Load byte from source
-    MOV [DI], AL                         ; Store byte to destination
-    INC SI                               ; Next source byte
-    INC DI                               ; Next destination byte
-    LOOP COPY_LOOP                       ; Decrement CX, loop if not zero
-    
-    ; Result: "BIOMEDICAL" copied to DEST
-            
-    ;-------------------------------------------------------------------------
-    ; Program Termination
-    ;-------------------------------------------------------------------------
-    MOV AH, 4CH
-    INT 21H
-CODE ENDS
-END START
 
 ;=============================================================================
 ; COMPARISON WITH STRING INSTRUCTIONS:

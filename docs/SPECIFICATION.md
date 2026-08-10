@@ -2,7 +2,7 @@
 
 ## Architectural Overview
 
-This repository constitutes a comprehensive engineering archive of **161 Assembly programs** targeting the **Intel 8086 (16-bit)** microprocessor architecture. The programs demonstrate the full operational lifecycle of a CISC architecture, simulated within the **Emu8086** environment.
+This repository constitutes a comprehensive engineering archive of **525 Assembly programs** targeting the **Intel 8086 (16-bit)** microprocessor architecture. The programs demonstrate the full operational lifecycle of a CISC architecture, simulated within the **Emu8086** environment.
 
 ### CPU Internal Architecture (BIU & EU)
 

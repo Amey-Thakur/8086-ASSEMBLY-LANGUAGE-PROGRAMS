@@ -30,6 +30,7 @@ import { tokenize, parseNumber, parseStringLiteral, splitOperands } from './lexe
 import { parseOperand, OPERAND }                                    from './operands.js';
 import { expandMacros }                                             from './macros.js';
 import { evaluateExpression, ExpressionContext }                    from './expressions.js';
+import { DEFAULT_CODE_SEGMENT, DEFAULT_DATA_SEGMENT }               from '../cpu/cpu.js';
 
 /** Directives that reserve or initialise storage, and how wide each unit is. */
 const DATA_DIRECTIVES = { DB: 1, DW: 2, DD: 4 };
@@ -147,6 +148,12 @@ export class Assembler {
     firstPass(lines) {
         let section = 'code';   // programs without .DATA are all code
 
+        // The full segment definition syntax, "DATA SEGMENT ... DATA ENDS",
+        // needs to know which segment is open and whether it has turned out to
+        // hold data, so the name can be given the right base when it closes.
+        let openSegment = null;
+        let sawData     = false;
+
         for (const line of lines) {
             // ---- conditional assembly ----------------------------------------
             // Handled before anything else, because a line inside a branch that
@@ -203,14 +210,45 @@ export class Assembler {
                 continue;
             }
 
-            if (namedDirective === 'PROC' || namedDirective === 'SEGMENT') {
+            if (namedDirective === 'PROC') {
                 // The procedure name is a jump target pointing at whatever
                 // instruction comes next, which is what "END MAIN" relies on.
                 this.defineNamedLabel(line.mnemonic, line.line);
                 continue;
             }
 
-            if (namedDirective === 'ENDP' || namedDirective === 'ENDS') {
+            // ---- "DATA SEGMENT", the full segment definition syntax ----------
+            //
+            // The name of a segment is not a label. "MOV AX, DATA" has to load
+            // the segment base so that "MOV DS, AX" points at the right place,
+            // and treating the name as a code label made it load an instruction
+            // number instead. Every program written this way then addressed
+            // segment zero and printed whatever happened to be there.
+            //
+            // Which base it gets is decided when the segment closes, from what
+            // it turned out to contain, because the declaration does not say.
+            if (namedDirective === 'SEGMENT') {
+                openSegment = line.mnemonic.toUpperCase();
+                sawData     = false;
+
+                // Assume code until a data definition appears. A segment
+                // declared with the STACK combine is neither, and is recognised
+                // from the rest of the line.
+                section = /\bSTACK\b/i.test(line.operands.join(' ')) ? 'data' : 'code';
+
+                this.declareSegment(openSegment, line);
+                continue;
+            }
+
+            if (namedDirective === 'ENDS') {
+                if (openSegment) {
+                    this.resolveSegment(openSegment, sawData);
+                    openSegment = null;
+                }
+                continue;
+            }
+
+            if (namedDirective === 'ENDP') {
                 continue;   // closes a block, emits nothing
             }
             if (line.mnemonic === 'EQU' && line.label) {
@@ -224,7 +262,17 @@ export class Assembler {
             // ---- data definitions --------------------------------------------
             // "MSG DB 'Hi$'" reaches the lexer as mnemonic MSG, operand "DB 'Hi$'".
             const asData = this.matchDataDefinition(line);
-            if (asData) { this.emitData(asData, line); continue; }
+
+            if (asData) {
+                // Only inside a full SEGMENT block does a declaration say what
+                // the segment is. A .MODEL SMALL program may declare data inside
+                // .CODE, and switching the section there would make every
+                // instruction after it look like a malformed declaration.
+                if (openSegment) { sawData = true; section = 'data'; }
+
+                this.emitData(asData, line);
+                continue;
+            }
 
             // ---- "NAME LABEL WORD" -------------------------------------------
             // Names the current position without reserving anything. Two of them
@@ -234,6 +282,8 @@ export class Assembler {
             if (asMarker) { this.definePosition(asMarker, line); continue; }
 
             if (line.mnemonic && Object.hasOwn(DATA_DIRECTIVES, line.mnemonic)) {
+                if (openSegment) { sawData = true; section = 'data'; }
+
                 this.emitData({ name: line.label, directive: line.mnemonic, items: line.operands }, line);
                 continue;
             }
@@ -380,6 +430,42 @@ export class Assembler {
         this.symbols[name] = instructionIndex === null
             ? { kind: SYMBOL.CODE, index: this.instructions.length }
             : { kind: SYMBOL.CODE, index: instructionIndex };
+    }
+
+    /**
+     * Record a segment name from "DATA SEGMENT".
+     *
+     * It is defined as a constant so that "MOV AX, DATA" loads a number rather
+     * than being taken for an address. The value is provisional: which base it
+     * really gets is not known until the segment closes and its contents have
+     * been seen.
+     */
+    declareSegment(name, line) {
+        if (Object.hasOwn(this.symbols, name)) {
+            this.report(`"${name}" is defined more than once`, line.line);
+            return;
+        }
+
+        this.symbols[name] = { kind: SYMBOL.CONSTANT, value: DEFAULT_CODE_SEGMENT, segment: true };
+    }
+
+    /**
+     * Settle a segment's base now that its contents are known.
+     *
+     * A segment that defined any data gets the data segment base, because that
+     * is where this assembler puts every declaration regardless of which
+     * segment it was written in. Anything else is code.
+     *
+     * That flattening is a simplification, and an honest one: a program with
+     * two data segments would find both at the same base. Every program in this
+     * repository has one of each, which is the shape the syntax is used for.
+     */
+    resolveSegment(name, heldData) {
+        const symbol = this.symbols[name];
+
+        if (!symbol?.segment) return;
+
+        symbol.value = heldData ? DEFAULT_DATA_SEGMENT : DEFAULT_CODE_SEGMENT;
     }
 
     /** Define a code label by name, pointing at the next instruction to be

@@ -97,10 +97,16 @@ export class CPU {
         this.registers.set('ES', DEFAULT_DATA_SEGMENT);
         this.registers.set('SS', DEFAULT_STACK_SEGMENT);
 
+        this.installVectors();
+
         this.halted            = false;
         this.instructionCount  = 0;
         this.consoleOutput     = '';
         this.pendingInput      = '';
+
+        // How many times the program has rung the bell. The interface plays a
+        // tone for each ring it has not played yet.
+        this.bellCount         = 0;
 
         // Set by INT 21h service 4Ch. Null until the program terminates through
         // it, which distinguishes "exited with zero" from "never exited".
@@ -121,6 +127,73 @@ export class CPU {
     // The 8086 stack is full-descending: SP always points at the last item
     // written, and it moves down as the stack grows.
     // -------------------------------------------------------------------------
+
+    /**
+     * Lay down an interrupt vector table.
+     *
+     * The first kilobyte of memory is 256 far pointers, one per interrupt, and
+     * a program is entitled to read them: that is how a handler is chained, and
+     * how a program checks whether a service is present at all. Leaving them all
+     * zero would make every vector look uninstalled, which is a state a real
+     * machine is never in once the BIOS has run.
+     *
+     * The addresses below are the ones an IBM PC left in place, so a program
+     * that recognises them sees what it would have seen in 1983. They are fixed
+     * rather than invented afresh, because a simulator whose memory differs
+     * between runs cannot be tested.
+     *
+     * Nothing executes at these addresses. The interrupts are serviced by the
+     * handlers in interrupts.js, exactly as they were before. The table is there
+     * to be read.
+     */
+    installVectors() {
+        const BIOS_SEGMENT = 0xF000;
+        const DOS_SEGMENT  = 0x0116;
+
+        // The BIOS pointed every unused vector at a single instruction that
+        // returns immediately, so an unexpected interrupt did nothing rather
+        // than running off into whatever happened to be at address zero.
+        const DUMMY_HANDLER = 0xFF53;
+
+        for (let vector = 0; vector < 256; vector++) {
+            this.memory.writeWord(0, vector * 4,     DUMMY_HANDLER);
+            this.memory.writeWord(0, vector * 4 + 2, BIOS_SEGMENT);
+        }
+
+        // The handlers a program is actually likely to look at.
+        const KNOWN = {
+            0x00: 0x0163,   // divide by zero
+            0x01: 0xFF53,   // single step, unused
+            0x02: 0xFF53,   // non-maskable interrupt
+            0x03: 0xFF53,   // breakpoint
+            0x04: 0xFF53,   // overflow, reached by INTO
+            0x05: 0xFF54,   // print screen
+            0x08: 0xFEA5,   // timer tick, eighteen and a fifth times a second
+            0x09: 0xE987,   // keyboard
+            0x0E: 0xEF57,   // diskette
+            0x10: 0xF065,   // video
+            0x11: 0xF84D,   // equipment list
+            0x12: 0xF841,   // memory size
+            0x13: 0xEC59,   // disc
+            0x14: 0xE739,   // serial
+            0x15: 0xF859,   // system services
+            0x16: 0xE82E,   // keyboard services
+            0x17: 0xEFD2,   // printer
+            0x19: 0xE6F2,   // bootstrap
+            0x1A: 0xFE6E    // clock services
+        };
+
+        for (const [vector, offset] of Object.entries(KNOWN)) {
+            this.memory.writeWord(0, Number(vector) * 4, offset);
+        }
+
+        // The DOS vectors live in the resident part of DOS rather than in the
+        // BIOS, so their segment differs. 21h is the one every program uses.
+        for (const vector of [0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x2F]) {
+            this.memory.writeWord(0, vector * 4,     0x1160 + (vector & 0x0F) * 0x10);
+            this.memory.writeWord(0, vector * 4 + 2, DOS_SEGMENT);
+        }
+    }
 
     push(value) {
         const stackPointer = (this.registers.get('SP') - 2) & 0xFFFF;
@@ -291,6 +364,18 @@ export class CPU {
         if (code === 0x08) {                     // backspace
             if (this.cursor.column > 0) this.cursor.column--;
             this.consoleOutput += String.fromCharCode(code);
+            return;
+        }
+
+        if (code === 0x07) {                     // bell
+            // BEL is a sound, not a glyph. Appending it put an invisible
+            // control character in the transcript and rang nothing at all,
+            // so a program written to beep appeared to do nothing.
+            //
+            // The count is what the interface watches: it plays a tone for each
+            // ring it has not yet played. Nothing is added to the transcript,
+            // and the cursor does not move, which is what a terminal does.
+            this.bellCount++;
             return;
         }
 

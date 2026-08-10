@@ -6,8 +6,10 @@
     "author": "Amey Thakur",
     "license": "CC-BY-4.0",
     "scripts": {
-        "test": "node js/test/library.test.mjs && node js/test/core.test.mjs && node js/test/alu.test.mjs && node js/test/cpu.test.mjs && node js/test/lexer.test.mjs && node js/test/operands.test.mjs && node js/test/assembler.test.mjs && node js/test/executor.test.mjs && node js/test/strings.test.mjs && node js/test/programs.test.mjs && node js/test/output.test.mjs",
+        "test": "node js/test/library.test.mjs && node js/test/core.test.mjs && node js/test/alu.test.mjs && node js/test/cpu.test.mjs && node js/test/lexer.test.mjs && node js/test/operands.test.mjs && node js/test/assembler.test.mjs && node js/test/executor.test.mjs && node js/test/strings.test.mjs && node js/test/robustness.test.mjs && node js/test/programs.test.mjs && node js/test/output.test.mjs",
         "test:record": "node js/test/output.test.mjs --update",
-        "index": "node js/tools/index-programs.mjs"
+        "index": "node js/tools/index-programs.mjs",
+        "counts": "node js/tools/sync-counts.mjs",
+        "counts:check": "node js/tools/sync-counts.mjs --check"
     }
 }

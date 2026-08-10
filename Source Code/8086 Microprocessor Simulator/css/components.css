@@ -565,11 +565,46 @@
 /* -----------------------------------------------------------------------------
    THE PROGRAM LIBRARY
 ----------------------------------------------------------------------------- */
+/* The search box follows the width of the panel, which the reader can drag.
+   It was laid out as a plain block, so the input inside kept its intrinsic
+   width and sat in a fixed size box however wide the panel became. Making the
+   wrapper a flex container is what lets the field's own "flex: 1 1 auto" take
+   effect. */
 .library__search {
+    display: flex;
     flex: none;
     padding: var(--space-3) var(--space-4);
     border-bottom: 1px solid var(--rule);
+
+    /* Named so the rules below can respond to the width of this panel rather
+       than the width of the window. Dragging the panel narrower has to change
+       the search box even when the window has not moved at all. */
+    container-type: inline-size;
+    container-name: library;
 }
+
+.library__search .field {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Below about two hundred pixels the padding is most of the field, so it is
+   tightened and the text made smaller rather than letting the placeholder be
+   clipped mid word. */
+@container library (max-width: 220px) {
+    .library__search {
+        padding: var(--space-2) var(--space-2);
+    }
+
+    .library__search .field {
+        height: 26px;
+        padding: 0 var(--space-2);
+        font-size: var(--size-xs);
+    }
+}
+
+/* A browser without container queries still gets a field that fills its panel,
+   because the flex rule above does not depend on them. */
 
 .library__group {
     border-bottom: 1px solid var(--rule);

@@ -130,6 +130,11 @@ export class Application {
         this.running  = false;
         this.frame    = null;
 
+        // How many bell rings have already been sounded, so a run does not
+        // replay every ring from the start of the program each frame.
+        this.bellsPlayed = 0;
+        this.audio       = null;
+
         this.buildPanels();
         this.bindControls();
         this.restoreTheme();
@@ -181,8 +186,9 @@ export class Application {
         this.panels = new Panels(this.element, document.querySelectorAll('.handle'));
 
         for (const handle of document.querySelectorAll('.handle')) {
-            handle.addEventListener('pointerup', () => this.render(false));
-            handle.addEventListener('keyup',     () => this.render(false));
+            handle.addEventListener('pointermove', () => this.fitSearchPlaceholder());
+            handle.addEventListener('pointerup',   () => this.render(false));
+            handle.addEventListener('keyup',       () => this.render(false));
         }
 
         window.addEventListener('resize', () => this.render(false));
@@ -203,8 +209,37 @@ export class Application {
 
         // Both counts come from the library itself, so adding a program never
         // means editing a number in the markup.
-        query('#library-total').textContent  = `${this.library.count} programs`;
-        query('#library-search').placeholder = `Search ${this.library.count} programs`;
+        query('#library-total').textContent = `${this.library.count} programs`;
+
+        this.fitSearchPlaceholder();
+    }
+
+    /**
+     * Choose a placeholder that fits the width the search box currently has.
+     *
+     * A placeholder wider than its field is clipped mid word, which reads as a
+     * rendering fault rather than as a hint. Three lengths cover the range the
+     * panel can be dragged to, and the longest one that fits is used.
+     *
+     * The count comes from the library rather than the markup, so adding a
+     * program never means editing a number by hand.
+     */
+    fitSearchPlaceholder() {
+        const field = query('#library-search');
+        const width = field.clientWidth;
+
+        // Roughly the width of a character in the monospaced field, less the
+        // padding either side. Deliberately generous: a placeholder that stops
+        // short looks deliberate, one that is cut off does not.
+        const room = Math.floor((width - 24) / 7);
+
+        const choices = [
+            `Search ${this.library.count} programs`,
+            `Search ${this.library.count}`,
+            'Search'
+        ];
+
+        field.placeholder = choices.find(text => text.length <= room) ?? '';
     }
 
     bindControls() {
@@ -503,6 +538,59 @@ export class Application {
         query('#count').textContent =
             `${snapshot.instructionCount.toLocaleString('en-US')} executed`;
         query('#queued').textContent = this.console.describeInput();
+
+        this.ringBell();
+        this.fitSearchPlaceholder();
+    }
+
+    /**
+     * Sound the bell once for each ring the program has made since the last look.
+     *
+     * A program that writes the bell character expects to be heard. Printing it
+     * as a glyph, which is what happened before, put an invisible control
+     * character in the transcript and made the program look as though it had
+     * done nothing at all.
+     *
+     * The tone is built rather than loaded, because the simulator has no assets
+     * and a data URI for a sound file would be far larger than the code. The
+     * audio context is created on the first ring, since a browser will not allow
+     * one before the visitor has interacted with the page.
+     */
+    ringBell() {
+        const rung = this.cpu.bellCount ?? 0;
+
+        if (rung <= this.bellsPlayed) { this.bellsPlayed = rung; return; }
+
+        // However many rings were missed, one tone is enough. A loop that beeps
+        // a thousand times should not queue a thousand tones.
+        this.bellsPlayed = rung;
+
+        try {
+            this.audio ??= new (window.AudioContext ?? window.webkitAudioContext)();
+
+            const tone = this.audio.createOscillator();
+            const gain = this.audio.createGain();
+
+            // The PC speaker beep was a square wave near 800 Hz for about a
+            // fifth of a second, which is what this imitates.
+            tone.type            = 'square';
+            tone.frequency.value = 800;
+
+            // A short fade at each end, because a square wave cut off abruptly
+            // clicks.
+            const now = this.audio.currentTime;
+
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.08, now + 0.01);
+            gain.gain.setValueAtTime(0.08, now + 0.16);
+            gain.gain.linearRampToValueAtTime(0, now + 0.2);
+
+            tone.connect(gain).connect(this.audio.destination);
+            tone.start(now);
+            tone.stop(now + 0.2);
+        } catch {
+            // No audio available, which is not a reason to stop the program.
+        }
     }
 
     setState(state, message) {

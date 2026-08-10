@@ -262,18 +262,68 @@ export class Executor {
     nearestMnemonic(mnemonic) {
         const typed = String(mnemonic).toUpperCase();
 
-        if (typed.length < 3) return null;
+        if (typed.length < 2) return null;
+
+        // A short mnemonic cannot afford a large distance: at two letters, a
+        // distance of two means nothing at all was recognisable. The allowance
+        // grows with the length of what was typed.
+        const allowed = typed.length <= 3 ? 2 : 3;
 
         let best     = null;
-        let bestCost = 3;
+        let bestCost = allowed;
+        let bestTie  = -1;
 
         for (const candidate of this.handlers.keys()) {
-            const cost = editDistance(typed, candidate, bestCost);
+            const cost = editDistance(typed, candidate, bestCost + 1);
 
-            if (cost < bestCost) { bestCost = cost; best = candidate; }
+            if (cost > bestCost) continue;
+
+            // Among candidates the same distance away, prefer the one that
+            // shares more of its opening letters. People mistype the end of a
+            // word far more often than the start, so JCXZ is a better answer for
+            // JCX than LOOPZ is, even when both score the same.
+            const tie = sharedPrefix(typed, candidate);
+
+            if (cost < bestCost || tie > bestTie) {
+                bestCost = cost;
+                bestTie  = tie;
+                best     = candidate;
+            }
         }
 
+        // A suggestion that shares nothing with what was typed is noise. One
+        // letter in common at the start is the minimum for it to read as a
+        // correction rather than as a random instruction.
+        if (best !== null && bestTie < 1) return null;
+
         return best;
+    }
+
+    /**
+     * The whole explanation for an unrecognised mnemonic.
+     *
+     * Three different things can be wrong, and they need different answers:
+     * a typing slip wants the nearest mnemonic, a real instruction from a later
+     * processor wants to be told so and given the 8086 equivalent, and something
+     * unrecognisable wants no guess at all.
+     */
+    explainUnknown(mnemonic) {
+        const later = laterInstruction(mnemonic);
+
+        if (later) {
+            const opening = `"${String(mnemonic).toUpperCase()}" is a real instruction, ` +
+                            `but it arrived with the ${later.processor} and the 8086 ` +
+                            `has not got it.`;
+
+            return later.instead === null
+                ? `${opening} There is no equivalent, because ${later.because}.`
+                : `${opening} Use ${later.instead}.`;
+        }
+
+        const nearest = this.nearestMnemonic(mnemonic);
+
+        return `"${mnemonic}" is not a recognised 8086 instruction` +
+               (nearest ? `. Did you mean ${nearest}?` : '.');
     }
 
     /**
@@ -331,11 +381,8 @@ export class Executor {
         const handler = this.handlers.get(instruction.mnemonic);
 
         if (!handler) {
-            const nearest = this.nearestMnemonic(instruction.mnemonic);
-
             throw new ExecutionError(
-                `"${instruction.mnemonic}" is not a recognised 8086 instruction` +
-                (nearest ? `. Did you mean ${nearest}?` : ''),
+                this.explainUnknown(instruction.mnemonic),
                 instruction.line
             );
         }
@@ -437,6 +484,24 @@ export class Executor {
 
         this.define(['PUSH'], operands => {
             expect(operands, 1, 'PUSH');
+
+            // PUSH SP is the one case where the 8086 and every later processor
+            // disagree. An 8086 and an 8088 decrement SP first and then store
+            // the decremented value, so the word written is two less than SP
+            // was. The 80286 changed this to store the original value, and the
+            // difference was used for years as a way to tell the two apart.
+            //
+            // This emulates an 8086, so the decremented value is what goes on
+            // the stack. Reading the operand after the decrement is all it
+            // takes, and it changes nothing for any other register.
+            if (operands[0].kind === OPERAND.REGISTER && operands[0].name === 'SP') {
+                const lowered = (cpu.registers.get('SP') - 2) & 0xFFFF;
+
+                cpu.registers.set('SP', lowered);
+                cpu.memory.writeWord(cpu.registers.get('SS'), lowered, lowered);
+                return;
+            }
+
             cpu.push(this.read(operands[0], 2));
         });
 
@@ -762,11 +827,28 @@ export class Executor {
  * @param {number} ceiling  give up once every path costs at least this much
  * @returns {number} the distance, or the ceiling if it is at least that far
  */
+/** How many opening letters two mnemonics share. */
+function sharedPrefix(from, to) {
+    let shared = 0;
+
+    while (shared < from.length && shared < to.length && from[shared] === to[shared]) {
+        shared++;
+    }
+
+    return shared;
+}
+
 export function editDistance(from, to, ceiling = Infinity) {
     // A difference in length is a lower bound on the distance, so most
     // candidates can be dismissed without any work at all.
     if (Math.abs(from.length - to.length) >= ceiling) return ceiling;
 
+    // Two rows of history rather than one, because swapping two adjacent
+    // letters is counted as a single mistake. It is much the commonest typing
+    // slip, and plain Levenshtein charges two for it, which is enough to push
+    // the right answer out of reach: MVO to MOV would score two, the same as
+    // two unrelated substitutions.
+    let older    = null;
     let previous = Array.from({ length: to.length + 1 }, (_, index) => index);
 
     for (let row = 1; row <= from.length; row++) {
@@ -776,7 +858,16 @@ export function editDistance(from, to, ceiling = Infinity) {
 
         for (let column = 1; column <= to.length; column++) {
             const substitute = previous[column - 1] + (from[row - 1] === to[column - 1] ? 0 : 1);
-            const cost       = Math.min(substitute, previous[column] + 1, current[column - 1] + 1);
+
+            let cost = Math.min(substitute, previous[column] + 1, current[column - 1] + 1);
+
+            // A transposition: this letter matches the previous one of the other
+            // word, and the previous one matches this.
+            if (row > 1 && column > 1 &&
+                from[row - 1] === to[column - 2] &&
+                from[row - 2] === to[column - 1]) {
+                cost = Math.min(cost, older[column - 2] + 1);
+            }
 
             current[column] = cost;
             rowBest = Math.min(rowBest, cost);
@@ -784,10 +875,97 @@ export function editDistance(from, to, ceiling = Infinity) {
 
         if (rowBest >= ceiling) return ceiling;   // no path can improve from here
 
+        older    = previous;
         previous = current;
     }
 
     return previous[to.length];
+}
+
+// -----------------------------------------------------------------------------
+// INSTRUCTIONS THAT ARE REAL BUT NOT 8086
+//
+// Suggesting the nearest 8086 mnemonic for one of these is worse than saying
+// nothing: MOVZX is not a misspelling of MOVSX, and telling somebody it might be
+// sends them looking for a typing mistake that is not there. The honest answer
+// is that the instruction exists, arrived later, and here is what to write
+// instead.
+//
+// Every entry names the processor that introduced it and gives the 8086
+// equivalent where there is one.
+// -----------------------------------------------------------------------------
+const LATER_INSTRUCTIONS = {
+    // ---- 80186 ----
+    PUSHA:  ['80186', 'individual pushes for the registers you need'],
+    POPA:   ['80186', 'individual pops, in the reverse order'],
+    ENTER:  ['80186', 'PUSH BP then MOV BP, SP then SUB SP, size'],
+    LEAVE:  ['80186', 'MOV SP, BP then POP BP'],
+    BOUND:  ['80186', 'compare against both limits with CMP and branch'],
+    INS:    ['80186', 'IN to AL then STOSB, in a loop'],
+    OUTS:   ['80186', 'LODSB then OUT, in a loop'],
+
+    // ---- 80286 ----
+    PUSHAD: ['80386', 'individual pushes for the registers you need'],
+    POPAD:  ['80386', 'individual pops, in the reverse order'],
+    ARPL:   ['80286', null, 'it belongs to protected mode, which the 8086 has not got'],
+    LGDT:   ['80286', null, 'the 8086 has no descriptor tables'],
+    LIDT:   ['80286', null, 'the 8086 interrupt table is fixed at address zero'],
+    SMSW:   ['80286', null, 'the 8086 has no machine status word'],
+
+    // ---- 80386 ----
+    MOVZX:  ['80386', 'XOR AH, AH then MOV AL, source for a byte to a word'],
+    MOVSX:  ['80386', 'MOV AL, source then CBW, which sign extends AL into AX'],
+    BSF:    ['80386', 'shift right in a loop, counting until the carry comes out set'],
+    BSR:    ['80386', 'shift left in a loop, counting until the carry comes out set'],
+    BT:     ['80386', 'TEST against a mask, or AND a copy'],
+    BTS:    ['80386', 'OR with a mask'],
+    BTR:    ['80386', 'AND with the complement of a mask'],
+    BTC:    ['80386', 'XOR with a mask'],
+    SETcc:  ['80386', 'branch on the condition and load the value on each path'],
+    CDQ:    ['80386', 'CWD, which is the sixteen bit equivalent'],
+    SHLD:   ['80386', 'shift both halves separately and combine them'],
+    SHRD:   ['80386', 'shift both halves separately and combine them'],
+    BSWAP:  ['80486', 'XCHG AL, AH for a word'],
+    CMOVE:  ['Pentium Pro', 'branch on the condition and move on one path only'],
+    CMOVZ:  ['Pentium Pro', 'branch on the condition and move on one path only'],
+    CPUID:  ['Pentium', null, 'there is no way to identify an 8086 from software'],
+    RDTSC:  ['Pentium', 'read the timer tick count with INT 1Ah service 00h']
+};
+
+/**
+ * The conditional set and move instructions come in dozens of spellings, and
+ * listing every one would be noise. Anything matching these shapes is treated as
+ * the family it belongs to.
+ */
+const LATER_FAMILIES = [
+    [/^SET[A-Z]{1,3}$/, '80386',
+     'branch on the condition and load the value on each path'],
+    [/^CMOV[A-Z]{1,3}$/, 'Pentium Pro',
+     'branch on the condition and move on one path only'],
+    [/^(FADD|FSUB|FMUL|FDIV|FLD|FST|FSTP|FCOM|FSQRT|FSIN|FCOS|FILD|FINIT)[A-Z]*$/,
+     '8087 coprocessor',
+     'integer arithmetic, because the 8086 on its own has no floating point at all']
+];
+
+/**
+ * Recognise a mnemonic that is a real instruction from a later processor.
+ *
+ * @returns {{processor: string, instead: string}|null}
+ */
+export function laterInstruction(mnemonic) {
+    const typed = String(mnemonic).toUpperCase();
+
+    if (Object.hasOwn(LATER_INSTRUCTIONS, typed)) {
+        const [processor, instead, because = null] = LATER_INSTRUCTIONS[typed];
+
+        return { processor, instead, because };
+    }
+
+    for (const [shape, processor, instead] of LATER_FAMILIES) {
+        if (shape.test(typed)) return { processor, instead, because: null };
+    }
+
+    return null;
 }
 
 export { NO_OPERAND };
