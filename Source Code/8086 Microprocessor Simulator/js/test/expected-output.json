@@ -695,6 +695,14 @@
     "output": "",
     "finished": false
   },
+  "File Operations/append_to_file.asm": {
+    "output": "Appending, which needs a seek to the end first\nCreated the log with the first entry.\nAppended an entry, file is now 27 bytes.\nAppended an entry, file is now 40 bytes.\n\nThe whole log read back:\nfirst entry\nsecond entry\nthird entry\n\nWriting without the seek would have overwritten the start of the file instead of adding to it.\n",
+    "finished": true
+  },
+  "File Operations/copy_file_contents.asm": {
+    "output": "Copying a file sixteen bytes at a time\nSource written, 55 bytes.\nblock 1: read 16, wrote 16\nblock 2: read 16, wrote 16\nblock 3: read 16, wrote 16\nblock 4: read 7, wrote 7\n\nCopy finished. Blocks: 4\nBytes copied: 55\n\nThe copy reads back identical to the source.\n\nA read returning fewer bytes than asked for is the end of the file. There is no separate flag for it.\n",
+    "finished": true
+  },
   "File Operations/create_file.asm": {
     "output": "\nSuccess: File 'TEST.TXT' Created.",
     "finished": true
@@ -703,8 +711,32 @@
     "output": "\nError: File not found or Access Denied.",
     "finished": true
   },
+  "File Operations/file_error_handling.asm": {
+    "output": "Every file error, provoked on purpose\n\n1. Opening a file that is not there\n   failed with code 2, file not found\n\n2. Deleting a file that is not there\n   failed with code 2, file not found\n\n3. Reading from a handle never opened\n   failed with code 6, invalid handle\n\n4. Writing to a handle opened read only\n   failed with code 5, access denied\n\n5. Closing a handle twice\n   failed with code 6, invalid handle\n\nFailures provoked: 5 out of 5\n\nThe carry flag says whether it failed and AX says why. Testing AX without the carry flag cannot tell a handle from an error.\n",
+    "finished": true
+  },
+  "File Operations/file_random_access_records.asm": {
+    "output": "Random access with fixed length records\nWrote five records of eight bytes each.\n\nReading them out of order:\nrecord 3 at offset 24 is SCREW-M4\nrecord 0 at offset 0 is BOLT-M6 \nrecord 2 at offset 16 is WASHER-A\n\nOverwriting record 1 in place.\n\nAll five records afterwards:\nrecord 0 at offset 0 is BOLT-M6 \nrecord 1 at offset 8 is SPRING-2\nrecord 2 at offset 16 is WASHER-A\nrecord 3 at offset 24 is SCREW-M4\nrecord 4 at offset 32 is RIVET-3M\n\nOnly the fixed size makes this possible. Variable length records need an index of where each one starts.\n",
+    "finished": true
+  },
+  "File Operations/file_size_by_seek.asm": {
+    "output": "Measuring a file with service 42h\nWrote 46 bytes.\nSeek to the end returned 46\nThe high word of the position: 0\nIt agrees with what was written.\n\nSeeking back to the start returned 0\nSeeking to the middle returned 20\n\nThe position is a thirty-two bit number in DX and AX, because a file may be longer than 65535 bytes.\n",
+    "finished": true
+  },
+  "File Operations/open_existing_file.asm": {
+    "output": "Opening a file, and what happens when it is not there\nCreated NOTES.TXT and wrote 19 bytes.\nOpened for reading, handle 6\nRead back: The quick brown fox\nOpened for writing, handle 7\nOpened for both, handle 8\n\nOpening ABSENT.TXT failed, error code 2  which is file not found.\n\n3Dh insists the file exists. 3Ch creates it, and destroys any file of the same name.\n",
+    "finished": true
+  },
   "File Operations/read_file.asm": {
     "output": "\nError: Could not read file.",
+    "finished": true
+  },
+  "File Operations/read_file_in_chunks.asm": {
+    "output": "Counting a file with a buffer smaller than it is\nWrote 60 bytes to REPORT.TXT.\nBuffer size: 10 bytes\n\nReads performed: 7\nCharacters:      60\nLines:           3\nWords:           12\n\nCharacters counted match the bytes written.\n\nThe word state has to survive between reads, because a word may be split across two buffers.\n",
+    "finished": true
+  },
+  "File Operations/rename_and_delete_file.asm": {
+    "output": "Renaming and deleting, and the errors both can give\nCreated DRAFT.TXT.\nRenamed to FINAL.TXT.\nDRAFT.TXT can no longer be opened, error 2\nFINAL.TXT still holds: Something worth keeping\n\nRenaming onto an existing name failed, error 5\n\nDeleted FINAL.TXT.\nDeleting GHOST.TXT failed, error 2\n\n56h is the only file service taking two names, so it is the only one that needs ES as well as DS.\n",
     "finished": true
   },
   "File Operations/write_file.asm": {
@@ -1431,12 +1463,48 @@
     "output": "  25 is stored as 0019H\n -25 is stored as FFE7H\nTheir sum is 0000H\n",
     "finished": true
   },
+  "Simulation/conveyor_belt_counter.asm": {
+    "output": "Counting items into boxes of twelve\nbox 1 full at moment 16\n\nItems counted:   21\nBoxes filled:    1\nLeft in the last: 9\n\nThe remainder is kept rather than discarded, so the next shift continues the part filled box.\n",
+    "finished": true
+  },
+  "Simulation/digital_clock_simulation.asm": {
+    "output": "A clock ticking through midnight\nStarting at 23:59:55 and ticking ten times.\n23:59:56\n23:59:57\n23:59:58\n23:59:59\n00:00:00   <- the day rolled over\n00:00:01\n00:00:02\n00:00:03\n00:00:04\n00:00:05\n\nEach carry is a separate test. Seconds reaching sixty advance the minute, and only then can the minute reach sixty.\n",
+    "finished": true
+  },
   "Simulation/fire_monitoring_system.asm": {
     "output": "\nSet Threshold for Room 1: 5\nSet Threshold for Room 2: \nCurrent Temperature: 0\n\u0007!!! ALARM ON !!! Threshold exceeded! \nPress '1' to reset system or any key to exit: 3",
     "finished": true
   },
   "Simulation/garment_defect.asm": {
     "output": "\nEnter Minimum Grade (T1): 5\nEnter Maximum Tolerance (T2): \n[QC] Defect detected at station. \n[QC] Defective piece flagged and removed. \n[QC] Defect detected at station. \n[QC] Defective piece flagged and removed. \n[QC] Defect detected at station. \n[QC] Defective piece flagged and removed. \n[QC] Defect detected at station. \n[QC] Defective piece flagged and removed. \n[QC] Defect detected at station. \n[QC] Defective piece flagged and removed. \nInventory Report: Good pieces = 5\nInventory Report: Defective pieces = 5",
+    "finished": true
+  },
+  "Simulation/lift_controller.asm": {
+    "output": "A lift serving calls in sweep order\nCalls waiting at floors: 1 3 4 6 \nStarting at floor 0, going up.\npassing floor 0\nstopping at floor 1\npassing floor 2\nstopping at floor 3\nstopping at floor 4\npassing floor 5\nstopping at floor 6\npassing floor 7\n\nTop of the sweep reached, reversing.\npassing floor 6\npassing floor 5\npassing floor 4\npassing floor 3\npassing floor 2\npassing floor 1\npassing floor 0\n\nAll calls served. Total stops: 4\nFloors travelled: 14\n",
+    "finished": true
+  },
+  "Simulation/parking_lot_occupancy.asm": {
+    "output": "A car park with six spaces\narrived  taken 1, free 5\narrived  taken 2, free 4\narrived  taken 3, free 3\nleft     taken 2, free 4\narrived  taken 3, free 3\narrived  taken 4, free 2\narrived  taken 5, free 1\narrived  taken 6, free 0\narrived  turned away, full\nleft     taken 5, free 1\nleft     taken 4, free 2\narrived  taken 5, free 1\narrived  taken 6, free 0\nleft     taken 5, free 1\nleft     taken 4, free 2\nleft     taken 3, free 3\nleft     taken 2, free 4\nleft     taken 1, free 5\nleft     taken 0, free 6\narrived  taken 1, free 5\n\nFinally taken:  1\nTurned away:    1\nImpossible exits: 0\n\nBoth limits are checked before the count changes, so the occupancy can never leave the range zero to six.\n",
+    "finished": true
+  },
+  "Simulation/seven_segment_display_driver.asm": {
+    "output": "Driving a seven segment display from a table\nShowing 40961\n\ndigit  pattern  segments lit\n4      102       -bc--fg\n0      63       abcdef-\n9      111       abcd-fg\n6      125       a-cdefg\n1      6       -bc----\n\nSegments lit altogether: 24\nA table is one memory read per digit. Working the pattern out would take a dozen instructions and be no more correct.\n",
+    "finished": true
+  },
+  "Simulation/temperature_controller.asm": {
+    "output": "A heater controlled with a dead band\nTarget 22 degrees, switching at 20 and 24.\n\nreading  heater  note\n18        on      switched on, below 20\n19        on      no change needed\n21        on      no change needed\n23        on      no change needed\n24        on      no change needed\n25        off     switched off, above 24\n24        off     no change needed\n22        off     no change needed\n20        off     no change needed\n19        on      switched on, below 20\n21        on      no change needed\n24        on      no change needed\n\nTimes the heater switched: 3\nWithout the band a reading wobbling around 22 would switch the relay on every sample.\n",
+    "finished": true
+  },
+  "Simulation/traffic_light_controller.asm": {
+    "output": "A traffic light as a four state machine\ntick  state  lamps  port\n0     0     red        1\n1     0     red        1\n2     0     red        1\n3     0     red        1\n4     0     red        1\n5     0     red        1\n6     1     red+amber  3\n7     1     red+amber  3\n8     2     green      4\n9     2     green      4\n10     2     green      4\n11     2     green      4\n12     2     green      4\n13     2     green      4\n14     3     amber      2\n15     3     amber      2\n16     0     red        1\n17     0     red        1\n18     0     red        1\n19     0     red        1\n20     0     red        1\n21     0     red        1\n22     1     red+amber  3\n23     1     red+amber  3\n24     2     green      4\n25     2     green      4\n26     2     green      4\n27     2     green      4\n28     2     green      4\n29     2     green      4\n30     3     amber      2\n31     3     amber      2\n\nTwo full cycles ran, thirty-two ticks in all.\nThe pattern and the duration are data, so the sequence changes without touching the code.\n",
+    "finished": true
+  },
+  "Simulation/vending_machine.asm": {
+    "output": "A vending machine taking coins and giving change\nPrice: 85\nInserted 20, running total 20   still short by 65\nInserted 10, running total 30   still short by 55\nInserted 50, running total 80   still short by 5\nInserted 20, running total 100   enough\n\nDispensing the item.\nChange owed: 15\nGiving 10\nGiving 5\nCoins returned: 2\n",
+    "finished": true
+  },
+  "Simulation/washing_machine_cycle.asm": {
+    "output": "A wash cycle, phase by phase\nphase   minutes  outputs  valve drum heater pump\nFill  4        1       on    --    --    --    \nWash  30        6       --    on    on    --    \nDrain 3        8       --    --    --    on    \nRinse 12        2       --    on    --    --    \nSpin  5        10       --    on    --    on    \n\nTotal cycle time: 54 minutes\n",
     "finished": true
   },
   "Simulation/water_level_controller.asm": {

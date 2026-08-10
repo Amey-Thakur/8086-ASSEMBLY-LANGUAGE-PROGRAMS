@@ -1,12 +1,11 @@
-;=============================================================================
-; Program:     Compare Two Strings
-; Description: Compare two strings using CMPSB instruction.
-;              Demonstrates string comparison operations.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Compare Two Strings
+; DESCRIPTION: Compare two strings using CMPSB instruction. Demonstrates
+;              string comparison operations.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 ;-----------------------------------------------------------------------------
 ; DATA SEGMENT

@@ -108,9 +108,10 @@ const FIRST_HANDLE = 5;
 
 /** DOS error codes the services below can return in AX. */
 export const DOS_ERROR = {
-    FILE_NOT_FOUND: 0x02,
-    ACCESS_DENIED:  0x05,
-    INVALID_HANDLE: 0x06
+    INVALID_FUNCTION: 0x01,
+    FILE_NOT_FOUND:   0x02,
+    ACCESS_DENIED:    0x05,
+    INVALID_HANDLE:   0x06
 };
 
 export class FileStore {
@@ -180,6 +181,59 @@ export class FileStore {
     /** Service 41h: delete a file. */
     remove(name) {
         return this.files.delete(name) ? {} : { error: DOS_ERROR.FILE_NOT_FOUND };
+    }
+
+    /**
+     * Service 42h: move the read and write position.
+     *
+     * The origin is 0 from the start, 1 from where it is now, and 2 from the
+     * end. Seeking to the end with an offset of zero is how a program asks how
+     * long a file is, which is the commonest use of the call by some distance.
+     *
+     * DOS allows a position past the end; writing there leaves a gap. The
+     * position is returned so the caller can see where it landed.
+     */
+    seek(handle, offset, origin) {
+        const entry = this.open.get(handle);
+
+        if (!entry)          return { error: DOS_ERROR.INVALID_HANDLE };
+        if (origin > 2)      return { error: DOS_ERROR.INVALID_FUNCTION };
+
+        const file = this.files.get(entry.name);
+        const from = origin === 0 ? 0
+                   : origin === 1 ? entry.position
+                   :                file.bytes.length;
+
+        // The offset is signed, so a seek backwards from the end is possible.
+        const position = from + offset;
+
+        if (position < 0) return { error: DOS_ERROR.INVALID_FUNCTION };
+
+        entry.position = position;
+        return { position };
+    }
+
+    /**
+     * Service 56h: rename a file.
+     *
+     * The file keeps its contents and any open handle keeps working, because a
+     * handle records the name it was opened under and that name is updated too.
+     */
+    rename(from, to) {
+        if (!this.files.has(from))  return { error: DOS_ERROR.FILE_NOT_FOUND };
+        if (this.files.has(to))     return { error: DOS_ERROR.ACCESS_DENIED };
+
+        const file = this.files.get(from);
+
+        file.name = to;
+        this.files.delete(from);
+        this.files.set(to, file);
+
+        for (const entry of this.open.values()) {
+            if (entry.name === from) entry.name = to;
+        }
+
+        return {};
     }
 
     /** What the interface needs to list the files a program produced. */

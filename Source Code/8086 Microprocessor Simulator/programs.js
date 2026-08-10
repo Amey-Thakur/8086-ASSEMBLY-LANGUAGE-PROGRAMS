@@ -13,7 +13,7 @@
 //              .asm file from the folder beside this one, so what the simulator
 //              runs is what the repository actually holds.
 //
-//              424 programs across 39 categories.
+//              441 programs across 39 categories.
 //
 // Authors:     Amey Thakur
 // Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
@@ -38,7 +38,7 @@ export const PROGRAMS = {
     'Data Transfer': ['in_out_port_transfer.asm', 'lahf_sahf_flag_transfer.asm', 'lds_les_far_pointers.asm', 'lea_versus_offset.asm', 'mov_between_registers.asm', 'mov_immediate_forms.asm', 'mov_memory_and_register.asm', 'mov_segment_registers.asm', 'push_pop_stack_order.asm', 'pushf_popf_preserve_flags.asm', 'xchg_swap_without_temporary.asm', 'xlat_lookup_table.asm'],
     'Expression': ['average_of_array.asm', 'calculator.asm', 'check_even_odd.asm', 'count_vowels.asm', 'count_words.asm', 'factorial.asm', 'fibonacci.asm', 'gcd_two_numbers.asm', 'power.asm', 'prime_number_check.asm', 'reverse_array.asm', 'string_concatenation.asm', 'substring_search.asm'],
     'External Devices': ['keyboard.asm', 'led_display_test.asm', 'mouse.asm', 'robot.asm', 'stepper_motor.asm', 'thermometer.asm', 'timer.asm', 'traffic_lights.asm', 'traffic_lights_advanced.asm'],
-    'File Operations': ['create_file.asm', 'delete_file.asm', 'read_file.asm', 'write_file.asm'],
+    'File Operations': ['append_to_file.asm', 'copy_file_contents.asm', 'create_file.asm', 'delete_file.asm', 'file_error_handling.asm', 'file_random_access_records.asm', 'file_size_by_seek.asm', 'open_existing_file.asm', 'read_file.asm', 'read_file_in_chunks.asm', 'rename_and_delete_file.asm', 'write_file.asm'],
     'Flags': ['carry_flag.asm', 'overflow_flag.asm', 'parity_flag.asm', 'sign_flag.asm', 'zero_flag.asm'],
     'Graphics': ['colored_text.asm', 'draw_line.asm', 'draw_pixel.asm', 'draw_rectangle.asm'],
     'Input Output': ['display_binary.asm', 'display_decimal.asm', 'display_hex.asm', 'read_number.asm'],
@@ -57,7 +57,7 @@ export const PROGRAMS = {
     'Searching': ['binary_search.asm', 'binary_search_insertion_point.asm', 'character_occurrences_count.asm', 'count_occurrences_by_bisection.asm', 'exponential_search.asm', 'find_duplicate_number.asm', 'find_first_and_last_occurrence.asm', 'find_missing_number.asm', 'jump_search.asm', 'linear_search.asm', 'linear_search_all_matches.asm', 'search_element_array.asm', 'search_in_sorted_matrix.asm', 'search_rotated_sorted_array.asm', 'sentinel_linear_search.asm', 'ternary_search.asm'],
     'Shift and Rotate': ['arithmetic_shift_signed_divide.asm', 'multiply_by_ten_using_shifts.asm', 'overflow_flag_on_single_shift.asm', 'pack_two_bytes_into_word.asm', 'rotate_left_no_carry.asm', 'rotate_right_through_carry.asm', 'rotate_through_carry_multiword_shift.asm', 'rotate_to_test_each_bit.asm', 'shift_left_to_multiply.asm', 'shift_right_to_divide_unsigned.asm', 'unpack_word_into_two_bytes.asm', 'variable_shift_count_in_cl.asm'],
     'Signed Arithmetic': ['absolute_value.asm', 'sign_extension_cbw_cwd.asm', 'signed_array_average.asm', 'signed_byte_arithmetic.asm', 'signed_divide_idiv.asm', 'signed_minimum_and_maximum.asm', 'signed_multiply_imul.asm', 'signed_overflow_detection.asm', 'signed_range_check.asm', 'signed_sorting_by_value.asm', 'signed_versus_shift_division.asm', 'two_complement_representation.asm'],
-    'Simulation': ['fire_monitoring_system.asm', 'garment_defect.asm', 'water_level_controller.asm'],
+    'Simulation': ['conveyor_belt_counter.asm', 'digital_clock_simulation.asm', 'fire_monitoring_system.asm', 'garment_defect.asm', 'lift_controller.asm', 'parking_lot_occupancy.asm', 'seven_segment_display_driver.asm', 'temperature_controller.asm', 'traffic_light_controller.asm', 'vending_machine.asm', 'washing_machine_cycle.asm', 'water_level_controller.asm'],
     'Sorting': ['array_ascending.asm', 'array_descending.asm', 'bubble_sort.asm', 'bubble_sort_with_early_exit.asm', 'check_if_sorted.asm', 'cocktail_shaker_sort.asm', 'counting_sort.asm', 'find_kth_smallest.asm', 'gnome_sort.asm', 'insertion_sort.asm', 'insertion_sort_word_array.asm', 'merge_sort_bottom_up.asm', 'merge_two_sorted_arrays.asm', 'selection_sort.asm', 'selection_sort_word_array.asm', 'sort_bytes_ascending.asm', 'sort_descending_order.asm'],
     'Stack Operations': ['balanced_brackets_check.asm', 'inspect_stack_registers.asm', 'last_in_first_out_order.asm', 'passing_arguments_on_stack.asm', 'push_pop.asm', 'reverse_string_stack.asm', 'save_all_registers.asm', 'save_and_restore_flags.asm', 'stack_depth_measurement.asm', 'stack_frame_with_bp.asm', 'stack_pointer_movement.asm', 'swap_using_stack.asm'],
     'String Instructions': ['cmpsb_compare_strings.asm', 'count_character_occurrences.asm', 'lodsb_process_each_byte.asm', 'movsb_copy_a_string.asm', 'movsw_copy_words.asm', 'overlapping_copy_with_direction.asm', 'palindrome_with_string_instructions.asm', 'reverse_string_with_pointers.asm', 'scasb_find_a_character.asm', 'segment_override_on_source.asm', 'stosb_fill_a_buffer.asm', 'string_length_with_scasb.asm'],
@@ -67,7 +67,7 @@ export const PROGRAMS = {
 
 /** How many programs the library holds. Written out so that anything quoting
  *  the number reads it from here rather than repeating it. */
-export const PROGRAM_COUNT = 424;
+export const PROGRAM_COUNT = 441;
 
 /** How many categories they are grouped into. */
 export const CATEGORY_COUNT = 39;

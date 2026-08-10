@@ -1,5 +1,5 @@
 ; =============================================================================
-; TITLE: Insertion Sort
+; TITLE: Insertion Sort On A Word Array
 ; DESCRIPTION: Grows a sorted region one element at a time by sliding each new
 ;              value back until it fits, the way a hand of cards is ordered.
 ; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)

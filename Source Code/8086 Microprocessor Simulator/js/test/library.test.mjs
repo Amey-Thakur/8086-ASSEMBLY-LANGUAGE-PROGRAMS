@@ -20,10 +20,14 @@
 // License:     CC BY 4.0
 // -----------------------------------------------------------------------------
 
+import { readFileSync }    from 'node:fs';
 import { join, dirname }  from 'node:path';
 import { fileURLToPath }  from 'node:url';
 
 import { readCatalogue }                             from '../tools/index-programs.mjs';
+import { Assembler }                                from '../asm/assembler.js';
+import { CPU }                                      from '../cpu/cpu.js';
+import { Executor }                                 from '../exec/executor.js';
 import { PROGRAMS, PROGRAM_COUNT, CATEGORY_COUNT }   from '../../programs.js';
 
 const here       = dirname(fileURLToPath(import.meta.url));
@@ -88,6 +92,92 @@ check('no program name needs unusual URL escaping', awkward, []);
 const duplicates = indexList.filter((name, index) => indexList.indexOf(name) !== index);
 
 check('no program is listed twice', duplicates, []);
+
+// -----------------------------------------------------------------------------
+console.log('\nNO PROGRAM DUPLICATES ANOTHER');
+//
+// Two files with different names doing exactly the same thing would inflate the
+// count without adding anything, and would leave whichever one nobody noticed to
+// rot. Neither the index nor the folder listing can see that, so the bodies and
+// the titles are compared here.
+// -----------------------------------------------------------------------------
+const byBody  = new Map();
+const byTitle = new Map();
+
+for (const name of diskList) {
+    const text = readFileSync(join(sourceRoot, name), 'utf8');
+
+    // Comments, blank lines and indentation differ harmlessly between files, so
+    // the comparison is made on the instructions and data alone.
+    const code = text
+        .split(/\r?\n/)
+        .map(line => line.replace(/;.*$/, '').trim().toUpperCase())
+        .filter(line => line !== '')
+        .join('\n');
+
+    const title = text.match(/^;\s*TITLE:\s*(.+)$/m)?.[1].trim() ?? `(no title in ${name})`;
+
+    if (!byBody.has(code))   byBody.set(code, []);
+    if (!byTitle.has(title)) byTitle.set(title, []);
+
+    byBody.get(code).push(name);
+    byTitle.get(title).push(name);
+}
+
+const sameBody  = [...byBody.values()].filter(names => names.length > 1);
+const sameTitle = [...byTitle.values()].filter(names => names.length > 1);
+
+check('no two programs have the same code', sameBody,  []);
+check('no two programs have the same title', sameTitle, []);
+
+// Every program should carry the authorship header the repository standardised
+// on, because that header is what makes a file readable on its own.
+const headerless = diskList.filter(name => {
+    const text = readFileSync(join(sourceRoot, name), 'utf8');
+
+    return !/^;\s*TITLE:/m.test(text) || !/^;\s*AUTHOR:/m.test(text);
+});
+
+check('every program carries a title and an author', headerless, []);
+
+// -----------------------------------------------------------------------------
+console.log('\nTHE PROGRAM THE EDITOR OPENS WITH');
+//
+// It is the first thing anybody sees, and somebody meeting the 8086 for the
+// first time will press Run before reading anything. If it did not assemble, the
+// simulator would look broken before it had been used at all. So it is held to
+// the same standard as every program in the library.
+// -----------------------------------------------------------------------------
+{
+    const appSource = readFileSync(join(here, '..', 'ui', 'app.js'), 'utf8');
+    const welcome   = appSource.match(/const WELCOME = `([\s\S]*?)`;/)?.[1];
+
+    check('the welcome program was found in app.js', typeof welcome, 'string');
+
+    if (welcome) {
+        const program = new Assembler().assemble(welcome);
+
+        check('it assembles with no diagnostics', program.diagnostics.map(String), []);
+
+        if (program.ok) {
+            const cpu = new CPU();
+
+            cpu.memory.load(cpu.registers.get('DS') << 4, program.data);
+            cpu.registers.set('IP', program.entryPoint);
+            new Executor(cpu, program).run(100_000);
+
+            check('it prints its greeting', cpu.consoleOutput, 'Hello from the 8086.\n');
+            check('it ends by returning to DOS', cpu.halted, true);
+            check('with an exit code of zero',   cpu.exitCode, 0);
+        }
+
+        // It is meant to teach, so the two mistakes it warns about must actually
+        // be described in it. A silent edit that dropped the commentary would
+        // leave a Hello World that no longer explains anything.
+        check('it explains the dollar terminator', /dollar sign/i.test(welcome), true);
+        check('it explains LEA against MOV',       /LEA/.test(welcome),         true);
+    }
+}
 
 // -----------------------------------------------------------------------------
 console.log(`\n${passed} passed, ${failed} failed\n`);

@@ -1,12 +1,11 @@
-;=============================================================================
-; Program:     Decimal to Binary Conversion
-; Description: Convert a decimal number to its binary representation
-;              and display the result.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Decimal to Binary Conversion
+; DESCRIPTION: Convert a decimal number to its binary representation and
+;              display the result.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 ;-----------------------------------------------------------------------------
 ; MACRO: Display String

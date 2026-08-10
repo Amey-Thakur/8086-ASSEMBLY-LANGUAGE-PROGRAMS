@@ -43,29 +43,76 @@ const SLICE = 250_000;
 /** Where the theme choice is kept between visits. */
 const THEME_KEY = '8086-simulator-theme';
 
-/** The program shown before anything has been chosen. */
-const WELCOME = `; 8086 Assembly Language
-; Choose a program from the library, or write your own here.
+/**
+ * The program the editor opens with.
+ *
+ * It is Hello World on purpose. It is the smallest program that is still a
+ * complete one, so every part of it has to be there, and explaining those parts
+ * explains the shape of every other program in the library. Somebody arriving
+ * with no 8086 at all can press Run, see output, and then read why it worked.
+ *
+ * Every line is commented for that reason. The other programs comment only what
+ * is interesting; this one comments everything.
+ */
+const WELCOME = `; =============================================================================
+; HELLO WORLD
+;
+; Press Assemble, then Run. The output appears in the console panel.
+;
+; Then read the comments: this is the smallest complete 8086 program, and every
+; other program in the library is built the same way.
+;
+; Choose something from the library on the left when you are ready, or write
+; your own over the top of this.
+; =============================================================================
 
-.MODEL SMALL
-.STACK 100H
+.MODEL SMALL                ; one 64K segment of code and one of data, which is
+                            ; the model nearly every program here uses
+.STACK 100H                 ; reserve 256 bytes for the stack
 
+; -----------------------------------------------------------------------------
+; DATA
+;
+; The dollar sign is not printed. It marks the end of the string for DOS, which
+; has no length to work from and so keeps writing until it finds one. Leaving it
+; out is the classic first mistake: the output runs on into whatever follows.
+;
+; 0DH is a carriage return and 0AH a line feed. DOS wants both to end a line.
+; -----------------------------------------------------------------------------
 .DATA
     MESSAGE DB 'Hello from the 8086.', 0DH, 0AH, '$'
 
+; -----------------------------------------------------------------------------
+; CODE
+; -----------------------------------------------------------------------------
 .CODE
 MAIN PROC
+    ; The processor reaches memory as a segment plus an offset, and a name like
+    ; MESSAGE is only the offset. DS has to point at the data segment before any
+    ; of it can be read. @DATA is the assembler telling you where it put it.
+    ;
+    ; This cannot be done in one instruction: MOV DS, @DATA is not legal,
+    ; because a segment register cannot be loaded from a constant.
     MOV AX, @DATA
     MOV DS, AX
 
-    MOV AH, 09H            ; print the string at DS:DX
+    ; DOS services are asked for through interrupt 21h, with the service number
+    ; in AH. Service 09h writes the string at DS:DX.
+    ;
+    ; LEA loads the address of MESSAGE. MOV DX, MESSAGE would load the first two
+    ; characters instead, which is the second classic mistake.
     LEA DX, MESSAGE
+    MOV AH, 09H
     INT 21H
 
-    MOV AH, 4CH            ; return to DOS
+    ; Service 4Ch ends the program and hands the code in AL back to DOS. Without
+    ; it the processor would carry on into whatever bytes came next.
+    MOV AH, 4CH
+    MOV AL, 0
     INT 21H
 MAIN ENDP
-END MAIN
+
+END MAIN                    ; where execution begins
 `;
 
 // -----------------------------------------------------------------------------

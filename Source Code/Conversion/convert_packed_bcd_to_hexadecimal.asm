@@ -1,12 +1,11 @@
-;=============================================================================
-; Program:     BCD to Hexadecimal Conversion
-; Description: Convert a 16-bit BCD (Binary Coded Decimal) number to its
+; =============================================================================
+; TITLE: BCD to Hexadecimal Conversion
+; DESCRIPTION: Convert a 16-bit BCD (Binary Coded Decimal) number to its
 ;              equivalent hexadecimal value.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 ;-----------------------------------------------------------------------------
 ; DATA SEGMENT

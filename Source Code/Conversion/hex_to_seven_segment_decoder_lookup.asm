@@ -1,12 +1,11 @@
-;=============================================================================
-; Program:     Seven Segment Display Decoder
-; Description: Convert a hexadecimal digit (0-F) to its seven segment
-;              display pattern using a lookup table.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Seven Segment Display Decoder
+; DESCRIPTION: Convert a hexadecimal digit (0-F) to its seven segment display
+;              pattern using a lookup table.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 ;-----------------------------------------------------------------------------
 ; DATA SEGMENT

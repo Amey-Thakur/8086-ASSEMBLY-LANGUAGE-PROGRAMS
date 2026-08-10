@@ -236,6 +236,34 @@ const DOS_SERVICES = {
         finishFileCall(cpu, cpu.files.remove(readFileName(cpu)));
     },
 
+    // ---- 42h  move the read and write position -------------------------------
+    // BX is the handle, AL the origin, and CX:DX the signed offset, high word
+    // first. The new position comes back the same way round, in DX:AX.
+    //
+    // Seeking to the end with an offset of zero is how a program asks how long a
+    // file is, which is much the commonest use of the call.
+    0x42(cpu) {
+        const offset = signed32(cpu.registers.get('CX'), cpu.registers.get('DX'));
+        const result = cpu.files.seek(cpu.registers.get('BX'),
+                                     offset,
+                                     cpu.registers.get('AL'));
+
+        if (result.error !== undefined) { failFileCall(cpu, result.error); return; }
+
+        cpu.registers.set('DX', (result.position >>> 16) & 0xFFFF);
+        succeedFileCall(cpu, result.position & 0xFFFF);
+    },
+
+    // ---- 56h  rename a file --------------------------------------------------
+    // The existing name is at DS:DX and the new one at ES:DI, which is the only
+    // file service taking two names and so the only one needing ES.
+    0x56(cpu) {
+        const from = readFileName(cpu);
+        const to   = readStringAt(cpu, cpu.registers.get('ES'), cpu.registers.get('DI'));
+
+        finishFileCall(cpu, cpu.files.rename(from, to));
+    },
+
     // ---- 4Ch  terminate with an exit code ------------------------------------
     0x4C(cpu) {
         cpu.exitCode = cpu.registers.get('AL');
@@ -252,18 +280,35 @@ const DOS_SERVICES = {
 
 /** Read the ASCIIZ name at DS:DX that every file service takes. */
 function readFileName(cpu) {
-    const segment = cpu.registers.get('DS');
-    const base    = cpu.registers.get('DX');
+    return readStringAt(cpu, cpu.registers.get('DS'), cpu.registers.get('DX'));
+}
+
+/** Read an ASCIIZ string from anywhere, for the rename service's second name. */
+function readStringAt(cpu, segment, offset) {
     const letters = [];
 
     for (let index = 0; index < 128; index++) {
-        const byte = cpu.memory.readByte(segment, (base + index) & 0xFFFF);
+        const byte = cpu.memory.readByte(segment, (offset + index) & 0xFFFF);
 
         if (byte === 0) break;
         letters.push(String.fromCharCode(byte));
     }
 
     return letters.join('');
+}
+
+/**
+ * Rebuild the signed 32-bit offset DOS passes as a register pair.
+ *
+ * Service 42h takes the high word in CX and the low word in DX, and the offset
+ * is signed so that a seek backwards from the end is possible. Reassembling it
+ * with a shift would overflow into the sign bit, so the pair is combined
+ * arithmetically and then folded into range.
+ */
+function signed32(high, low) {
+    const value = (high * 0x10000) + low;
+
+    return value >= 0x80000000 ? value - 0x100000000 : value;
 }
 
 function succeedFileCall(cpu, value) {

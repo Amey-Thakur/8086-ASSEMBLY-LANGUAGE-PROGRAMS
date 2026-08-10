@@ -1,5 +1,5 @@
 ; =============================================================================
-; TITLE: Selection Sort
+; TITLE: Selection Sort On A Word Array
 ; DESCRIPTION: Finds the smallest remaining element on each pass and puts it in
 ;              place, which costs the fewest exchanges of any simple sort.
 ; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)

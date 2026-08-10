@@ -247,5 +247,230 @@ expectState('CBW then IDIV handles negatives',
 }
 
 // -----------------------------------------------------------------------------
+console.log('\nFILE SEEK AND RENAME  (INT 21h, 42h and 56h)');
+// -----------------------------------------------------------------------------
+{
+    // Origin 2 with a zero offset is how a program asks how long a file is,
+    // which is the commonest use of the call by some way.
+    const measured = run(`
+.MODEL SMALL
+.STACK 100H
+.DATA
+    NAME_A  DB 'M.TXT', 0
+    TEXT_W  DB '0123456789'
+.CODE
+START:
+    MOV AX, @DATA
+    MOV DS, AX
+    LEA DX, NAME_A
+    XOR CX, CX
+    MOV AH, 3CH
+    INT 21H
+    MOV BX, AX
+    LEA DX, TEXT_W
+    MOV CX, 10
+    MOV AH, 40H
+    INT 21H
+    MOV AX, 4202H
+    XOR CX, CX
+    XOR DX, DX
+    INT 21H
+    MOV SI, AX
+    MOV DI, DX
+    MOV AH, 4CH
+    INT 21H
+END START
+`);
+
+    check('seeking to the end returns the length', measured.SI, '000A');
+    check('the high word of the position is zero', measured.DI, '0000');
+
+    // Origin 1 is relative to where the position already is, which is what a
+    // program skipping a record header uses.
+    const relative = run(`
+.MODEL SMALL
+.STACK 100H
+.DATA
+    NAME_A  DB 'R.TXT', 0
+    TEXT_W  DB 'ABCDEFGHIJ'
+    BUF     DB 4 DUP (0)
+.CODE
+START:
+    MOV AX, @DATA
+    MOV DS, AX
+    LEA DX, NAME_A
+    XOR CX, CX
+    MOV AH, 3CH
+    INT 21H
+    MOV BX, AX
+    LEA DX, TEXT_W
+    MOV CX, 10
+    MOV AH, 40H
+    INT 21H
+    MOV AX, 4200H
+    XOR CX, CX
+    MOV DX, 2
+    INT 21H
+    MOV AX, 4201H
+    XOR CX, CX
+    MOV DX, 3
+    INT 21H
+    MOV SI, AX
+    LEA DX, BUF
+    MOV CX, 2
+    MOV AH, 3FH
+    INT 21H
+    MOV DI, AX
+    MOV AH, 4CH
+    INT 21H
+END START
+`);
+
+    check('a relative seek adds to the position', relative.SI, '0005');
+    check('and the read that follows starts there', relative.DI, '0002');
+
+    // A seek backwards past the start is refused rather than wrapping, and a
+    // seek on a handle that was never opened is an invalid handle.
+    const refused = run(`
+.MODEL SMALL
+.STACK 100H
+.DATA
+    NAME_A  DB 'B.TXT', 0
+.CODE
+START:
+    MOV AX, @DATA
+    MOV DS, AX
+    LEA DX, NAME_A
+    XOR CX, CX
+    MOV AH, 3CH
+    INT 21H
+    MOV BX, AX
+    MOV AX, 4200H
+    MOV CX, 0FFFFH
+    MOV DX, 0FFF0H
+    INT 21H
+    MOV SI, 0
+    JNC NOT_REFUSED
+    MOV SI, AX
+NOT_REFUSED:
+    MOV BX, 77
+    MOV AX, 4200H
+    XOR CX, CX
+    XOR DX, DX
+    INT 21H
+    MOV DI, 0
+    JNC NOT_BAD
+    MOV DI, AX
+NOT_BAD:
+    MOV AH, 4CH
+    INT 21H
+END START
+`);
+
+    check('a seek before the start is refused', refused.SI, '0001');
+    check('a seek on an unopened handle is an invalid handle', refused.DI, '0006');
+
+    // A rename moves the file: the old name must stop working and the contents
+    // must survive under the new one.
+    const renamed = run(`
+.MODEL SMALL
+.STACK 100H
+.DATA
+    OLD_N   DB 'OLD.TXT', 0
+    NEW_N   DB 'NEW.TXT', 0
+    TEXT_W  DB 'KEEP'
+    BUF     DB 4 DUP (0)
+.CODE
+START:
+    MOV AX, @DATA
+    MOV DS, AX
+    MOV ES, AX
+    LEA DX, OLD_N
+    XOR CX, CX
+    MOV AH, 3CH
+    INT 21H
+    MOV BX, AX
+    LEA DX, TEXT_W
+    MOV CX, 4
+    MOV AH, 40H
+    INT 21H
+    MOV AH, 3EH
+    INT 21H
+    LEA DX, OLD_N
+    LEA DI, NEW_N
+    MOV AH, 56H
+    INT 21H
+    MOV AX, 3D00H
+    LEA DX, OLD_N
+    INT 21H
+    MOV SI, 0
+    JNC OLD_OPENED
+    MOV SI, AX
+OLD_OPENED:
+    MOV AX, 3D00H
+    LEA DX, NEW_N
+    INT 21H
+    MOV BX, AX
+    LEA DX, BUF
+    MOV CX, 4
+    MOV AH, 3FH
+    INT 21H
+    MOV DI, AX
+    MOV AH, 4CH
+    INT 21H
+END START
+`);
+
+    check('the old name no longer opens', renamed.SI, '0002');
+    check('the contents survive under the new name', renamed.DI, '0004');
+
+    // Renaming onto a name already in use is refused, so the other file cannot
+    // be destroyed by accident.
+    const clash = run(`
+.MODEL SMALL
+.STACK 100H
+.DATA
+    ONE_N   DB 'ONE.TXT', 0
+    TWO_N   DB 'TWO.TXT', 0
+.CODE
+START:
+    MOV AX, @DATA
+    MOV DS, AX
+    MOV ES, AX
+    LEA DX, ONE_N
+    XOR CX, CX
+    MOV AH, 3CH
+    INT 21H
+    MOV BX, AX
+    MOV AH, 3EH
+    INT 21H
+    LEA DX, TWO_N
+    XOR CX, CX
+    MOV AH, 3CH
+    INT 21H
+    MOV BX, AX
+    MOV AH, 3EH
+    INT 21H
+    LEA DX, ONE_N
+    LEA DI, TWO_N
+    MOV AH, 56H
+    INT 21H
+    MOV SI, 0
+    JNC NO_CLASH
+    MOV SI, AX
+NO_CLASH:
+    LEA DX, ONE_N
+    LEA DI, ONE_N
+    MOV AH, 56H
+    INT 21H
+    MOV AH, 4CH
+    INT 21H
+END START
+`);
+
+    check('renaming onto an existing name is access denied', clash.SI, '0005');
+}
+
+// -----------------------------------------------------------------------------
 console.log(`\n${passed} passed, ${failed} failed\n`);
 process.exit(failed === 0 ? 0 : 1);

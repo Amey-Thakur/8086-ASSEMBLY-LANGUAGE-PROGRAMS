@@ -1,12 +1,11 @@
-;=============================================================================
-; Program:     Temperature Conversion
-; Description: Convert Celsius to Fahrenheit and vice versa.
-;              Demonstrates arithmetic operations with formulas.
-; 
-; Author:      Amey Thakur
-; Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
-; License:     MIT License
-;=============================================================================
+; =============================================================================
+; TITLE: Temperature Conversion
+; DESCRIPTION: Convert Celsius to Fahrenheit and vice versa. Demonstrates
+;              arithmetic operations with formulas.
+; AUTHOR: Amey Thakur (https://github.com/Amey-Thakur)
+; REPOSITORY: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+; LICENSE: MIT License
+; =============================================================================
 
 .MODEL SMALL
 .STACK 100H
