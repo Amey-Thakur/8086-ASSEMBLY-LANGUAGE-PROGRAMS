@@ -219,6 +219,22 @@
     "output": "Loop Iteration Index: 0\nLoop Iteration Index: 1\nLoop Iteration Index: 2\nLoop Iteration Index: 3\nLoop Iteration Index: 4\n",
     "finished": true
   },
+  "Conversion/ascii_to_integer.asm": {
+    "output": "From \"4096\" the value is 4096\nFrom \"-273\" the value is -273\nFrom \"31xyz\" the value is 31\nFrom \"abc\" the value is 0\n",
+    "finished": true
+  },
+  "Conversion/bcd_to_ascii_and_back.asm": {
+    "output": "The byte 79h unpacks to 79\nRepacking those digits gives 79h\n",
+    "finished": true
+  },
+  "Conversion/binary_to_decimal.asm": {
+    "output": "1011010011010010 is 46290\n0000000011111111 is 255\n1000000000000000 is 32768\n",
+    "finished": true
+  },
+  "Conversion/binary_to_hexadecimal_text.asm": {
+    "output": "Binary:      1011010011010010\nHexadecimal: B4D2h\n",
+    "finished": true
+  },
   "Conversion/celsius_fahrenheit_temperature_converter.asm": {
     "output": "Celsius to Fahrenheit: 77F\nFahrenheit to Celsius: 25C",
     "finished": true
@@ -243,12 +259,40 @@
     "output": "",
     "finished": true
   },
+  "Conversion/decimal_to_any_base.asm": {
+    "output": "46315 written in several bases:\nbase 2:  1011010011101011\nbase 8:  132353\nbase 10:  46315\nbase 16:  B4EB\n",
+    "finished": true
+  },
+  "Conversion/decimal_to_roman_numerals.asm": {
+    "output": "1994 is MCMXCIV\n2022 is MMXXII\n49 is XLIX\n3888 is MMMDCCCLXXXVIII\n4 is IV\n",
+    "finished": true
+  },
+  "Conversion/gray_code_conversion.asm": {
+    "output": "value  gray   back\n0000   0000   0000\n0001   0001   0001\n0010   0011   0010\n0011   0010   0011\n0100   0110   0100\n0101   0111   0101\n0110   0101   0110\n0111   0100   0111\nEvery value converted and came back unchanged.\n",
+    "finished": true
+  },
+  "Conversion/hex_string_to_value.asm": {
+    "output": "The text \"B4D2\" is the value 46290\nThe text \"ffff\" is the value 65535\nThe text \"1F\" is the value 31\nThe text \"0\" is the value 0\n",
+    "finished": true
+  },
   "Conversion/hex_to_seven_segment_decoder_lookup.asm": {
     "output": "",
     "finished": true
   },
+  "Conversion/number_to_words.asm": {
+    "output": "472 is four      hundred seventy   two       \n15 is fifteen   \n90 is ninety    \n907 is nine      hundred seven     \n0 is zero      \n",
+    "finished": true
+  },
   "Conversion/reverse_digits_of_integer_value.asm": {
     "output": "\nInput Integer:  12345\nReversed Result: 54321",
+    "finished": true
+  },
+  "Conversion/roman_numerals_to_decimal.asm": {
+    "output": "MCMXCIV is 1994\nMMXXII is 2022\nXLIX is 49\n",
+    "finished": true
+  },
+  "Conversion/seconds_to_time_of_day.asm": {
+    "output": "3661 seconds is 01:01:01\n65535 seconds is 18:12:15\n45 seconds is 00:00:45\n7200 seconds is 02:00:00\n",
     "finished": true
   },
   "Conversion/string_comparison_lexicographical_check.asm": {
@@ -261,6 +305,10 @@
   },
   "Conversion/string_copy_using_movsb_instruction.asm": {
     "output": "",
+    "finished": true
+  },
+  "Conversion/temperature_scales.asm": {
+    "output": "C: -40   F: -40   K: 233\nC: 0   F: 32   K: 273\nC: 37   F: 98   K: 310\nC: 100   F: 212   K: 373\nC: 25   F: 77   K: 298\n",
     "finished": true
   },
   "Data Structures/balanced_parentheses.asm": {
