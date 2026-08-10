@@ -79,8 +79,11 @@ console.log('\nDATA LAYOUT  (little endian, offsets assigned in order)');
     ].join('\n'));
 
     check('assembles cleanly', result.ok, true);
-    check('MSG at offset zero',  result.symbols.MSG,  { kind: SYMBOL.DATA, offset: 0, width: 1 });
-    check('NUM follows the string', result.symbols.NUM, { kind: SYMBOL.DATA, offset: 3, width: 2 });
+    // length is how many units the name covers, which is what LENGTH reports.
+    check('MSG at offset zero',
+          result.symbols.MSG, { kind: SYMBOL.DATA, offset: 0, width: 1, length: 3 });
+    check('NUM follows the string',
+          result.symbols.NUM, { kind: SYMBOL.DATA, offset: 3, width: 2, length: 1 });
     check('SMALL follows the word', result.symbols.SMALL.offset, 5);
 
     check('string laid out byte per character, word in little endian',

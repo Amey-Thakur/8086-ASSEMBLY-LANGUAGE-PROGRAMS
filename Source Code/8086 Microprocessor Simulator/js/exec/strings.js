@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // Script Name: strings.js
-// Module:      Execution, 2 of 3
+// Module:      Execution, 3 of 4
 // Stack:       JavaScript (ES2020), depends on the CPU core
 // Description: The 8086 string instructions: MOVS, CMPS, SCAS, LODS and STOS,
 //              together with the REP, REPE and REPNE prefixes.

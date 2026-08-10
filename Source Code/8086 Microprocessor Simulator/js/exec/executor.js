@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // Script Name: executor.js
-// Module:      Execution, 1 of 3
+// Module:      Execution, 1 of 4
 // Stack:       JavaScript (ES2020), depends on the CPU core and the assembler
 // Description: Executes one assembled instruction at a time against a live CPU.
 //
@@ -35,6 +35,15 @@ import { registerInterruptHandlers }                from './interrupts.js';
 /** Conditional jumps, mapped to a predicate over the flag register. Several
  *  mnemonics are synonyms, which is why the table is keyed by every spelling
  *  a student might reasonably write. */
+/** How many instructions one call to run() will execute before handing control
+ *  back. Sized so a browser frame is never held for long. */
+export const RUN_BUDGET = 500_000;
+
+/** The point at which runToCompletion() gives up and calls it a runaway loop.
+ *  Set above the cost of a real one second delay loop, which is about thirty
+ *  five million instructions, so that genuine timing code still finishes. */
+export const COMPLETION_CEILING = 80_000_000;
+
 export const JUMP_CONDITIONS = {
     JE:   f => f.ZF === 1,                       JZ:   f => f.ZF === 1,
     JNE:  f => f.ZF === 0,                       JNZ:  f => f.ZF === 0,
@@ -202,18 +211,52 @@ export class Executor {
         throw new ExecutionError('LEA needs a memory operand');
     }
 
-    /** Resolve a branch target to an instruction index. */
+    /**
+     * Resolve a branch target to an instruction index.
+     *
+     * A target is usually a label, but it may also be held in a register or in
+     * memory. "JMP TABLE[BX]" reads the word the table holds and jumps there,
+     * which is how a switch statement is written in assembly.
+     */
     branchTarget(operand) {
         if (operand.kind === OPERAND.SYMBOL) {
             const symbol = this.resolveSymbol(operand.name);
 
             if (typeof symbol !== 'number' && symbol.kind === SYMBOL.CODE) return symbol.index;
+
+            // A data name used as a target holds the address to jump to.
+            if (typeof symbol !== 'number' && symbol.kind === SYMBOL.DATA) {
+                return this.cpu.readMemory(symbol.offset, 2);
+            }
+
             throw new ExecutionError(`"${operand.name}" is not a jump target`);
         }
 
         if (operand.kind === OPERAND.IMMEDIATE) return operand.value;
+        if (operand.kind === OPERAND.REGISTER)  return this.read(operand, 2);
+        if (operand.kind === OPERAND.MEMORY)    return this.read(operand, 2);
 
         throw new ExecutionError('a jump needs a label');
+    }
+
+    /**
+     * Work out which port an IN or OUT is addressing.
+     *
+     * An immediate port number fits in one byte. Anything above that has to be
+     * placed in DX first, which is why "OUT DX, AL" is so common.
+     */
+    portNumber(operand, instruction) {
+        if (operand.kind === OPERAND.REGISTER) {
+            if (operand.name !== 'DX') {
+                throw new ExecutionError(
+                    `only DX can hold a port number, not ${operand.name}`,
+                    instruction?.line
+                );
+            }
+            return this.cpu.registers.get('DX');
+        }
+
+        return this.read(operand, 2) & 0xFFFF;
     }
 
     // -------------------------------------------------------------------------
@@ -272,10 +315,45 @@ export class Executor {
         return !cpu.halted;
     }
 
-    /** Run to completion, or until the instruction budget is exhausted. */
-    run() {
-        while (this.step()) { /* the budget inside countInstruction bounds this */ }
-        return this.cpu.snapshot();
+    /**
+     * Run until the program stops or the budget for this call runs out.
+     *
+     * A budget is necessary because a program is allowed to loop forever: a
+     * traffic light controller or a keyboard monitor is supposed to. Running
+     * out of budget is therefore not an error, it just means the program is
+     * still going, and calling run() again continues from where it stopped.
+     * That is what keeps the page responsive without lying about the program.
+     *
+     * @param {number} budget  instructions to execute before returning
+     * @returns {{reason: 'halted'|'running', executed: number}}
+     */
+    run(budget = RUN_BUDGET) {
+        let executed = 0;
+
+        while (executed < budget) {
+            if (!this.step()) {
+                return { reason: 'halted', executed, snapshot: this.cpu.snapshot() };
+            }
+            executed++;
+        }
+
+        return { reason: 'running', executed, snapshot: this.cpu.snapshot() };
+    }
+
+    /** Run to completion, however long that takes. Used by the test suites,
+     *  where blocking is acceptable and a definite answer is what is wanted. */
+    runToCompletion(ceiling = COMPLETION_CEILING) {
+        let executed = 0;
+
+        while (executed < ceiling) {
+            if (!this.step()) return this.cpu.snapshot();
+            executed++;
+        }
+
+        throw new ExecutionError(
+            `execution stopped after ${ceiling.toLocaleString('en-US')} instructions, ` +
+            `which usually means a loop never terminates`
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -505,6 +583,28 @@ export class Executor {
         this.define(['RET', 'RETN', 'RETF'], operands => {
             const discard = operands.length ? this.read(operands[0], 2) : 0;
             cpu.returnFromCall(discard);
+        });
+
+        // ---- port input and output --------------------------------------------
+        // A peripheral lives in its own address space, reached only by IN and
+        // OUT. The port number is either an immediate or, when it needs more
+        // than eight bits, whatever is in DX.
+        this.define(['IN'], (operands, instruction) => {
+            expect(operands, 2, 'IN');
+
+            const width = operands[0].name === 'AL' ? 1 : 2;
+            const port  = this.portNumber(operands[1], instruction);
+
+            this.write(operands[0], cpu.ports.read(port, width), width);
+        });
+
+        this.define(['OUT'], (operands, instruction) => {
+            expect(operands, 2, 'OUT');
+
+            const width = operands[1].name === 'AL' ? 1 : 2;
+            const port  = this.portNumber(operands[0], instruction);
+
+            cpu.ports.write(port, this.read(operands[1], width), width);
         });
 
         // ---- flag control -----------------------------------------------------

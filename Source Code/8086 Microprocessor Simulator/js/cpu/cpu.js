@@ -26,9 +26,10 @@
 
 'use strict';
 
-import { Memory }       from './memory.js';
-import { RegisterFile } from './registers.js';
-import { Flags }        from './flags.js';
+import { Memory }                    from './memory.js';
+import { RegisterFile }              from './registers.js';
+import { Flags }                     from './flags.js';
+import { PortSpace, FileStore, Clock } from '../exec/devices.js';
 
 /** Where the assembler places code and data by default. Chosen so the layout
  *  matches what a small .COM style program under DOS would see. */
@@ -36,9 +37,8 @@ export const DEFAULT_CODE_SEGMENT = 0x0700;
 export const DEFAULT_DATA_SEGMENT = 0x0800;
 export const DEFAULT_STACK_SEGMENT = 0x0900;
 
-/** A run is abandoned after this many instructions. A student program that
- *  loops forever should report a clear diagnosis, not hang the browser tab. */
-export const INSTRUCTION_LIMIT = 2_000_000;
+// How long a run is allowed to go on is decided by the executor, not here.
+// See RUN_BUDGET and COMPLETION_CEILING in exec/executor.js.
 
 /** Raised when execution cannot continue. Carries the source line so the
  *  editor can point at the offending instruction. */
@@ -60,6 +60,13 @@ export class CPU {
         this.registers = new RegisterFile();
         this.flags     = new Flags();
 
+        // The world outside the processor. Kept on the machine rather than in
+        // the interrupt handlers so a program's effect on it survives a step
+        // and can be shown while execution is paused.
+        this.ports = new PortSpace();
+        this.files = new FileStore();
+        this.clock = new Clock();
+
         this.reset();
     }
 
@@ -71,6 +78,9 @@ export class CPU {
         this.memory.clear();
         this.registers.reset();
         this.flags.reset();
+        this.ports.reset();
+        this.files.reset();
+        this.clock.reset();
 
         this.registers.set('CS', DEFAULT_CODE_SEGMENT);
         this.registers.set('DS', DEFAULT_DATA_SEGMENT);
@@ -258,15 +268,16 @@ export class CPU {
     // EXECUTION BUDGET
     // -------------------------------------------------------------------------
 
+    /**
+     * Count one instruction.
+     *
+     * Deliberately without a ceiling. A program that never ends is not
+     * necessarily wrong: a traffic light controller is supposed to run until
+     * the power is cut. Deciding when to stop belongs to whoever is driving
+     * the machine, so the executor holds the budget and this only counts.
+     */
     countInstruction() {
         this.instructionCount++;
-
-        if (this.instructionCount > INSTRUCTION_LIMIT) {
-            throw new ExecutionError(
-                `execution stopped after ${INSTRUCTION_LIMIT.toLocaleString()} instructions, ` +
-                `which usually means a loop never terminates`
-            );
-        }
     }
 
     // -------------------------------------------------------------------------
@@ -283,6 +294,8 @@ export class CPU {
             output:           this.consoleOutput,
             exitCode:         this.exitCode,
             cursor:           { ...this.cursor },
+            ports:            this.ports.snapshot(),
+            files:            this.files.snapshot(),
             callDepth:        this.callTrace.length,
             stack:            this.peekStack()
         };

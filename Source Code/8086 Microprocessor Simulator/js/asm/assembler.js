@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // Script Name: assembler.js
-// Module:      Assembler, 3 of 3
+// Module:      Assembler, 5 of 5
 // Stack:       JavaScript (ES2020), depends on lexer.js and operands.js
 // Description: Two pass assembler. Turns tokenized source into an executable
 //              program: a list of instructions, a symbol table and a data
@@ -28,6 +28,8 @@
 
 import { tokenize, parseNumber, parseStringLiteral, splitOperands } from './lexer.js';
 import { parseOperand, OPERAND }                                    from './operands.js';
+import { expandMacros }                                             from './macros.js';
+import { evaluateExpression, ExpressionContext }                    from './expressions.js';
 
 /** Directives that reserve or initialise storage, and how wide each unit is. */
 const DATA_DIRECTIVES = { DB: 1, DW: 2, DD: 4 };
@@ -35,8 +37,16 @@ const DATA_DIRECTIVES = { DB: 1, DW: 2, DD: 4 };
 /** Directives consumed by the assembler that emit nothing by themselves. */
 const IGNORED_DIRECTIVES = new Set([
     '.MODEL', '.STACK', '.386', '.8086', '.486', '.586',
-    'ASSUME', 'PROC', 'ENDP', 'SEGMENT', 'ENDS', 'PUBLIC', 'EXTRN', 'INCLUDE'
+    'ASSUME', 'PROC', 'ENDP', 'SEGMENT', 'ENDS', 'PUBLIC', 'EXTRN', 'INCLUDE',
+    'NAME', 'TITLE', 'SUBTTL', 'PAGE', 'COMMENT', 'ALIGN', 'EVEN', 'LOCAL'
 ]);
+
+/** Directives that begin a run of data rather than of code. */
+const DATA_SECTIONS = new Set(['.DATA', '.DATA?', '.CONST', '.FARDATA', '.FARDATA?']);
+
+/** Conditional assembly. These decide whether the lines they enclose are
+ *  assembled at all, so they are handled before anything else on the line. */
+const CONDITIONAL_DIRECTIVES = new Set(['IF', 'IFE', 'IFDEF', 'IFNDEF', 'ELSE', 'ELSEIF', 'ENDIF']);
 
 /** How a symbol was defined, which decides how it resolves in an operand. */
 export const SYMBOL = {
@@ -73,6 +83,14 @@ export class Assembler {
         this.dataBytes    = [];
         this.diagnostics  = [];
         this.entryPoint   = 0;
+
+        // Data words that name a code label cannot be filled in during the
+        // first pass, because the label may be defined further down. Their
+        // positions are recorded here and patched once every address is known.
+        this.fixups = [];
+
+        // Nesting state for IF / ELSE / ENDIF.
+        this.conditionals = [];
     }
 
     /** Record a problem and keep going, so one run reports everything. */
@@ -92,9 +110,18 @@ export class Assembler {
     assemble(source) {
         this.reset();
 
-        const lines = tokenize(source);
+        // Macros are pasted in before anything is parsed, so the rest of the
+        // assembler never has to know they existed.
+        const expansion = expandMacros(source);
+
+        for (const problem of expansion.diagnostics) {
+            this.report(problem.message, problem.line);
+        }
+
+        const lines = tokenize(expansion.lines);
 
         this.firstPass(lines);
+        this.applyFixups();
         this.secondPass();
 
         return {
@@ -118,8 +145,22 @@ export class Assembler {
         let section = 'code';   // programs without .DATA are all code
 
         for (const line of lines) {
+            // ---- conditional assembly ----------------------------------------
+            // Handled before anything else, because a line inside a branch that
+            // was not taken must not define labels or emit anything at all.
+            if (line.mnemonic && CONDITIONAL_DIRECTIVES.has(line.mnemonic)) {
+                this.applyConditional(line);
+                continue;
+            }
+
+            if (!this.assembling()) continue;
+
             // ---- section directives ------------------------------------------
-            if (line.mnemonic === '.DATA')  { section = 'data'; this.defineLabel(line); continue; }
+            if (line.mnemonic && DATA_SECTIONS.has(line.mnemonic)) {
+                section = 'data';
+                this.defineLabel(line);
+                continue;
+            }
             if (line.mnemonic === '.CODE')  { section = 'code'; this.defineLabel(line); continue; }
 
             if (line.mnemonic && IGNORED_DIRECTIVES.has(line.mnemonic)) {
@@ -220,6 +261,101 @@ export class Assembler {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // CONDITIONAL ASSEMBLY
+    //
+    // IF, ELSE and ENDIF decide which lines exist at all. The state is a stack
+    // so that conditionals may nest, and a branch inside a branch that was not
+    // taken stays untaken however its own test comes out.
+    // -------------------------------------------------------------------------
+
+    /** True when the line currently being read is inside a taken branch. */
+    assembling() {
+        return this.conditionals.every(frame => frame.active);
+    }
+
+    applyConditional(line) {
+        const argument = (line.operands[0] ?? '').trim();
+
+        switch (line.mnemonic) {
+
+            case 'IF':
+            case 'IFE': {
+                const enclosing = this.assembling();
+                const holds     = enclosing ? this.testCondition(argument, line) : false;
+
+                this.conditionals.push({
+                    active:  line.mnemonic === 'IF' ? holds : !holds && enclosing,
+                    taken:   line.mnemonic === 'IF' ? holds : !holds && enclosing,
+                    enclosing
+                });
+                return;
+            }
+
+            case 'IFDEF':
+            case 'IFNDEF': {
+                const enclosing = this.assembling();
+                const defined   = Object.hasOwn(this.symbols, argument.toUpperCase());
+                const holds     = enclosing && (line.mnemonic === 'IFDEF' ? defined : !defined);
+
+                this.conditionals.push({ active: holds, taken: holds, enclosing });
+                return;
+            }
+
+            case 'ELSEIF': {
+                const frame = this.conditionals[this.conditionals.length - 1];
+
+                if (!frame) { this.report('ELSEIF without IF', line.line); return; }
+
+                const holds  = frame.enclosing && !frame.taken && this.testCondition(argument, line);
+                frame.active = holds;
+                frame.taken  = frame.taken || holds;
+                return;
+            }
+
+            case 'ELSE': {
+                const frame = this.conditionals[this.conditionals.length - 1];
+
+                if (!frame) { this.report('ELSE without IF', line.line); return; }
+
+                frame.active = frame.enclosing && !frame.taken;
+                frame.taken  = true;
+                return;
+            }
+
+            default:                                  // ENDIF
+                if (this.conditionals.pop() === undefined) {
+                    this.report('ENDIF without IF', line.line);
+                }
+        }
+    }
+
+    /** Evaluate the test on an IF, reporting rather than throwing if it fails. */
+    testCondition(text, line) {
+        if (text === '') { this.report('IF needs a condition', line.line); return false; }
+
+        try {
+            return this.evaluate(text) !== 0;
+        } catch (error) {
+            this.report(error.message, line.line);
+            return false;
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // EXPRESSIONS
+    // -------------------------------------------------------------------------
+
+    /** Evaluate a constant expression against the symbols known so far. */
+    evaluate(text) {
+        return evaluateExpression(text, this.context()).value;
+    }
+
+    /** The symbol table and location counter an expression is read against. */
+    context() {
+        return new ExpressionContext(this.symbols, this.dataBytes.length, 0);
+    }
+
     /** Record a label, either as a jump target or as a bare marker. */
     defineLabel(line, instructionIndex = null) {
         if (!line.label) return;
@@ -251,16 +387,26 @@ export class Assembler {
         this.symbols[name] = { kind: SYMBOL.CODE, index: this.instructions.length };
     }
 
-    /** "NAME EQU 10" arrives with NAME as the mnemonic and "EQU 10" as operand. */
+    /**
+     * "NAME EQU 10" arrives with NAME as the mnemonic and "EQU 10" as operand.
+     *
+     * The value may be any constant expression, which is what makes the usual
+     * "MSG_LEN EQU $ - MSG" work: $ is the current end of the data laid down so
+     * far, so subtracting the start of the message gives its length.
+     */
     defineConstant(line) {
-        const parts = line.operands[0].split(/\s+/);
-        const value = parseNumber(parts.slice(1).join(' '));
-        const name  = (line.label ?? line.mnemonic ?? '').toUpperCase();
+        const body = [line.operands[0].replace(/^\s*EQU\b/i, ''), ...line.operands.slice(1)]
+                        .join(',')
+                        .trim();
+        const name = (line.label ?? line.mnemonic ?? '').toUpperCase();
 
-        if (!name)          { this.report('EQU without a name', line.line); return; }
-        if (value === null) { this.report(`EQU "${name}" needs a constant value`, line.line); return; }
+        if (!name) { this.report('EQU without a name', line.line); return; }
 
-        this.symbols[name] = { kind: SYMBOL.CONSTANT, value };
+        try {
+            this.symbols[name] = { kind: SYMBOL.CONSTANT, value: this.evaluate(body) };
+        } catch (error) {
+            this.report(`EQU "${name}" needs a constant value: ${error.message}`, line.line);
+        }
     }
 
     /**
@@ -294,7 +440,7 @@ export class Assembler {
             if (Object.hasOwn(this.symbols, name)) {
                 this.report(`"${definition.name}" is defined more than once`, line.line);
             } else {
-                this.symbols[name] = { kind: SYMBOL.DATA, offset, width };
+                this.symbols[name] = { kind: SYMBOL.DATA, offset, width, length: 0 };
             }
         }
 
@@ -303,14 +449,19 @@ export class Assembler {
             if (item === '') continue;
 
             // "DUP" reserves repeated storage: 10 DUP(0)
-            const duplicate = item.match(/^(\S+)\s+DUP\s*\(\s*([^)]*)\s*\)$/i);
+            const duplicate = item.match(/^([\s\S]+?)\s+DUP\s*\(\s*([\s\S]*)\s*\)$/i);
             if (duplicate) {
-                const count = parseNumber(duplicate[1]);
-                const fill  = duplicate[2].trim() === '?' ? 0 : (parseNumber(duplicate[2]) ?? 0);
+                const filler = duplicate[2].trim();
 
-                if (count === null) { this.report(`DUP needs a count`, line.line); continue; }
+                let count;
+                try { count = this.evaluate(duplicate[1]); }
+                catch { this.report('DUP needs a count', line.line); continue; }
 
-                for (let n = 0; n < count; n++) this.pushValue(fill, width);
+                // The filler may itself be a string, as in 5 DUP('$').
+                const text = filler === '?' ? null : parseStringLiteral(filler);
+                const fill = filler === '?' ? 0 : (text ? text[0] : this.readValue(filler, line));
+
+                for (let n = 0; n < count; n++) this.pushValue(fill ?? 0, width);
                 continue;
             }
 
@@ -321,13 +472,65 @@ export class Assembler {
             // "?" means reserved but uninitialised.
             if (item === '?') { this.pushValue(0, width); continue; }
 
-            const value = parseNumber(item);
-            if (value === null) {
-                this.report(`cannot read data value "${item}"`, line.line);
+            // A name that is not defined yet is almost always a code label used
+            // to build a jump table. Reserve the space and fill it in later.
+            if (/^[A-Za-z_@$?][A-Za-z0-9_@$?]*$/.test(item) &&
+                !Object.hasOwn(this.symbols, item.toUpperCase())) {
+
+                this.fixups.push({ offset: this.dataBytes.length, name: item, width, line: line.line });
+                this.pushValue(0, width);
                 continue;
             }
 
+            const value = this.readValue(item, line);
+            if (value === null) continue;
+
             this.pushValue(value, width);
+        }
+
+        // Record how many units the name covers, so LENGTH and SIZE can answer.
+        if (definition.name) {
+            const symbol = this.symbols[definition.name.toUpperCase()];
+
+            if (symbol && symbol.kind === SYMBOL.DATA) {
+                symbol.length = Math.max(1, Math.floor((this.dataBytes.length - offset) / width));
+            }
+        }
+    }
+
+    /** Read one data item as a constant expression, reporting if it will not. */
+    readValue(item, line) {
+        try {
+            return this.evaluate(item);
+        } catch {
+            this.report(`cannot read data value "${item}"`, line.line);
+            return null;
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // FIXUPS
+    //
+    // A jump table written as "TABLE DW CASE_1, CASE_2" names labels that the
+    // first pass had not reached yet. Now that every address is known, the
+    // reserved words can be filled in.
+    // -------------------------------------------------------------------------
+    applyFixups() {
+        for (const fixup of this.fixups) {
+            const symbol = this.symbols[fixup.name.toUpperCase()];
+
+            if (!symbol) {
+                this.report(`"${fixup.name}" is not defined`, fixup.line);
+                continue;
+            }
+
+            const value = symbol.kind === SYMBOL.DATA     ? symbol.offset
+                        : symbol.kind === SYMBOL.CONSTANT ? symbol.value
+                        :                                   symbol.index;
+
+            for (let byte = 0; byte < fixup.width; byte++) {
+                this.dataBytes[fixup.offset + byte] = (value >> (byte * 8)) & 0xFF;
+            }
         }
     }
 
@@ -350,7 +553,7 @@ export class Assembler {
 
             for (const rawOperand of instruction.rawOperands) {
                 try {
-                    const operand = parseOperand(rawOperand, instruction.line);
+                    const operand = parseOperand(rawOperand, instruction.line, this.context());
 
                     this.checkSymbol(operand, instruction.line);
                     parsed.push(operand);

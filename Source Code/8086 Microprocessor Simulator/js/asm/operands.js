@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // Script Name: operands.js
-// Module:      Assembler, 2 of 3
+// Module:      Assembler, 4 of 5
 // Stack:       JavaScript (ES2020), depends on lexer.js and registers.js
 // Description: Parses a single operand into a structured descriptor the
 //              executor can act on without re-reading text, and resolves memory
@@ -26,6 +26,7 @@
 'use strict';
 
 import { parseNumber, SyntaxError8086 } from './lexer.js';
+import { evaluateExpression }           from './expressions.js';
 import { RegisterFile }                 from '../cpu/registers.js';
 
 /** Operand kinds produced by this module. */
@@ -56,7 +57,7 @@ const OVERRIDE_SEGMENTS = new Set(['CS', 'DS', 'ES', 'SS']);
  * @param {number} line  source line, for error messages
  * @returns {object} a descriptor: { kind, ... }
  */
-export function parseOperand(text, line = null) {
+export function parseOperand(text, line = null, context = null) {
     let token = String(text).trim();
 
     if (token === '') {
@@ -66,7 +67,11 @@ export function parseOperand(text, line = null) {
     // ---- explicit size hint: BYTE PTR [BX], WORD PTR value -------------------
     let width = null;
 
-    const sizeHint = token.match(/^(BYTE|WORD)\s+PTR\s+(.+)$/i);
+    // Adjacent bracket groups are the older way of writing one address:
+    // [BX][SI] and [BX+SI] mean the same thing.
+    token = token.replace(/\]\s*\[/g, '+');
+
+    const sizeHint = token.match(/^(BYTE|WORD)\s+PTR\s*(.+)$/i);
     if (sizeHint) {
         width = sizeHint[1].toUpperCase() === 'BYTE' ? 1 : 2;
         token = sizeHint[2].trim();
@@ -98,6 +103,22 @@ export function parseOperand(text, line = null) {
         return { kind: OPERAND.MEMORY, ...memory, width, override };
     }
 
+    // ---- indexed direct reference: ARR[SI], QUEUE_BUF[BX] --------------------
+    // The name supplies the base address and the brackets the displacement, so
+    // this means exactly the same thing as [ARR+SI] and is the form the
+    // programs in this repository were written with.
+    const indexed = token.match(/^([A-Za-z_@$?][A-Za-z0-9_@$?]*)\s*\[([^\]]+)\]$/);
+
+    if (indexed) {
+        const memory = parseAddressExpression(indexed[2], line);
+
+        if (memory.symbol) {
+            throw new SyntaxError8086(`two symbols in "${token}"`, line);
+        }
+
+        return { kind: OPERAND.MEMORY, ...memory, symbol: indexed[1], width, override };
+    }
+
     // ---- immediate -----------------------------------------------------------
     const immediate = parseNumber(token);
     if (immediate !== null) {
@@ -109,12 +130,33 @@ export function parseOperand(text, line = null) {
         return { kind: OPERAND.SYMBOL, name: token, width, override };
     }
 
-    // ---- an expression written without brackets: BUF+1, TABLE-2, 4+4 ---------
-    // A direct memory reference is allowed to carry a displacement, and that is
-    // the ordinary way to reach the second byte of a buffer. A name somewhere in
-    // the expression makes it a memory reference; with only numbers it is plain
-    // arithmetic and folds to an immediate.
-    if (/^[^\[\]]+[+-][^\[\]]+$/.test(token)) {
+    // ---- anything else is an expression: OFFSET MSG, LEN / 2, BUF + 1 --------
+    // The assembler folds these to a number. A data name taking part without
+    // OFFSET makes the result an address rather than a value, which is the
+    // difference between "BUF+1" and "OFFSET BUF+1".
+    if (context) {
+        const { value, reference } = evaluateExpression(token, context);
+
+        if (reference === null) {
+            return { kind: OPERAND.IMMEDIATE, value: value & 0xFFFF, width };
+        }
+
+        const referenced = context.symbols?.[reference];
+
+        return {
+            kind:         OPERAND.MEMORY,
+            base:         null,
+            index:        null,
+            displacement: value & 0xFFFF,
+            symbol:       null,
+            width:        width ?? referenced?.width ?? null,
+            override
+        };
+    }
+
+    // Without a symbol table only the shape can be checked, which is enough for
+    // the parser's own tests but not for a real assembly.
+    if (/^[^[\]]+[+-][^[\]]+$/.test(token)) {
         const expression = parseAddressExpression(token, line);
 
         if (expression.base || expression.index) {

@@ -47,7 +47,7 @@ function run(source, input = '') {
     cpu.pendingInput = input;
 
     try {
-        new Executor(cpu, program).run();
+        new Executor(cpu, program).runToCompletion();
     } catch (error) {
         return { ERROR: error.message };
     }
@@ -142,7 +142,7 @@ expectState('STD makes the pointers count down',
 
     cpu.registers.set('ES', 0x0A00);
     cpu.registers.set('IP', program.entryPoint);
-    new Executor(cpu, program).run();
+    new Executor(cpu, program).runToCompletion();
 
     check('the destination is ES:DI, not DS:DI',
           hex(cpu.memory.readByte(0x0A00, 0x50), 2), '7E');
@@ -309,9 +309,70 @@ expectState('INT 10h service 0Eh prints through the BIOS',
 }
 
 {
-    const state = run('INT 33h\nHLT');
+    const state = run('INT 5Ch\nHLT');
     check('an unsupported interrupt is named, not silently ignored',
-          state.ERROR?.includes('INT 33h'), true);
+          state.ERROR?.includes('INT 5Ch'), true);
+}
+
+expectState('INT 16h reads a key with its scan code',
+            'MOV AH,0\nINT 16h\nHLT',
+            { AX: '1C0D' }, '\r');
+
+expectState('INT 16h service 01h reports an empty buffer through ZF',
+            'MOV AH,1\nINT 16h\nHLT',
+            { ZF: 1 });
+
+// 09:30 is 34,200 seconds, and the timer ticks 18.2 times a second, so the
+// count is 622,440, which is 0009_7F68 split across CX and DX.
+expectState('INT 1Ah returns the tick count',
+            'MOV AH,0\nINT 1Ah\nHLT',
+            { CX: '0009', DX: '7F68' });
+
+expectState('OUT records what was sent and IN reads it back',
+            'MOV AL,55h\nOUT 4,AL\nMOV AL,0\nIN AL,4\nHLT',
+            { AX: '0055' });
+
+expectState('a port never written reads as zero',
+            'MOV AL,0FFh\nIN AL,200\nHLT',
+            { AX: '0000' });
+
+expectState('DX carries a port number too large for an immediate',
+            'MOV DX,3F8h\nMOV AL,7Eh\nOUT DX,AL\nMOV AL,0\nIN AL,DX\nHLT',
+            { AX: '007E' });
+
+expectState('an indirect jump goes through a table',
+            `.DATA
+             TABLE DW FIRST, SECOND
+             .CODE
+             MOV BX,2
+             JMP TABLE[BX]
+             FIRST:  MOV AX,1
+                     HLT
+             SECOND: MOV AX,2
+                     HLT`,
+            { AX: '0002' });
+
+{
+    const state = run(
+        `.DATA
+         NAME_  DB 'OUT.TXT',0
+         TEXT   DB 'AMEY'
+         .CODE
+         MOV AH,3Ch
+         MOV CX,0
+         LEA DX,NAME_
+         INT 21h
+         MOV BX,AX
+         MOV AH,40h
+         MOV CX,4
+         LEA DX,TEXT
+         INT 21h
+         MOV AH,3Eh
+         INT 21h
+         HLT`);
+
+    check('a file written by a program can be read back',
+          state.cpu?.files.snapshot(), [{ name: 'OUT.TXT', size: 4, text: 'AMEY' }]);
 }
 
 {

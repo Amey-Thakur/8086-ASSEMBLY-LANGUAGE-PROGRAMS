@@ -51,7 +51,7 @@ function run(source) {
     const executor = new Executor(cpu, program);
 
     try {
-        executor.run();
+        executor.runToCompletion();
     } catch (error) {
         return { ERROR: error.message };
     }

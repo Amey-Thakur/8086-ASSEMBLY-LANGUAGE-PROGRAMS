@@ -12,7 +12,7 @@
 // License:     CC BY 4.0
 // -----------------------------------------------------------------------------
 
-import { CPU, ExecutionError, INSTRUCTION_LIMIT } from '../cpu/cpu.js';
+import { CPU, ExecutionError } from '../cpu/cpu.js';
 
 let passed = 0;
 let failed = 0;
@@ -140,15 +140,12 @@ console.log('\nCONSOLE AND BUDGET');
     check('reset restores SP',        hex(cpu.registers.get('SP')), 'FFFE');
     check('reset re-seeds segments',  hex(cpu.registers.get('CS')), '0700');
 
-    // The budget must fire rather than let a runaway loop hang the browser.
-    let raised = null;
-    try {
-        cpu.instructionCount = INSTRUCTION_LIMIT;
-        cpu.countInstruction();
-    } catch (error) {
-        raised = error;
-    }
-    check('runaway loops are stopped', raised && raised.name, 'ExecutionError');
+    // Counting is all the processor does. Deciding when a run has gone on long
+    // enough belongs to the executor, because a program that never ends is not
+    // necessarily a program that is wrong.
+    cpu.instructionCount = 5_000_000;
+    cpu.countInstruction();
+    check('counting has no ceiling of its own', cpu.instructionCount, 5_000_001);
 }
 
 // -----------------------------------------------------------------------------

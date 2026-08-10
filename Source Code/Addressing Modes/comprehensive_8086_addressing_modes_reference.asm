@@ -77,8 +77,8 @@ MAIN PROC
     ; Uses an index register (SI or DI) with an optional displacement.
     ; Ideal for array traversal.
     LEA DI, ARRAY                    ; DI = Base of array
-    MOV SI, 2                        ; SI = Offset relative to base
-    MOV AL, [DI+SI]                  ; Access ARRAY[2] (10H + 2 bytes = 30H)
+    MOV AL, [DI]                     ; Access ARRAY[0] (10H)
+    MOV AL, [DI+2]                   ; Access ARRAY[2] (10H + 2 bytes = 30H)
     
     ; 6. BASED ADDRESSING MODE
     ; -------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // Script Name: lexer.js
-// Module:      Assembler, 1 of 3
+// Module:      Assembler, 1 of 5
 // Stack:       JavaScript (ES2020), no dependencies
 // Description: Turns assembly source text into a flat list of logical lines,
 //              each already separated into its label, mnemonic and operands,
@@ -128,6 +128,12 @@ export function parseNumber(text) {
     if (body.startsWith('-')) { negative = true; body = body.slice(1).trim(); }
     else if (body.startsWith('+')) { body = body.slice(1).trim(); }
 
+    // Underscores group digits for readability, as in 0000_0011b. They carry no
+    // meaning and are removed before the value is read.
+    if (/_/.test(body) && /^[0-9a-f_]+[hbdoq]?$/i.test(body)) {
+        body = body.replace(/_/g, '');
+    }
+
     let value = null;
 
     if (/^0x[0-9a-f]+$/i.test(body))        value = parseInt(body.slice(2), 16);
@@ -189,14 +195,27 @@ export const PREFIX_MNEMONICS = new Set(['REP', 'REPE', 'REPZ', 'REPNE', 'REPNZ'
  * line number rides along so every later error can point at real source.
  */
 export function tokenize(source) {
-    const lines  = String(source).split(/\r?\n/);
+    // Source arrives either as plain text or, once macros have been expanded,
+    // as lines that already know which line of the original file they came
+    // from. An expanded line must keep the number of the call that produced it,
+    // otherwise every error inside a macro points at the wrong place.
+    const lines = Array.isArray(source)
+        ? source
+        : String(source).split(/\r?\n/).map((text, index) => ({ text, line: index + 1 }));
+
     const output = [];
 
-    lines.forEach((rawText, index) => {
-        const lineNumber = index + 1;
+    lines.forEach(entry => {
+        const rawText    = entry.text;
+        const lineNumber = entry.line;
         const text       = stripComment(rawText).trim();
 
         if (text === '') return;
+
+        // emu8086 carries its build settings in hash delimited lines such as
+        // "#make_bin#" and "#cs = 500#". They configure that tool rather than
+        // the processor, so they are read as comments here.
+        if (text.startsWith('#')) return;
 
         let remainder = text;
         let label     = null;
