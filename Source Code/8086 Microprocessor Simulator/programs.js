@@ -13,7 +13,7 @@
 //              .asm file from the folder beside this one, so what the simulator
 //              runs is what the repository actually holds.
 //
-//              371 programs across 39 categories.
+//              384 programs across 39 categories.
 //
 // Authors:     Amey Thakur
 // Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
@@ -26,7 +26,7 @@
 export const PROGRAMS = {
     'Addressing Modes': ['comprehensive_8086_addressing_modes_reference.asm'],
     'Arithmetic': ['add_array_of_bytes_from_memory.asm', 'addition_16bit_packed_bcd.asm', 'addition_16bit_simple.asm', 'addition_16bit_with_carry_detection.asm', 'addition_8bit_with_user_input.asm', 'calculate_sum_of_first_n_natural_numbers.asm', 'count_set_bits_in_16bit_binary.asm', 'decimal_adjust_after_addition_demo.asm', 'division_16bit_dividend_by_8bit_divisor.asm', 'generate_multiplication_table_for_number.asm', 'multiplication_8bit_unsigned.asm', 'signed_addition_and_subtraction_demo.asm', 'subtraction_8bit_with_user_input.asm', 'swap_two_numbers_using_registers.asm'],
-    'Array Operations': ['calculate_sum_of_array_elements.asm', 'copy_block_of_data_between_arrays.asm', 'count_odd_and_even_numbers_in_array.asm', 'delete_element_from_array_by_index.asm', 'find_maximum_element_in_array.asm', 'find_minimum_element_in_array.asm', 'insert_element_into_array_at_index.asm'],
+    'Array Operations': ['array_equality_check.asm', 'calculate_sum_of_array_elements.asm', 'copy_block_of_data_between_arrays.asm', 'count_odd_and_even_numbers_in_array.asm', 'delete_element_from_array_by_index.asm', 'element_frequency_count.asm', 'find_maximum_element_in_array.asm', 'find_minimum_element_in_array.asm', 'insert_element_into_array_at_index.asm', 'interleave_two_arrays.asm', 'leaders_in_array.asm', 'maximum_subarray_sum.asm', 'move_zeros_to_end.asm', 'pair_with_given_sum.asm', 'prefix_sums.asm', 'remove_duplicates_from_sorted.asm', 'rotate_array_left.asm', 'rotate_array_right.asm', 'second_largest_element.asm', 'split_array_by_condition.asm'],
     'BIOS Services': ['bios_boot_and_system.asm', 'bios_character_with_attribute.asm', 'bios_clear_screen.asm', 'bios_cursor_control.asm', 'bios_keyboard_status.asm', 'bios_keyboard_wait.asm', 'bios_scan_code_table.asm', 'bios_shift_key_state.asm', 'bios_teletype_output.asm', 'bios_timer_ticks.asm', 'bios_versus_dos_output.asm', 'bios_video_mode_query.asm'],
     'Bit Manipulation': ['check_power_of_two.asm', 'count_set_bits_kernighan.asm', 'extract_bit_field.asm', 'isolate_lowest_set_bit.asm', 'reverse_bits_in_word.asm', 'swap_nibbles_in_byte.asm'],
     'Bitwise Operations': ['bitwise_and_logic_demonstration.asm', 'bitwise_logical_shift_left_and_multiplication.asm', 'bitwise_logical_shift_right_and_division.asm', 'bitwise_not_ones_complement_demonstration.asm', 'bitwise_or_logic_demonstration.asm', 'bitwise_rotate_left_circular_shift.asm', 'bitwise_rotate_right_circular_shift.asm', 'bitwise_xor_logic_demonstration.asm'],
@@ -67,7 +67,7 @@ export const PROGRAMS = {
 
 /** How many programs the library holds. Written out so that anything quoting
  *  the number reads it from here rather than repeating it. */
-export const PROGRAM_COUNT = 371;
+export const PROGRAM_COUNT = 384;
 
 /** How many categories they are grouped into. */
 export const CATEGORY_COUNT = 39;

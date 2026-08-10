@@ -59,6 +59,10 @@
     "output": "State [BEFORE Swap]: 10, 20\nState [AFTER XCHG]: 20, 10\nState [AFTER XOR ]: 20, 10",
     "finished": true
   },
+  "Array Operations/array_equality_check.asm": {
+    "output": "First and second: identical\nFirst and third:  differ at index 2\n",
+    "finished": true
+  },
   "Array Operations/calculate_sum_of_array_elements.asm": {
     "output": "",
     "finished": true
@@ -75,6 +79,10 @@
     "output": "",
     "finished": true
   },
+  "Array Operations/element_frequency_count.asm": {
+    "output": "The array: 4 7 4 2 7 4 9 2 \nvalue  times\n4      3\n7      2\n2      2\n9      1\n",
+    "finished": true
+  },
   "Array Operations/find_maximum_element_in_array.asm": {
     "output": "",
     "finished": true
@@ -85,6 +93,50 @@
   },
   "Array Operations/insert_element_into_array_at_index.asm": {
     "output": "",
+    "finished": true
+  },
+  "Array Operations/interleave_two_arrays.asm": {
+    "output": "Odds:       1 3 5 7 \nEvens:      2 4 6 8 \nInterleaved: 1 2 3 4 5 6 7 8 \nSeparated A: 1 3 5 7 \nSeparated B: 2 4 6 8 \n",
+    "finished": true
+  },
+  "Array Operations/leaders_in_array.asm": {
+    "output": "The array:   16 17 4 3 5 2 \nThe leaders: 17 5 2 \n",
+    "finished": true
+  },
+  "Array Operations/maximum_subarray_sum.asm": {
+    "output": "The array:  -2 1 -3 4 -1 2 1 -5 4 \nBest total: 6   from index 3 to 6\n",
+    "finished": true
+  },
+  "Array Operations/move_zeros_to_end.asm": {
+    "output": "Before: 0 12 0 7 3 0 9 0 \nAfter:  12 7 3 9 0 0 0 0 \nZeros moved: 4\n",
+    "finished": true
+  },
+  "Array Operations/pair_with_given_sum.asm": {
+    "output": "Sorted array: 2 7 11 15 19 24 30 \nLooking for a pair adding to 26\nFound 2 + 24 = 26\nComparisons made: 2\n",
+    "finished": true
+  },
+  "Array Operations/prefix_sums.asm": {
+    "output": "The array:    3 8 2 6 4 9 1 7 \nPrefix sums:  0 3 11 13 19 23 32 33 40 \nSum of elements 2 to 5: 21\nThe same by adding them up: 21\n",
+    "finished": true
+  },
+  "Array Operations/remove_duplicates_from_sorted.asm": {
+    "output": "Before: 1 1 2 2 2 3 5 5 8 8 \nAfter:  1 2 3 5 8 \nDistinct values: 5\n",
+    "finished": true
+  },
+  "Array Operations/rotate_array_left.asm": {
+    "output": "Before:  1 2 3 4 5 6 7 \nAfter 3: 4 5 6 7 1 2 3 \n",
+    "finished": true
+  },
+  "Array Operations/rotate_array_right.asm": {
+    "output": "Before:  1 2 3 4 5 6 7 \nAfter 2: 6 7 1 2 3 4 5 \n",
+    "finished": true
+  },
+  "Array Operations/second_largest_element.asm": {
+    "output": "The array:      14 92 37 92 65 8 71 \nLargest:        92\nSecond largest: 71\n",
+    "finished": true
+  },
+  "Array Operations/split_array_by_condition.asm": {
+    "output": "Before: 29 4 17 42 8 31 12 25 \nAfter:  4 17 8 12 29 31 42 25 \nValues below 20 occupy the first 4 places\n",
     "finished": true
   },
   "BIOS Services/bios_boot_and_system.asm": {
