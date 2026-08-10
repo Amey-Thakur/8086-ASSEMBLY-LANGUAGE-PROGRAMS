@@ -32,9 +32,22 @@ const REGISTERS = [
 /** The flags shown, in bit order within the flags word. */
 const FLAGS = ['CF', 'PF', 'AF', 'ZF', 'SF', 'TF', 'IF', 'DF', 'OF'];
 
-/** How many bytes of memory the window shows, and how many to a row. */
-const MEMORY_ROWS    = 8;
-const BYTES_PER_ROW  = 8;
+/** How many rows the memory window shows. */
+const MEMORY_ROWS = 8;
+
+/**
+ * How many bytes fit on a row at a given panel width.
+ *
+ * A hex dump is traditionally sixteen bytes wide, and that is what is shown
+ * whenever there is room. On a narrow panel sixteen would either overflow or
+ * force the text column off the end, so it falls back to eight and then four.
+ * The widths were measured against the monospaced face at thirteen pixels.
+ */
+function bytesPerRow(width) {
+    if (width >= 520) return 16;
+    if (width >= 300) return 8;
+    return 4;
+}
 
 const hex = (value, width) => (value >>> 0).toString(16).toUpperCase().padStart(width, '0');
 
@@ -188,14 +201,17 @@ export class Inspector {
     updateMemory(memory, segment) {
         if (!memory) return;
 
-        const rows = [];
+        // The row width follows the panel, so dragging the inspector wider
+        // shows more of memory rather than more empty space.
+        const perRow = bytesPerRow(this.elements.memory.clientWidth || 300);
+        const rows   = [];
 
         for (let row = 0; row < MEMORY_ROWS; row++) {
-            const offset = (this.memoryBase + row * BYTES_PER_ROW) & 0xFFFF;
+            const offset = (this.memoryBase + row * perRow) & 0xFFFF;
             const bytes  = [];
             const text   = [];
 
-            for (let column = 0; column < BYTES_PER_ROW; column++) {
+            for (let column = 0; column < perRow; column++) {
                 const byte = memory.readByte(segment, (offset + column) & 0xFFFF);
 
                 bytes.push(hex(byte, 2));

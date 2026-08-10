@@ -307,9 +307,12 @@
     padding: 0 var(--space-4) var(--space-4);
 }
 
+/* The number of columns follows the width of the panel rather than being
+   fixed at two, so widening the inspector shows three or four registers to a
+   row instead of leaving a stripe of empty space down the side. */
 .registers {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
     gap: 1px;
 
     /* The gap shows the panel through, which draws the rules between cells

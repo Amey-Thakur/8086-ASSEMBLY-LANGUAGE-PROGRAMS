@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // Script Name: app.js
-// Module:      Interface, 7 of 7
+// Module:      Interface, 8 of 8
 // Stack:       JavaScript (ES2020), no framework
 // Description: The controller. Owns the machine, drives assemble, run, step and
 //              reset, and keeps every panel showing the same state.
@@ -33,6 +33,7 @@ import { Inspector } from './inspector.js';
 import { Library }   from './library.js';
 import { Console }   from './console.js';
 import { Shortcuts } from './shortcuts.js';
+import { Panels }    from './panels.js';
 
 /** Instructions executed per animation frame while running. Chosen so a frame
  *  stays inside its budget on a modest laptop, and a delay loop still finishes
@@ -126,6 +127,18 @@ export class Application {
         });
 
         this.console = new Console(query('#output'), query('#input'));
+
+        // The columns can be dragged wider or narrower, and remember where
+        // they were left. Redrawing on release lets the memory view pick a
+        // new row width for the space it now has.
+        this.panels = new Panels(this.element, document.querySelectorAll('.handle'));
+
+        for (const handle of document.querySelectorAll('.handle')) {
+            handle.addEventListener('pointerup', () => this.render(false));
+            handle.addEventListener('keyup',     () => this.render(false));
+        }
+
+        window.addEventListener('resize', () => this.render(false));
         this.library = new Library(query('#library-list'), query('#library-search'));
 
         // Editing invalidates whatever was assembled: the instructions in hand
@@ -141,7 +154,10 @@ export class Application {
 
         this.library.onOpen = result => this.loadProgram(result);
 
-        query('#library-total').textContent = `${this.library.count} programs`;
+        // Both counts come from the library itself, so adding a program never
+        // means editing a number in the markup.
+        query('#library-total').textContent  = `${this.library.count} programs`;
+        query('#library-search').placeholder = `Search ${this.library.count} programs`;
     }
 
     bindControls() {

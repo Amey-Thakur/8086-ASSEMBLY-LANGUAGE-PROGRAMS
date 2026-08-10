@@ -247,11 +247,16 @@
                 <div class="library__search">
                     <label class="visually-hidden" for="library-search">Search the library</label>
                     <input type="search" id="library-search" class="field"
-                           placeholder="Search 161 programs" autocomplete="off" spellcheck="false">
+                           placeholder="Search the library" autocomplete="off" spellcheck="false">
                 </div>
 
                 <div class="panel__body" id="library-list"></div>
             </aside>
+
+            <div class="handle" data-edge="library" role="separator"
+                 tabindex="0" aria-orientation="vertical"
+                 aria-label="Resize the library. Arrow keys adjust, Home resets."
+                 aria-valuemin="170" aria-valuemax="460" aria-valuenow="248"></div>
 
             <!-- ---- the editor --------------------------------------------- -->
             <main class="panel panel--editor" aria-label="Source">
@@ -294,6 +299,11 @@
                     </section>
                 </div>
             </main>
+
+            <div class="handle" data-edge="inspector" role="separator"
+                 tabindex="0" aria-orientation="vertical"
+                 aria-label="Resize the machine panel. Arrow keys adjust, Home resets."
+                 aria-valuemin="260" aria-valuemax="620" aria-valuenow="340"></div>
 
             <!-- ---- the machine -------------------------------------------- -->
             <aside class="panel panel--inspector" aria-label="Machine state">

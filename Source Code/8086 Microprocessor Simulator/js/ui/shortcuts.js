@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------------
 // Script Name: shortcuts.js
-// Module:      Interface, 6 of 7
+// Module:      Interface, 6 of 8
 // Stack:       JavaScript (ES2020), no framework
 // Description: The keyboard. One table describes every shortcut, and that same
 //              table both dispatches the keys and draws the list a reader can

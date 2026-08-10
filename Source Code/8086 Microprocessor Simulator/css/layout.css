@@ -37,8 +37,55 @@
 
 .app__body {
     display: grid;
-    grid-template-columns: var(--library-width) minmax(0, 1fr) var(--inspector-width);
+
+    /* Five tracks, not three: a handle sits between each pair of panels so the
+       proportions can be dragged. The handles are three pixels wide and hit
+       tested wider than that, which is what makes them catchable. */
+    grid-template-columns:
+        var(--library-width) 3px minmax(0, 1fr) 3px var(--inspector-width);
+
     min-height: 0;                       /* lets the children scroll, not the grid */
+}
+
+/* -----------------------------------------------------------------------------
+   THE DRAG HANDLES
+----------------------------------------------------------------------------- */
+.handle {
+    position: relative;
+    z-index: 5;
+
+    border: 0;
+    padding: 0;
+
+    background: var(--rule);
+    cursor: col-resize;
+
+    transition: background 120ms ease;
+    touch-action: none;                  /* the pointer events do the scrolling */
+}
+
+/* The visible line is three pixels; the area that responds is eleven, which is
+   the difference between a handle that can be grabbed and one that cannot. */
+.handle::after {
+    content: "";
+    position: absolute;
+    inset: 0 -4px;
+}
+
+.handle:hover,
+.handle:focus-visible {
+    background: var(--accent);
+}
+
+/* While a drag is in progress the whole window shows the resize cursor and
+   stops selecting text, so a fast drag over the editor does not highlight it. */
+.app[data-dragging] {
+    cursor: col-resize;
+    user-select: none;
+}
+
+.app[data-dragging] .handle {
+    background: var(--accent);
 }
 
 /* -----------------------------------------------------------------------------
@@ -223,8 +270,13 @@
    consults occasionally rather than watches, so it is the one that goes.
 ----------------------------------------------------------------------------- */
 @media (max-width: 1199px) {
+    /* The library is a drawer here, so its handle has nothing to divide. */
     .app__body {
-        grid-template-columns: minmax(0, 1fr) var(--inspector-width);
+        grid-template-columns: minmax(0, 1fr) 3px var(--inspector-width);
+    }
+
+    .handle[data-edge="library"] {
+        display: none;
     }
 
     .panel--library {
@@ -299,6 +351,11 @@
         position: relative;
         min-height: 0;
         height: 100%;
+    }
+
+    /* One panel at a time, so there is nothing to divide and nothing to drag. */
+    .handle {
+        display: none;
     }
 
     /* Only the two panels that take turns are hidden. The library is left
