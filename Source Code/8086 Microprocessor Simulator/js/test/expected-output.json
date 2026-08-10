@@ -759,6 +759,54 @@
     "output": "",
     "finished": true
   },
+  "Recursion/binary_search_recursive.asm": {
+    "output": "57 is at index 6\n",
+    "finished": true
+  },
+  "Recursion/factorial_recursive_frames.asm": {
+    "output": "7 factorial, computed recursively: 5040\nThe deepest the stack went: 56 bytes\n",
+    "finished": true
+  },
+  "Recursion/fibonacci_recursive.asm": {
+    "output": "Fibonacci term 12 is 144\nIt took 465 calls to work out\n",
+    "finished": true
+  },
+  "Recursion/gcd_recursive.asm": {
+    "output": "The greatest common divisor of 1071 and 462 is 21\n",
+    "finished": true
+  },
+  "Recursion/mutual_recursion_even_odd.asm": {
+    "output": "7 is odd\n10 is even\n0 is even\n13 is odd\n",
+    "finished": true
+  },
+  "Recursion/power_recursive.asm": {
+    "output": "Three to the ninth, one step at a time: 19683  multiplications: 9\nThe same by squaring:                    19683  multiplications: 6\n",
+    "finished": true
+  },
+  "Recursion/recursion_versus_iteration.asm": {
+    "output": "Recursive: 40320   stack used: 64 bytes\nIterative: 40320   stack used: 10 bytes\n",
+    "finished": true
+  },
+  "Recursion/reverse_string_recursive.asm": {
+    "output": "Forward:  RECURSION\nBackward: NOISRUCER\n",
+    "finished": true
+  },
+  "Recursion/stack_frame_anatomy.asm": {
+    "output": "BP now points at    65526\nSaved BP there is   0\nReturn address at BP+2 is 7\nFirst argument BP+4 is    1111\nSecond argument BP+6 is   2222\nA local at BP-2 is        9999\n",
+    "finished": true
+  },
+  "Recursion/sum_array_recursive.asm": {
+    "output": "The array adds up to 231\n",
+    "finished": true
+  },
+  "Recursion/sum_of_digits_recursive.asm": {
+    "output": "The digits of 48963 add up to 30\n",
+    "finished": true
+  },
+  "Recursion/tower_of_hanoi.asm": {
+    "output": "Moving 3 disks from A to C:\nMove disk from A to C\nMove disk from A to B\nMove disk from C to B\nMove disk from A to C\nMove disk from B to A\nMove disk from B to C\nMove disk from A to C\nTotal moves: 7\n",
+    "finished": true
+  },
   "Searching/binary_search.asm": {
     "output": "Element found at 1-based index: 4_rd Position",
     "finished": true

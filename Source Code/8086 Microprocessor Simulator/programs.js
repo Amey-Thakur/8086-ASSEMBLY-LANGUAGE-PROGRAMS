@@ -13,7 +13,7 @@
 //              .asm file from the folder beside this one, so what the simulator
 //              runs is what the repository actually holds.
 //
-//              251 programs across 35 categories.
+//              263 programs across 36 categories.
 //
 // Authors:     Amey Thakur
 // Repository:  https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
@@ -50,6 +50,7 @@ export const PROGRAMS = {
     'Number Theory': ['binomial_coefficient.asm', 'classify_by_divisor_sum.asm', 'collatz_sequence_length.asm', 'coprime_check.asm', 'count_divisors.asm', 'digital_root.asm', 'happy_number_check.asm', 'modular_exponentiation.asm', 'prime_factorisation.asm', 'sieve_of_eratosthenes.asm', 'sum_of_squares_and_cubes.asm', 'triangular_numbers.asm'],
     'Patterns': ['diamond_pattern.asm', 'inverted_triangle.asm', 'number_pyramid.asm', 'triangle_pattern.asm'],
     'Procedures': ['basic_procedure.asm', 'local_variables.asm', 'nested_procedures.asm', 'procedure_parameters.asm', 'recursive_factorial.asm'],
+    'Recursion': ['binary_search_recursive.asm', 'factorial_recursive_frames.asm', 'fibonacci_recursive.asm', 'gcd_recursive.asm', 'mutual_recursion_even_odd.asm', 'power_recursive.asm', 'recursion_versus_iteration.asm', 'reverse_string_recursive.asm', 'stack_frame_anatomy.asm', 'sum_array_recursive.asm', 'sum_of_digits_recursive.asm', 'tower_of_hanoi.asm'],
     'Searching': ['binary_search.asm', 'character_occurrences_count.asm', 'linear_search.asm', 'search_element_array.asm'],
     'Shift and Rotate': ['arithmetic_shift_signed_divide.asm', 'multiply_by_ten_using_shifts.asm', 'overflow_flag_on_single_shift.asm', 'pack_two_bytes_into_word.asm', 'rotate_left_no_carry.asm', 'rotate_right_through_carry.asm', 'rotate_through_carry_multiword_shift.asm', 'rotate_to_test_each_bit.asm', 'shift_left_to_multiply.asm', 'shift_right_to_divide_unsigned.asm', 'unpack_word_into_two_bytes.asm', 'variable_shift_count_in_cl.asm'],
     'Signed Arithmetic': ['absolute_value.asm', 'sign_extension_cbw_cwd.asm', 'signed_array_average.asm', 'signed_byte_arithmetic.asm', 'signed_divide_idiv.asm', 'signed_minimum_and_maximum.asm', 'signed_multiply_imul.asm', 'signed_overflow_detection.asm', 'signed_range_check.asm', 'signed_sorting_by_value.asm', 'signed_versus_shift_division.asm', 'two_complement_representation.asm'],
@@ -63,7 +64,7 @@ export const PROGRAMS = {
 
 /** How many programs the library holds. Written out so that anything quoting
  *  the number reads it from here rather than repeating it. */
-export const PROGRAM_COUNT = 251;
+export const PROGRAM_COUNT = 263;
 
 /** How many categories they are grouped into. */
-export const CATEGORY_COUNT = 35;
+export const CATEGORY_COUNT = 36;
