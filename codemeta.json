@@ -20,8 +20,10 @@
             }
         }
     ],
+    "dateCreated": "2022-02-17",
     "dateReleased": "2021-08-12",
     "codeRepository": "https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS",
+    "isPartOf": "https://github.com/Amey-Thakur/COMPUTER-ENGINEERING",
     "developmentStatus": "complete",
     "runtimePlatform": [
         "DOS",
@@ -33,6 +35,32 @@
         "Assembly Language",
         "Microprocessor",
         "Computer Engineering",
-        "Standardized"
-    ]
+        "Standardized",
+        "8086 Emulator",
+        "ASM",
+        "Assembly Language Programming",
+        "Computer Science",
+        "DOS Interrupts",
+        "Emu8086",
+        "Engineering",
+        "Hardware Interfacing",
+        "Microprocessor Programming",
+        "System Programming",
+        "University Of Mumbai",
+        "University of Mumbai",
+        "Mumbai University",
+        "Terna Engineering College",
+        "Navi Mumbai",
+        "India",
+        "B.E. Computer Engineering",
+        "Semester V",
+        "Amey Thakur",
+        "amey",
+        "ameythakur",
+        "amey-thakur",
+        "ameyarc",
+        "Mega Satish",
+        "megasatish"
+    ],
+    "url": "https://amey-thakur.github.io/8086-ASSEMBLY-LANGUAGE-PROGRAMS/"
 }

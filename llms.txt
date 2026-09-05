@@ -1,0 +1,36 @@
+# 8086 Assembly Language Programs
+
+> 525 documented Intel 8086 assembly programs, with a browser simulator that
+> assembles and runs every one of them: full instruction set, nine flags,
+> macros, DOS and BIOS services, and step-by-step debugging. Verified by
+> 2010 tests.
+
+Author: Amey Thakur, ORCID 0000-0001-5644-1575
+Institution: Terna Engineering College, University of Mumbai
+Programme: B.E. Computer Engineering, Third Year, Semester V
+Licence: CC BY 4.0, attribution required
+Repository created: 17 February 2022
+Work dated: 19 January 2021
+
+## What is in this repository
+
+- Source Code, 572 files
+- docs, 1 file
+- images, 1 file
+- 404.html
+- index.html
+
+## Subject terms
+
+8086, 8086-emulator, asm, assembly-language, assembly-language-programming,
+computer-engineering, computer-science, dos-interrupts, emu8086,
+engineering, hardware-interfacing, microprocessor,
+microprocessor-programming, system-programming, university-of-mumbai
+
+## Where this sits
+
+- This repository: https://github.com/Amey-Thakur/8086-ASSEMBLY-LANGUAGE-PROGRAMS
+- Degree index, every subject and project: https://github.com/Amey-Thakur/COMPUTER-ENGINEERING
+- Project page: https://amey-thakur.github.io/8086-ASSEMBLY-LANGUAGE-PROGRAMS/
+- Author: https://github.com/Amey-Thakur
+- Research notes and reflections: https://amey-thakur.github.io/
